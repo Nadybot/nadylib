@@ -132,43 +132,6 @@ impl MmdbParser<'_> {
     }
 }
 
-fn rewrite_c_formatting_to_rust(input: String) -> String {
-    // WIP
-    // TODO: Rethink with Regex
-    // Format is
-    // %[flags][width][.precision][length]specifier
-    let mut output = String::new();
-    let mut iter = input.chars().peekable();
-    while iter.peek().is_some() {
-        let character = iter.next().unwrap();
-        // If escaped, do nothing
-        if character == '%' && (iter.peek() == Some(&'%') || iter.peek().is_none()) {
-            output.push('%');
-            let _ = iter.next();
-        } else if character == '%' {
-            let next = iter.next().unwrap();
-            match next {
-                's' | 'i' | 'u' | 'd' => {
-                    output += "{}";
-                }
-                '.' => {}
-                _ => output.push('%'),
-            }
-        } else {
-            output.push(character);
-        }
-    }
-    output
-}
-
-#[test]
-fn test_rewriting() {
-    let f1 = String::from("Hello, %s, you got %i credits!");
-    println!("{}", rewrite_c_formatting_to_rust(f1));
-    let f2 = String::from("The tower is down %i%%!");
-    println!("{}", rewrite_c_formatting_to_rust(f2));
-}
-
 #[test]
 fn test_can_find_offline_msg() {
     let mut parser = MmdbParser::new();
