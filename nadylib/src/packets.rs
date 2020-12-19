@@ -210,16 +210,16 @@ pub trait IncomingPacket {
 // AOCP_MSG_PRIVATE      (Message Private)                 ISS       DONE
 // AOCP_MSG_VICINITY     (Message Vicinity)                ISS       Can't be added
 // AOCP_MSG_VICINITYA    (Message Anon Vicinity)           SSS       DONE
-// AOCP_MSG_SYSTEM       (Message System)                  S         Can't be added
+// AOCP_MSG_SYSTEM       (Message System)                  S         DONE
 // AOCP_CHAT_NOTICE      (Chat Notice)                     IIIS      DONE
 // AOCP_BUDDY_ADD        (Buddy Added)                     IIS       DONE
 // AOCP_BUDDY_REMOVE     (Buddy Removed)                   I         DONE
 // AOCP_PRIVGRP_INVITE   (Privategroup Invited)            I         DONE
 // AOCP_PRIVGRP_KICK     (Privategroup Kicked)             I
 // AOCP_PRIVGRP_PART     (Privategroup Part)               I
-// AOCP_PRIVGRP_CLIJOIN  (Privategroup Client Join)        II
-// AOCP_PRIVGRP_CLIPART  (Privategroup Client Part)        II
-// AOCP_PRIVGRP_MESSAGE  (Privategroup Message)            IISS
+// AOCP_PRIVGRP_CLIJOIN  (Privategroup Client Join)        II        DONE
+// AOCP_PRIVGRP_CLIPART  (Privategroup Client Part)        II        DONE
+// AOCP_PRIVGRP_MESSAGE  (Privategroup Message)            IISS      DONE
 // AOCP_PRIVGRP_REFUSE   (Privategroup Refuse Invite)      II
 // AOCP_GROUP_ANNOUNCE   (Group Announce)                  GSIS      DONE
 // AOCP_GROUP_PART       (Group Part)                      G
@@ -236,7 +236,7 @@ pub trait IncomingPacket {
 // AOCP_BUDDY_ADD        (Buddy Add)                       IS        DONE
 // AOCP_BUDDY_REMOVE     (Buddy Remove)                    I         DONE
 // AOCP_ONLINE_SET       (Onlinestatus Set)                I
-// AOCP_PRIVGRP_INVITE   (Privategroup Invite)             I
+// AOCP_PRIVGRP_INVITE   (Privategroup Invite)             I         DONE
 // AOCP_PRIVGRP_KICK     (Privategroup Kick)               I
 // AOCP_PRIVGRP_JOIN     (Privategroup Join)               I
 // AOCP_PRIVGRP_PART     (Privategroup Part)               I
@@ -265,7 +265,11 @@ pub enum Packet {
     ChatNotice(ChatNoticePacket),
     MsgPrivate(MsgPrivatePacket),
     ClientLookup(ClientLookupResultPacket),
-    PrivgrpInvite(PrivgrpInvitePacket),
+    PrivgrpInvite(IncPrivgrpInvitePacket),
+    PrivgrpClijoin(PrivgrpClijoinPacket),
+    PrivgrpClipart(PrivgrpClipartPacket),
+    PrivgrpMessage(PrivgrpMessagePacket),
+    MsgSystem(MsgSystemPacket),
 }
 
 impl TryFrom<(PacketType, &[u8])> for Packet {
@@ -293,8 +297,18 @@ impl TryFrom<(PacketType, &[u8])> for Packet {
                 Ok(Self::ClientLookup(ClientLookupResultPacket::load(value.1)?))
             }
             PacketType::PrivgrpInvite => {
-                Ok(Self::PrivgrpInvite(PrivgrpInvitePacket::load(value.1)?))
+                Ok(Self::PrivgrpInvite(IncPrivgrpInvitePacket::load(value.1)?))
             }
+            PacketType::PrivgrpClijoin => {
+                Ok(Self::PrivgrpClijoin(PrivgrpClijoinPacket::load(value.1)?))
+            }
+            PacketType::PrivgrpClipart => {
+                Ok(Self::PrivgrpClipart(PrivgrpClipartPacket::load(value.1)?))
+            }
+            PacketType::PrivgrpMessage => {
+                Ok(Self::PrivgrpMessage(PrivgrpMessagePacket::load(value.1)?))
+            }
+            PacketType::MsgSystem => Ok(Self::MsgSystem(MsgSystemPacket::load(value.1)?)),
             _ => Err(Error::UnknownPacket(Some(value.0))),
         }
     }
@@ -403,8 +417,40 @@ pub struct ClientLookupResultPacket {
 
 /// Packet with an invite to a private group.
 #[derive(Debug)]
-pub struct PrivgrpInvitePacket {
+pub struct IncPrivgrpInvitePacket {
     pub channel: Channel,
+}
+
+/// Packet to invite someone to the private group.
+#[derive(Debug)]
+pub struct OutPrivgrpInvitePacket {
+    pub character_id: u32,
+}
+
+/// Packet indicating someone joined a private group.
+#[derive(Debug)]
+pub struct PrivgrpClijoinPacket {
+    pub channel: Channel,
+    pub character_id: u32,
+}
+
+/// Packet indicating someone left a private group.
+#[derive(Debug)]
+pub struct PrivgrpClipartPacket {
+    pub channel: Channel,
+    pub character_id: u32,
+}
+
+/// Packet with a private group message.
+#[derive(Debug)]
+pub struct PrivgrpMessagePacket {
+    pub message: Message,
+}
+
+/// Packet with a system message.
+#[derive(Debug)]
+pub struct MsgSystemPacket {
+    pub text: String,
 }
 
 impl IncomingPacket for LoginSeedPacket {
@@ -645,11 +691,74 @@ impl IncomingPacket for ClientLookupResultPacket {
     }
 }
 
-impl IncomingPacket for PrivgrpInvitePacket {
+impl IncomingPacket for IncPrivgrpInvitePacket {
     fn load(mut data: &[u8]) -> Result<Self> {
         let channel_id = read_u32(&mut data);
         let channel = Channel::PrivateChannel(channel_id);
 
         Ok(Self { channel })
+    }
+}
+
+impl OutgoingPacket for OutPrivgrpInvitePacket {
+    fn serialize(&self) -> (PacketType, Vec<u8>) {
+        let mut buf = Vec::with_capacity(4);
+        write_u32(&mut buf, self.character_id);
+
+        (PacketType::PrivgrpInvite, buf)
+    }
+}
+
+impl IncomingPacket for PrivgrpClijoinPacket {
+    fn load(mut data: &[u8]) -> Result<Self> {
+        let channel_id = read_u32(&mut data);
+        let character_id = read_u32(&mut data);
+
+        let channel = Channel::PrivateChannel(channel_id);
+
+        Ok(Self {
+            channel,
+            character_id,
+        })
+    }
+}
+
+impl IncomingPacket for PrivgrpClipartPacket {
+    fn load(mut data: &[u8]) -> Result<Self> {
+        let channel_id = read_u32(&mut data);
+        let character_id = read_u32(&mut data);
+
+        let channel = Channel::PrivateChannel(channel_id);
+
+        Ok(Self {
+            channel,
+            character_id,
+        })
+    }
+}
+
+impl IncomingPacket for PrivgrpMessagePacket {
+    fn load(mut data: &[u8]) -> Result<Self> {
+        let channel_id = read_u32(&mut data);
+        let sender_id = read_u32(&mut data);
+        let content = read_string(&mut data);
+        // Seems to be empty always
+        // let d = read_string(&mut data);
+
+        let message = Message {
+            sender: Some(sender_id),
+            channel: Channel::PrivateChannel(channel_id),
+            text: content,
+        };
+
+        Ok(Self { message })
+    }
+}
+
+impl IncomingPacket for MsgSystemPacket {
+    fn load(mut data: &[u8]) -> Result<Self> {
+        let text = read_string(&mut data);
+
+        Ok(Self { text })
     }
 }

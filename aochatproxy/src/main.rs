@@ -2,7 +2,8 @@ use nadylib::client_socket::AOSocket;
 use nadylib::error::Result;
 use nadylib::models::Channel;
 use nadylib::packets::{
-    BuddyAddPacket, BuddyRemovePacket, ClientLookupPacket, LoginSelectPacket, Packet,
+    BuddyAddPacket, BuddyRemovePacket, ClientLookupPacket, LoginSelectPacket,
+    OutPrivgrpInvitePacket, Packet,
 };
 
 use std::env::var;
@@ -13,6 +14,7 @@ async fn main() -> Result<()> {
     // but until nadylib is finished
     // only a playground for the library
     let mut sock = AOSocket::connect("chat.d1.funcom.com:7105").await?;
+    let mut my_id: u32 = 0;
 
     loop {
         let packet = sock.read_packet().await?;
@@ -42,6 +44,9 @@ async fn main() -> Result<()> {
             }
             Packet::LoginOk => println!("Successfully logged in"),
             Packet::ClientName(c) => {
+                if my_id == 0 {
+                    my_id = c.character_id;
+                }
                 println!("Character {} has ID {}", c.character_name, c.character_id)
             }
             Packet::MsgVicinitya(m) => {
@@ -78,9 +83,20 @@ async fn main() -> Result<()> {
                         character_id: arg.parse().unwrap(),
                     };
                     sock.send(pack).await?;
+                } else if m.message.text.starts_with("!join") {
+                    let pack = OutPrivgrpInvitePacket {
+                        character_id: m.message.sender.unwrap(),
+                    };
+                    sock.send(pack).await?;
                 }
             }
             Packet::GroupMessage(m) => {
+                println!(
+                    "Got a msg from {:?} in {:?} with text {}",
+                    m.message.sender, m.message.channel, m.message.text
+                )
+            }
+            Packet::PrivgrpMessage(m) => {
                 println!(
                     "Got a msg from {:?} in {:?} with text {}",
                     m.message.sender, m.message.channel, m.message.text
@@ -98,8 +114,17 @@ async fn main() -> Result<()> {
             Packet::PrivgrpInvite(p) => {
                 println!("Got invited to private group {:?}", p.channel)
             }
+            Packet::PrivgrpClijoin(p) => {
+                println!("{} joined the private channel", p.character_id)
+            }
+            Packet::PrivgrpClipart(p) => {
+                println!("{} left the private channel", p.character_id)
+            }
             Packet::BuddyRemove(b) => {
                 println!("Buddy {} successfully removed", b.character_id)
+            }
+            Packet::MsgSystem(m) => {
+                println!("Got a system message: {}", m.text)
             }
             _ => {}
         }
