@@ -1,0 +1,8 @@
+[workspace]
+members = [
+    "nadylib",
+    "aochatproxy",
+]
+
+[profile.release]
+lto = "thin"
