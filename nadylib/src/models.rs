@@ -29,7 +29,8 @@ pub struct Group {
 #[derive(Debug)]
 pub enum Channel {
     Group(Group),
-    Private(u32),
+    PrivateChannel(u32),
+    Tell(u32),
     Vicinity,
 }
 

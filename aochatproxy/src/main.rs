@@ -1,7 +1,9 @@
 use nadylib::client_socket::AOSocket;
 use nadylib::error::Result;
 use nadylib::models::Channel;
-use nadylib::packets::{ClientLookupPacket, LoginSelectPacket, Packet};
+use nadylib::packets::{
+    BuddyAddPacket, BuddyRemovePacket, ClientLookupPacket, LoginSelectPacket, Packet,
+};
 
 use std::env::var;
 
@@ -45,15 +47,14 @@ async fn main() -> Result<()> {
             Packet::MsgVicinitya(m) => {
                 println!("{:?}", m.message);
             }
-            Packet::BuddyAdd(b) => {
+            Packet::BuddyStatus(b) => {
                 println!("Buddy {} online? {}", b.character_id, b.online)
             }
-            Packet::GroupAnnounce(c) => match c.channel {
-                Channel::Group(g) => {
+            Packet::GroupAnnounce(c) => {
+                if let Channel::Group(g) = c.channel {
                     println!("Am in channel {:?} ({}) {:?}", g.name, g.id, g.r#type)
                 }
-                _ => {}
-            },
+            }
             Packet::MsgPrivate(m) => {
                 println!(
                     "Got a msg from {:?} in {:?} with text {}",
@@ -63,6 +64,18 @@ async fn main() -> Result<()> {
                     let arg = m.message.text.split_whitespace().nth(1).unwrap_or("");
                     let pack = ClientLookupPacket {
                         character_name: arg.to_owned(),
+                    };
+                    sock.send(pack).await?;
+                } else if m.message.text.starts_with("!rembuddy") {
+                    let arg = m.message.text.split_whitespace().nth(1).unwrap_or("");
+                    let pack = BuddyRemovePacket {
+                        character_id: arg.parse().unwrap(),
+                    };
+                    sock.send(pack).await?;
+                } else if m.message.text.starts_with("!addbuddy") {
+                    let arg = m.message.text.split_whitespace().nth(1).unwrap_or("");
+                    let pack = BuddyAddPacket {
+                        character_id: arg.parse().unwrap(),
                     };
                     sock.send(pack).await?;
                 }
@@ -81,6 +94,12 @@ async fn main() -> Result<()> {
             }
             Packet::ClientLookup(c) => {
                 println!("User {} has ID {}", c.character_name, c.character_id)
+            }
+            Packet::PrivgrpInvite(p) => {
+                println!("Got invited to private group {:?}", p.channel)
+            }
+            Packet::BuddyRemove(b) => {
+                println!("Buddy {} successfully removed", b.character_id)
             }
             _ => {}
         }

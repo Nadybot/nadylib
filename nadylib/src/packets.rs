@@ -10,6 +10,8 @@ use num_enum::TryFromPrimitive;
 use std::convert::TryFrom;
 use std::result::Result as OrigResult;
 
+const MAXINT: u32 = 4294967295;
+
 fn read_u8(data: &mut &[u8]) -> u8 {
     let val = data[0];
     *data = &data[1..];
@@ -195,6 +197,59 @@ pub trait IncomingPacket {
         Self: Sized;
 }
 
+// Current status
+//
+// Incoming:
+// AOCP_LOGIN_SEED       (Login Seed)                      S         DONE
+// AOCP_LOGIN_OK         (Login Result OK)                           DONE
+// AOCP_LOGIN_ERROR      (Login Result Error)              S         DONE
+// AOCP_LOGIN_CHARLIST   (Login CharacterList)             isii      DONE
+// AOCP_CLIENT_UNKNOWN   (Client Unknown)                  I
+// AOCP_CLIENT_NAME      (Client Name)                     IS        DONE
+// AOCP_CLIENT_LOOKUP    (Lookup Result)                   IS        DONE
+// AOCP_MSG_PRIVATE      (Message Private)                 ISS       DONE
+// AOCP_MSG_VICINITY     (Message Vicinity)                ISS       Can't be added
+// AOCP_MSG_VICINITYA    (Message Anon Vicinity)           SSS       DONE
+// AOCP_MSG_SYSTEM       (Message System)                  S         Can't be added
+// AOCP_CHAT_NOTICE      (Chat Notice)                     IIIS      DONE
+// AOCP_BUDDY_ADD        (Buddy Added)                     IIS       DONE
+// AOCP_BUDDY_REMOVE     (Buddy Removed)                   I         DONE
+// AOCP_PRIVGRP_INVITE   (Privategroup Invited)            I         DONE
+// AOCP_PRIVGRP_KICK     (Privategroup Kicked)             I
+// AOCP_PRIVGRP_PART     (Privategroup Part)               I
+// AOCP_PRIVGRP_CLIJOIN  (Privategroup Client Join)        II
+// AOCP_PRIVGRP_CLIPART  (Privategroup Client Part)        II
+// AOCP_PRIVGRP_MESSAGE  (Privategroup Message)            IISS
+// AOCP_PRIVGRP_REFUSE   (Privategroup Refuse Invite)      II
+// AOCP_GROUP_ANNOUNCE   (Group Announce)                  GSIS      DONE
+// AOCP_GROUP_PART       (Group Part)                      G
+// AOCP_GROUP_MESSAGE    (Group Message)                   GISS      DONE
+// AOCP_PING             (Pong)                            S
+// AOCP_FORWARD          (Forward)                         IM
+// AOCP_ADM_MUX_INFO     (Adm Mux Info)                    iii
+//
+// Outgoing:
+// AOCP_LOGIN_REQUEST    (Login Response GetCharLst)       ISS       DONE
+// AOCP_LOGIN_SELECT     (Login Select Character)          I         DONE
+// AOCP_CLIENT_LOOKUP    (Name Lookup)                     S         DONE
+// AOCP_MSG_PRIVATE      (Message Private)                 ISS
+// AOCP_BUDDY_ADD        (Buddy Add)                       IS        DONE
+// AOCP_BUDDY_REMOVE     (Buddy Remove)                    I         DONE
+// AOCP_ONLINE_SET       (Onlinestatus Set)                I
+// AOCP_PRIVGRP_INVITE   (Privategroup Invite)             I
+// AOCP_PRIVGRP_KICK     (Privategroup Kick)               I
+// AOCP_PRIVGRP_JOIN     (Privategroup Join)               I
+// AOCP_PRIVGRP_PART     (Privategroup Part)               I
+// AOCP_PRIVGRP_KICKALL  (Privategroup Kickall)
+// AOCP_PRIVGRP_MESSAGE  (Privategroup Message)            ISS
+// AOCP_GROUP_DATA_SET   (Group Data Set)                  GIS
+// AOCP_GROUP_MESSAGE    (Group Message)                   GSS
+// AOCP_GROUP_CM_SET     (Group Clientmode Set)            GIIII
+// AOCP_CLIENTMODE_GET   (Clientmode Get)                  IG
+// AOCP_CLIENTMODE_SET   (Clientmode Set)                  IIII
+// AOCP_PING             (Ping)                            S
+// AOCP_CC               (CC)                              s
+
 #[derive(Debug)]
 pub enum Packet {
     LoginSeed(LoginSeedPacket),
@@ -203,12 +258,14 @@ pub enum Packet {
     LoginOk,
     ClientName(ClientNamePacket),
     MsgVicinitya(MsgVicinityaPacket),
-    BuddyAdd(BuddyAddPacket),
+    BuddyStatus(BuddyStatusPacket),
+    BuddyRemove(BuddyRemovePacket),
     GroupAnnounce(GroupAnnouncePacket),
     GroupMessage(GroupMessagePacket),
     ChatNotice(ChatNoticePacket),
     MsgPrivate(MsgPrivatePacket),
     ClientLookup(ClientLookupResultPacket),
+    PrivgrpInvite(PrivgrpInvitePacket),
 }
 
 impl TryFrom<(PacketType, &[u8])> for Packet {
@@ -224,7 +281,8 @@ impl TryFrom<(PacketType, &[u8])> for Packet {
             PacketType::LoginOk => Ok(Self::LoginOk),
             PacketType::ClientName => Ok(Self::ClientName(ClientNamePacket::load(value.1)?)),
             PacketType::MsgVicinitya => Ok(Self::MsgVicinitya(MsgVicinityaPacket::load(value.1)?)),
-            PacketType::BuddyAdd => Ok(Self::BuddyAdd(BuddyAddPacket::load(value.1)?)),
+            PacketType::BuddyAdd => Ok(Self::BuddyStatus(BuddyStatusPacket::load(value.1)?)),
+            PacketType::BuddyRemove => Ok(Self::BuddyRemove(BuddyRemovePacket::load(value.1)?)),
             PacketType::GroupAnnounce => {
                 Ok(Self::GroupAnnounce(GroupAnnouncePacket::load(value.1)?))
             }
@@ -233,6 +291,9 @@ impl TryFrom<(PacketType, &[u8])> for Packet {
             PacketType::MsgPrivate => Ok(Self::MsgPrivate(MsgPrivatePacket::load(value.1)?)),
             PacketType::ClientLookup => {
                 Ok(Self::ClientLookup(ClientLookupResultPacket::load(value.1)?))
+            }
+            PacketType::PrivgrpInvite => {
+                Ok(Self::PrivgrpInvite(PrivgrpInvitePacket::load(value.1)?))
             }
             _ => Err(Error::UnknownPacket(Some(value.0))),
         }
@@ -285,9 +346,21 @@ pub struct MsgVicinityaPacket {
 
 /// A buddy went online or offline.
 #[derive(Debug)]
-pub struct BuddyAddPacket {
+pub struct BuddyStatusPacket {
     pub character_id: u32,
     pub online: bool,
+}
+
+/// Add a buddy.
+#[derive(Debug)]
+pub struct BuddyAddPacket {
+    pub character_id: u32,
+}
+
+/// Remove a buddy or confirmation of success.
+#[derive(Debug)]
+pub struct BuddyRemovePacket {
+    pub character_id: u32,
 }
 
 /// A channel becomes available.
@@ -325,6 +398,13 @@ pub struct ClientLookupPacket {
 pub struct ClientLookupResultPacket {
     pub character_name: String,
     pub character_id: u32,
+    pub exists: bool,
+}
+
+/// Packet with an invite to a private group.
+#[derive(Debug)]
+pub struct PrivgrpInvitePacket {
+    pub channel: Channel,
 }
 
 impl IncomingPacket for LoginSeedPacket {
@@ -413,7 +493,7 @@ impl IncomingPacket for MsgVicinityaPacket {
     }
 }
 
-impl IncomingPacket for BuddyAddPacket {
+impl IncomingPacket for BuddyStatusPacket {
     fn load(mut data: &[u8]) -> Result<Self> {
         let character_id = read_u32(&mut data);
         let online = read_u32(&mut data) == 1;
@@ -424,6 +504,33 @@ impl IncomingPacket for BuddyAddPacket {
             character_id,
             online,
         })
+    }
+}
+
+impl OutgoingPacket for BuddyAddPacket {
+    fn serialize(&self) -> (PacketType, Vec<u8>) {
+        let mut buf = Vec::with_capacity(7);
+        write_u32(&mut buf, self.character_id);
+        write_string(&mut buf, "\u{1}");
+
+        (PacketType::BuddyAdd, buf)
+    }
+}
+
+impl IncomingPacket for BuddyRemovePacket {
+    fn load(mut data: &[u8]) -> Result<Self> {
+        let character_id = read_u32(&mut data);
+
+        Ok(Self { character_id })
+    }
+}
+
+impl OutgoingPacket for BuddyRemovePacket {
+    fn serialize(&self) -> (PacketType, Vec<u8>) {
+        let mut buf = Vec::with_capacity(4);
+        write_u32(&mut buf, self.character_id);
+
+        (PacketType::BuddyRemove, buf)
     }
 }
 
@@ -507,7 +614,7 @@ impl IncomingPacket for MsgPrivatePacket {
 
         let message = Message {
             sender: Some(sender_id),
-            channel: Channel::Private(sender_id),
+            channel: Channel::Tell(sender_id),
             text: content,
         };
 
@@ -528,10 +635,21 @@ impl IncomingPacket for ClientLookupResultPacket {
     fn load(mut data: &[u8]) -> Result<Self> {
         let character_id = read_u32(&mut data);
         let character_name = read_string(&mut data);
+        let exists = character_id != MAXINT;
 
         Ok(Self {
             character_name,
             character_id,
+            exists,
         })
+    }
+}
+
+impl IncomingPacket for PrivgrpInvitePacket {
+    fn load(mut data: &[u8]) -> Result<Self> {
+        let channel_id = read_u32(&mut data);
+        let channel = Channel::PrivateChannel(channel_id);
+
+        Ok(Self { channel })
     }
 }
