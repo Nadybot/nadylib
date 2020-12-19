@@ -208,6 +208,7 @@ pub enum Packet {
     GroupMessage(GroupMessagePacket),
     ChatNotice(ChatNoticePacket),
     MsgPrivate(MsgPrivatePacket),
+    ClientLookup(ClientLookupResultPacket),
 }
 
 impl TryFrom<(PacketType, &[u8])> for Packet {
@@ -230,6 +231,9 @@ impl TryFrom<(PacketType, &[u8])> for Packet {
             PacketType::GroupMessage => Ok(Self::GroupMessage(GroupMessagePacket::load(value.1)?)),
             PacketType::ChatNotice => Ok(Self::ChatNotice(ChatNoticePacket::load(value.1)?)),
             PacketType::MsgPrivate => Ok(Self::MsgPrivate(MsgPrivatePacket::load(value.1)?)),
+            PacketType::ClientLookup => {
+                Ok(Self::ClientLookup(ClientLookupResultPacket::load(value.1)?))
+            }
             _ => Err(Error::UnknownPacket(Some(value.0))),
         }
     }
@@ -308,6 +312,19 @@ pub struct ChatNoticePacket {
 #[derive(Debug)]
 pub struct MsgPrivatePacket {
     pub message: Message,
+}
+
+/// Packet for looking up a character by name.
+#[derive(Debug)]
+pub struct ClientLookupPacket {
+    pub character_name: String,
+}
+
+/// Packet with a lookup result.
+#[derive(Debug)]
+pub struct ClientLookupResultPacket {
+    pub character_name: String,
+    pub character_id: u32,
 }
 
 impl IncomingPacket for LoginSeedPacket {
@@ -495,5 +512,26 @@ impl IncomingPacket for MsgPrivatePacket {
         };
 
         Ok(Self { message })
+    }
+}
+
+impl OutgoingPacket for ClientLookupPacket {
+    fn serialize(&self) -> (PacketType, Vec<u8>) {
+        let mut buf = Vec::with_capacity(self.character_name.len());
+        write_string(&mut buf, &self.character_name);
+
+        (PacketType::ClientLookup, buf)
+    }
+}
+
+impl IncomingPacket for ClientLookupResultPacket {
+    fn load(mut data: &[u8]) -> Result<Self> {
+        let character_id = read_u32(&mut data);
+        let character_name = read_string(&mut data);
+
+        Ok(Self {
+            character_name,
+            character_id,
+        })
     }
 }

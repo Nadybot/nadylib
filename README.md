@@ -10,9 +10,9 @@ Done:
 * Some packet types
 * Helper methods for writing and reading the protocol
 * MMDB parser
+* Good enough implementation of MMDB string formatting
 
 Not yet done:
-* Proper implementation of MMDB string formatting
 * A lot of packet types
 * In the future, an AOBot wrapper with state handling
 * Document everything

@@ -16,14 +16,6 @@ pub fn get_message(category_id: u32, instance_id: u32) -> Option<String> {
         .cloned()
 }
 
-// pub fn format_string<A>(string: &str, arguments: A) -> String
-// where
-//    A: FormatArgs,
-// {
-//    // TODO
-//    string
-// }
-
 #[test]
 fn test_mmdb_loading() {
     assert_eq!(MMDB.len(), 52);

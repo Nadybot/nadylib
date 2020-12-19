@@ -1,7 +1,7 @@
 use nadylib::client_socket::AOSocket;
 use nadylib::error::Result;
 use nadylib::models::Channel;
-use nadylib::packets::{LoginSelectPacket, Packet};
+use nadylib::packets::{ClientLookupPacket, LoginSelectPacket, Packet};
 
 use std::env::var;
 
@@ -58,7 +58,14 @@ async fn main() -> Result<()> {
                 println!(
                     "Got a msg from {:?} in {:?} with text {}",
                     m.message.sender, m.message.channel, m.message.text
-                )
+                );
+                if m.message.text.starts_with("!lookup") {
+                    let arg = m.message.text.split_whitespace().nth(1).unwrap_or("");
+                    let pack = ClientLookupPacket {
+                        character_name: arg.to_owned(),
+                    };
+                    sock.send(pack).await?;
+                }
             }
             Packet::GroupMessage(m) => {
                 println!(
@@ -71,6 +78,9 @@ async fn main() -> Result<()> {
                     "Got a chat notice from {}: {}",
                     c.notice.sender, c.notice.text
                 )
+            }
+            Packet::ClientLookup(c) => {
+                println!("User {} has ID {}", c.character_name, c.character_id)
             }
             _ => {}
         }
