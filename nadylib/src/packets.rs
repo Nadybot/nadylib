@@ -1,4 +1,5 @@
 use crate::error::{Error, Result};
+use crate::formatter::{format_string, FormattingArgument};
 use crate::mmdb;
 use crate::models::{Channel, ChannelType, Character, ChatNotice, Group, Message};
 
@@ -66,7 +67,7 @@ fn write_string(target: &mut Vec<u8>, string: &str) {
     target.extend_from_slice(string.as_bytes());
 }
 
-fn parse_ext_params(msg: String) -> Option<Vec<String>> {
+fn parse_ext_params(msg: String) -> Option<Vec<FormattingArgument>> {
     // TODO: Refactor to use bytes because this is abominable
     let mut args = Vec::new();
     let mut characters = msg.chars().peekable();
@@ -81,7 +82,7 @@ fn parse_ext_params(msg: String) -> Option<Vec<String>> {
                 for _ in 0..len {
                     string.push(characters.next()?);
                 }
-                args.push(string);
+                args.push(FormattingArgument::String(string));
             }
             's' => {
                 let len = characters.next()? as usize;
@@ -90,7 +91,7 @@ fn parse_ext_params(msg: String) -> Option<Vec<String>> {
                 for _ in 0..len - 2 {
                     string.push(characters.next()?);
                 }
-                args.push(string);
+                args.push(FormattingArgument::String(string));
             }
             'I' => {
                 let stuff = vec![
@@ -100,7 +101,7 @@ fn parse_ext_params(msg: String) -> Option<Vec<String>> {
                     characters.next()? as u8,
                 ];
                 let num = NetworkEndian::read_u32(&stuff);
-                args.push(num.to_string());
+                args.push(FormattingArgument::U32(num));
             }
             'i' => {}
             'u' => {
@@ -108,7 +109,7 @@ fn parse_ext_params(msg: String) -> Option<Vec<String>> {
                 for _ in 0..5 {
                     n = n * 85 + (characters.next()? as u32) - 33;
                 }
-                args.push(n.to_string());
+                args.push(FormattingArgument::U32(n));
             }
             'R' => {
                 let mut cat = 0;
@@ -120,7 +121,7 @@ fn parse_ext_params(msg: String) -> Option<Vec<String>> {
                     ins = ins * 85 + (characters.next()? as u32) - 33;
                 }
                 let string = get_message(cat, ins)?;
-                args.push(string);
+                args.push(FormattingArgument::String(string));
             }
             'l' => {
                 let stuff = vec![
@@ -132,7 +133,7 @@ fn parse_ext_params(msg: String) -> Option<Vec<String>> {
                 let ins = NetworkEndian::read_u32(&stuff);
                 let cat = 20000;
                 let string = get_message(cat, ins)?;
-                args.push(string);
+                args.push(FormattingArgument::String(string));
             }
             '~' => return Some(args),
             _ => return None,
@@ -446,7 +447,7 @@ impl IncomingPacket for GroupMessagePacket {
 
         let message = Message {
             sender: Some(sender_id),
-            channel: channel,
+            channel,
             text: content,
         };
 
@@ -461,17 +462,19 @@ impl IncomingPacket for ChatNoticePacket {
         let _ = read_u32(&mut data);
         // MMDB instance ID.
         let instance_id = read_u32(&mut data);
-        // let arguments = read_string(&mut data);
+        let arguments = read_string(&mut data);
 
         // This is constant for chat notices.
         let category_id = 20000;
 
         let message = mmdb::get_message(category_id, instance_id).ok_or(Error::PayloadError)?;
-        // let params = parse_ext_params(arguments).ok_or(Error::PayloadError)?;
+        let params = parse_ext_params(arguments).ok_or(Error::PayloadError)?;
+
+        let text = format_string(&message, params).unwrap_or(message);
 
         let notice = ChatNotice {
             sender: sender_id,
-            text: message,
+            text,
         };
 
         Ok(Self { notice })
