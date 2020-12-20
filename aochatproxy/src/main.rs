@@ -1,10 +1,10 @@
 use nadylib::client_socket::AOSocket;
 use nadylib::error::Result;
-use nadylib::models::Channel;
+use nadylib::models::{Channel, Message};
 use nadylib::packets::{
-    BuddyAddPacket, BuddyRemovePacket, ClientLookupPacket, LoginSelectPacket,
+    BuddyAddPacket, BuddyRemovePacket, ClientLookupPacket, LoginSelectPacket, MsgPrivatePacket,
     OutPrivgrpInvitePacket, OutPrivgrpKickPacket, Packet, PrivgrpJoinPacket, PrivgrpKickallPacket,
-    PrivgrpPartPacket,
+    PrivgrpMessagePacket, PrivgrpPartPacket,
 };
 
 use std::env::var;
@@ -104,19 +104,40 @@ async fn main() -> Result<()> {
                         channel: Channel::PrivateChannel(arg.parse().unwrap()),
                     };
                     sock.send(pack).await?;
+                } else if m.message.text.starts_with("!say") {
+                    let arg = m.message.text.split_whitespace().nth(1).unwrap_or("");
+                    let pack = MsgPrivatePacket {
+                        message: Message {
+                            sender: None,
+                            channel: Channel::Tell(m.message.sender.unwrap()),
+                            text: arg.to_owned(),
+                        },
+                    };
+                    sock.send(pack).await?;
                 }
             }
             Packet::GroupMessage(m) => {
                 println!(
                     "Got a msg from {:?} in {:?} with text {}",
                     m.message.sender, m.message.channel, m.message.text
-                )
+                );
             }
             Packet::PrivgrpMessage(m) => {
                 println!(
                     "Got a msg from {:?} in {:?} with text {}",
                     m.message.sender, m.message.channel, m.message.text
-                )
+                );
+                if m.message.text.starts_with("!say") {
+                    let arg = m.message.text.split_whitespace().nth(1).unwrap_or("");
+                    let pack = PrivgrpMessagePacket {
+                        message: Message {
+                            sender: None,
+                            channel: m.message.channel,
+                            text: arg.to_owned(),
+                        },
+                    };
+                    sock.send(pack).await?;
+                }
             }
             Packet::ChatNotice(c) => {
                 println!(

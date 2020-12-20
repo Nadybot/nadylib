@@ -204,7 +204,7 @@ pub trait IncomingPacket {
 // AOCP_LOGIN_OK         (Login Result OK)                           DONE
 // AOCP_LOGIN_ERROR      (Login Result Error)              S         DONE
 // AOCP_LOGIN_CHARLIST   (Login CharacterList)             isii      DONE
-// AOCP_CLIENT_UNKNOWN   (Client Unknown)                  I
+// AOCP_CLIENT_UNKNOWN   (Client Unknown)                  I         Does not seem to exist
 // AOCP_CLIENT_NAME      (Client Name)                     IS        DONE
 // AOCP_CLIENT_LOOKUP    (Lookup Result)                   IS        DONE
 // AOCP_MSG_PRIVATE      (Message Private)                 ISS       DONE
@@ -216,11 +216,10 @@ pub trait IncomingPacket {
 // AOCP_BUDDY_REMOVE     (Buddy Removed)                   I         DONE
 // AOCP_PRIVGRP_INVITE   (Privategroup Invited)            I         DONE
 // AOCP_PRIVGRP_KICK     (Privategroup Kicked)             I         DONE
-// AOCP_PRIVGRP_PART     (Privategroup Part)               I
 // AOCP_PRIVGRP_CLIJOIN  (Privategroup Client Join)        II        DONE
 // AOCP_PRIVGRP_CLIPART  (Privategroup Client Part)        II        DONE
 // AOCP_PRIVGRP_MESSAGE  (Privategroup Message)            IISS      DONE
-// AOCP_PRIVGRP_REFUSE   (Privategroup Refuse Invite)      II
+// AOCP_PRIVGRP_REFUSE   (Privategroup Refuse Invite)      II        Does not seem to exist
 // AOCP_GROUP_ANNOUNCE   (Group Announce)                  GSIS      DONE
 // AOCP_GROUP_PART       (Group Part)                      G
 // AOCP_GROUP_MESSAGE    (Group Message)                   GISS      DONE
@@ -232,7 +231,7 @@ pub trait IncomingPacket {
 // AOCP_LOGIN_REQUEST    (Login Response GetCharLst)       ISS       DONE
 // AOCP_LOGIN_SELECT     (Login Select Character)          I         DONE
 // AOCP_CLIENT_LOOKUP    (Name Lookup)                     S         DONE
-// AOCP_MSG_PRIVATE      (Message Private)                 ISS
+// AOCP_MSG_PRIVATE      (Message Private)                 ISS       DONE
 // AOCP_BUDDY_ADD        (Buddy Add)                       IS        DONE
 // AOCP_BUDDY_REMOVE     (Buddy Remove)                    I         DONE
 // AOCP_ONLINE_SET       (Onlinestatus Set)                I
@@ -241,7 +240,7 @@ pub trait IncomingPacket {
 // AOCP_PRIVGRP_JOIN     (Privategroup Join)               I         DONE
 // AOCP_PRIVGRP_PART     (Privategroup Part)               I         DONE
 // AOCP_PRIVGRP_KICKALL  (Privategroup Kickall)                      DONE
-// AOCP_PRIVGRP_MESSAGE  (Privategroup Message)            ISS
+// AOCP_PRIVGRP_MESSAGE  (Privategroup Message)            ISS       DONE
 // AOCP_GROUP_DATA_SET   (Group Data Set)                  GIS
 // AOCP_GROUP_MESSAGE    (Group Message)                   GSS
 // AOCP_GROUP_CM_SET     (Group Clientmode Set)            GIIII
@@ -698,6 +697,21 @@ impl IncomingPacket for MsgPrivatePacket {
     }
 }
 
+impl OutgoingPacket for MsgPrivatePacket {
+    fn serialize(&self) -> (PacketType, Vec<u8>) {
+        if let Channel::Tell(recipient) = self.message.channel {
+            let mut buf = Vec::with_capacity(4 + 2 + self.message.text.len() + 3);
+            write_u32(&mut buf, recipient);
+            write_string(&mut buf, &self.message.text);
+            write_string(&mut buf, "\u{0}");
+
+            (PacketType::MsgPrivate, buf)
+        } else {
+            panic!("Can only send a private message with tell channel");
+        }
+    }
+}
+
 impl OutgoingPacket for ClientLookupPacket {
     fn serialize(&self) -> (PacketType, Vec<u8>) {
         let mut buf = Vec::with_capacity(self.character_name.len());
@@ -782,6 +796,21 @@ impl IncomingPacket for PrivgrpMessagePacket {
         };
 
         Ok(Self { message })
+    }
+}
+
+impl OutgoingPacket for PrivgrpMessagePacket {
+    fn serialize(&self) -> (PacketType, Vec<u8>) {
+        if let Channel::PrivateChannel(id) = self.message.channel {
+            let mut buf = Vec::with_capacity(4 + 2 + self.message.text.len() + 3);
+            write_u32(&mut buf, id);
+            write_string(&mut buf, &self.message.text);
+            write_string(&mut buf, "\u{0}");
+
+            (PacketType::PrivgrpMessage, buf)
+        } else {
+            panic!("Can only send to private channels with this packet")
+        }
     }
 }
 
