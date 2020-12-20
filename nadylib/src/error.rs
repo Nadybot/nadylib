@@ -1,7 +1,10 @@
 use num_enum::TryFromPrimitiveError;
+use tokio::{
+    sync::{mpsc::error::SendError as MpscError, watch::error::SendError as WatchError},
+    time::Instant,
+};
 
-use std::result::Result as OrigResult;
-use std::{io::Error as IoError, string::FromUtf8Error};
+use std::{io::Error as IoError, result::Result as OrigResult, string::FromUtf8Error};
 
 use crate::packets::PacketType;
 
@@ -10,6 +13,8 @@ pub enum Error {
     IoError(IoError),
     UnknownPacket(Option<PacketType>),
     PayloadError,
+    QueueError,
+    PingError,
 }
 
 impl From<IoError> for Error {
@@ -27,6 +32,18 @@ impl From<TryFromPrimitiveError<PacketType>> for Error {
 impl From<FromUtf8Error> for Error {
     fn from(_: FromUtf8Error) -> Self {
         Self::PayloadError
+    }
+}
+
+impl From<MpscError<(PacketType, Vec<u8>)>> for Error {
+    fn from(_: MpscError<(PacketType, Vec<u8>)>) -> Self {
+        Self::QueueError
+    }
+}
+
+impl From<WatchError<Instant>> for Error {
+    fn from(_: WatchError<Instant>) -> Self {
+        Self::PingError
     }
 }
 

@@ -1,14 +1,15 @@
-use crate::error::{Error, Result};
-use crate::formatter::{format_string, FormattingArgument};
-use crate::mmdb;
-use crate::models::{Channel, ChannelType, Character, ChatNotice, Group, Message};
+use crate::{
+    error::{Error, Result},
+    formatter::{format_string, FormattingArgument},
+    mmdb,
+    models::{Channel, ChannelType, Character, ChatNotice, Group, Message},
+};
 
 use byteorder::{ByteOrder, NetworkEndian};
 use mmdb::get_message;
 use num_enum::TryFromPrimitive;
 
-use std::convert::TryFrom;
-use std::result::Result as OrigResult;
+use std::{convert::TryFrom, result::Result as OrigResult};
 
 const MAXINT: u32 = 4294967295;
 
@@ -188,7 +189,7 @@ pub enum PacketType {
 }
 
 pub trait OutgoingPacket {
-    fn serialize(&self) -> (PacketType, Vec<u8>);
+    fn serialize(&self) -> SerializedPacket;
 }
 
 pub trait IncomingPacket {
@@ -223,7 +224,7 @@ pub trait IncomingPacket {
 // AOCP_GROUP_ANNOUNCE   (Group Announce)                  GSIS      DONE
 // AOCP_GROUP_PART       (Group Part)                      G
 // AOCP_GROUP_MESSAGE    (Group Message)                   GISS      DONE
-// AOCP_PING             (Pong)                            S
+// AOCP_PING             (Pong)                            S         DONE
 // AOCP_FORWARD          (Forward)                         IM        Can't be added
 // AOCP_ADM_MUX_INFO     (Adm Mux Info)                    iii       Can't be added
 //
@@ -246,11 +247,11 @@ pub trait IncomingPacket {
 // AOCP_GROUP_CM_SET     (Group Clientmode Set)            GIIII
 // AOCP_CLIENTMODE_GET   (Clientmode Get)                  IG
 // AOCP_CLIENTMODE_SET   (Clientmode Set)                  IIII
-// AOCP_PING             (Ping)                            S
+// AOCP_PING             (Ping)                            S         DONE
 // AOCP_CC               (CC)                              s         Can't be added
 
 #[derive(Debug)]
-pub enum Packet {
+pub enum ReceivedPacket {
     LoginSeed(LoginSeedPacket),
     LoginError(LoginErrorPacket),
     LoginCharlist(LoginCharlistPacket),
@@ -270,9 +271,12 @@ pub enum Packet {
     PrivgrpMessage(PrivgrpMessagePacket),
     PrivgrpKick(IncPrivgrpKickPacket),
     MsgSystem(MsgSystemPacket),
+    Ping(PingPacket),
 }
 
-impl TryFrom<(PacketType, &[u8])> for Packet {
+pub type SerializedPacket = (PacketType, Vec<u8>);
+
+impl TryFrom<(PacketType, &[u8])> for ReceivedPacket {
     type Error = Error;
 
     fn try_from(value: (PacketType, &[u8])) -> OrigResult<Self, Self::Error> {
@@ -310,6 +314,7 @@ impl TryFrom<(PacketType, &[u8])> for Packet {
             }
             PacketType::PrivgrpKick => Ok(Self::PrivgrpKick(IncPrivgrpKickPacket::load(value.1)?)),
             PacketType::MsgSystem => Ok(Self::MsgSystem(MsgSystemPacket::load(value.1)?)),
+            PacketType::Ping => Ok(Self::Ping(PingPacket::load(value.1)?)),
             _ => Err(Error::UnknownPacket(Some(value.0))),
         }
     }
@@ -482,6 +487,12 @@ pub struct MsgSystemPacket {
     pub text: String,
 }
 
+/// Packet for keeping the connection open.
+#[derive(Debug)]
+pub struct PingPacket {
+    pub client: String,
+}
+
 impl IncomingPacket for LoginSeedPacket {
     fn load(mut data: &[u8]) -> Result<Self> {
         let seed = read_string(&mut data);
@@ -490,7 +501,7 @@ impl IncomingPacket for LoginSeedPacket {
 }
 
 impl OutgoingPacket for LoginRequestPacket {
-    fn serialize(&self) -> (PacketType, Vec<u8>) {
+    fn serialize(&self) -> SerializedPacket {
         let mut buf = Vec::with_capacity(4 + 2 + self.username.len() + 2 + self.key.len());
         write_u32(&mut buf, 0);
         write_string(&mut buf, &self.username);
@@ -530,7 +541,7 @@ impl IncomingPacket for LoginCharlistPacket {
 }
 
 impl OutgoingPacket for LoginSelectPacket {
-    fn serialize(&self) -> (PacketType, Vec<u8>) {
+    fn serialize(&self) -> SerializedPacket {
         let mut buf = Vec::with_capacity(4);
         write_u32(&mut buf, self.character_id);
 
@@ -583,7 +594,7 @@ impl IncomingPacket for BuddyStatusPacket {
 }
 
 impl OutgoingPacket for BuddyAddPacket {
-    fn serialize(&self) -> (PacketType, Vec<u8>) {
+    fn serialize(&self) -> SerializedPacket {
         let mut buf = Vec::with_capacity(7);
         write_u32(&mut buf, self.character_id);
         write_string(&mut buf, "\u{1}");
@@ -601,7 +612,7 @@ impl IncomingPacket for BuddyRemovePacket {
 }
 
 impl OutgoingPacket for BuddyRemovePacket {
-    fn serialize(&self) -> (PacketType, Vec<u8>) {
+    fn serialize(&self) -> SerializedPacket {
         let mut buf = Vec::with_capacity(4);
         write_u32(&mut buf, self.character_id);
 
@@ -698,7 +709,7 @@ impl IncomingPacket for MsgPrivatePacket {
 }
 
 impl OutgoingPacket for MsgPrivatePacket {
-    fn serialize(&self) -> (PacketType, Vec<u8>) {
+    fn serialize(&self) -> SerializedPacket {
         if let Channel::Tell(recipient) = self.message.channel {
             let mut buf = Vec::with_capacity(4 + 2 + self.message.text.len() + 3);
             write_u32(&mut buf, recipient);
@@ -713,7 +724,7 @@ impl OutgoingPacket for MsgPrivatePacket {
 }
 
 impl OutgoingPacket for ClientLookupPacket {
-    fn serialize(&self) -> (PacketType, Vec<u8>) {
+    fn serialize(&self) -> SerializedPacket {
         let mut buf = Vec::with_capacity(self.character_name.len());
         write_string(&mut buf, &self.character_name);
 
@@ -745,7 +756,7 @@ impl IncomingPacket for IncPrivgrpInvitePacket {
 }
 
 impl OutgoingPacket for OutPrivgrpInvitePacket {
-    fn serialize(&self) -> (PacketType, Vec<u8>) {
+    fn serialize(&self) -> SerializedPacket {
         let mut buf = Vec::with_capacity(4);
         write_u32(&mut buf, self.character_id);
 
@@ -800,7 +811,7 @@ impl IncomingPacket for PrivgrpMessagePacket {
 }
 
 impl OutgoingPacket for PrivgrpMessagePacket {
-    fn serialize(&self) -> (PacketType, Vec<u8>) {
+    fn serialize(&self) -> SerializedPacket {
         if let Channel::PrivateChannel(id) = self.message.channel {
             let mut buf = Vec::with_capacity(4 + 2 + self.message.text.len() + 3);
             write_u32(&mut buf, id);
@@ -815,7 +826,7 @@ impl OutgoingPacket for PrivgrpMessagePacket {
 }
 
 impl OutgoingPacket for PrivgrpJoinPacket {
-    fn serialize(&self) -> (PacketType, Vec<u8>) {
+    fn serialize(&self) -> SerializedPacket {
         if let Channel::PrivateChannel(id) = self.channel {
             let mut buf = Vec::with_capacity(4);
             write_u32(&mut buf, id);
@@ -828,7 +839,7 @@ impl OutgoingPacket for PrivgrpJoinPacket {
 }
 
 impl OutgoingPacket for PrivgrpPartPacket {
-    fn serialize(&self) -> (PacketType, Vec<u8>) {
+    fn serialize(&self) -> SerializedPacket {
         if let Channel::PrivateChannel(id) = self.channel {
             let mut buf = Vec::with_capacity(4);
             write_u32(&mut buf, id);
@@ -851,7 +862,7 @@ impl IncomingPacket for IncPrivgrpKickPacket {
 }
 
 impl OutgoingPacket for OutPrivgrpKickPacket {
-    fn serialize(&self) -> (PacketType, Vec<u8>) {
+    fn serialize(&self) -> SerializedPacket {
         let mut buf = Vec::with_capacity(4);
         write_u32(&mut buf, self.character_id);
 
@@ -860,7 +871,7 @@ impl OutgoingPacket for OutPrivgrpKickPacket {
 }
 
 impl OutgoingPacket for PrivgrpKickallPacket {
-    fn serialize(&self) -> (PacketType, Vec<u8>) {
+    fn serialize(&self) -> SerializedPacket {
         let buf = Vec::new();
 
         (PacketType::PrivgrpKickall, buf)
@@ -872,5 +883,22 @@ impl IncomingPacket for MsgSystemPacket {
         let text = read_string(&mut data);
 
         Ok(Self { text })
+    }
+}
+
+impl OutgoingPacket for PingPacket {
+    fn serialize(&self) -> SerializedPacket {
+        let mut buf = Vec::with_capacity(2 + self.client.len());
+        write_string(&mut buf, &self.client);
+
+        (PacketType::Ping, buf)
+    }
+}
+
+impl IncomingPacket for PingPacket {
+    fn load(mut data: &[u8]) -> Result<Self> {
+        let client = read_string(&mut data);
+
+        Ok(Self { client })
     }
 }

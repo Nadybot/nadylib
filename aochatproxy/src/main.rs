@@ -1,10 +1,12 @@
-use nadylib::client_socket::AOSocket;
-use nadylib::error::Result;
-use nadylib::models::{Channel, Message};
-use nadylib::packets::{
-    BuddyAddPacket, BuddyRemovePacket, ClientLookupPacket, LoginSelectPacket, MsgPrivatePacket,
-    OutPrivgrpInvitePacket, OutPrivgrpKickPacket, Packet, PrivgrpJoinPacket, PrivgrpKickallPacket,
-    PrivgrpMessagePacket, PrivgrpPartPacket,
+use nadylib::{
+    client_socket::AOSocket,
+    error::Result,
+    models::{Channel, Message},
+    packets::{
+        BuddyAddPacket, BuddyRemovePacket, ClientLookupPacket, LoginSelectPacket, MsgPrivatePacket,
+        OutPrivgrpInvitePacket, OutPrivgrpKickPacket, PrivgrpJoinPacket, PrivgrpKickallPacket,
+        PrivgrpMessagePacket, PrivgrpPartPacket, ReceivedPacket,
+    },
 };
 
 use std::env::var;
@@ -21,16 +23,15 @@ async fn main() -> Result<()> {
         let packet = sock.read_packet().await?;
 
         match packet {
-            Packet::LoginSeed(l) => {
+            ReceivedPacket::LoginSeed(l) => {
                 sock.login(
                     &var("AO_ACCOUNT").unwrap(),
                     &var("AO_PASSWORD").unwrap(),
                     &l.login_seed,
-                )
-                .await?;
+                )?;
             }
-            Packet::LoginError(e) => println!("Error: {}", e.message),
-            Packet::LoginCharlist(c) => {
+            ReceivedPacket::LoginError(e) => println!("Error: {}", e.message),
+            ReceivedPacket::LoginCharlist(c) => {
                 let char_name = var("AO_CHAR").unwrap();
                 let char_id = c
                     .characters
@@ -41,27 +42,27 @@ async fn main() -> Result<()> {
                 let pack = LoginSelectPacket {
                     character_id: char_id,
                 };
-                sock.send(pack).await?;
+                sock.send(pack)?;
             }
-            Packet::LoginOk => println!("Successfully logged in"),
-            Packet::ClientName(c) => {
+            ReceivedPacket::LoginOk => println!("Successfully logged in"),
+            ReceivedPacket::ClientName(c) => {
                 if my_id == 0 {
                     my_id = c.character_id;
                 }
                 println!("Character {} has ID {}", c.character_name, c.character_id)
             }
-            Packet::MsgVicinitya(m) => {
+            ReceivedPacket::MsgVicinitya(m) => {
                 println!("{:?}", m.message);
             }
-            Packet::BuddyStatus(b) => {
+            ReceivedPacket::BuddyStatus(b) => {
                 println!("Buddy {} online? {}", b.character_id, b.online)
             }
-            Packet::GroupAnnounce(c) => {
+            ReceivedPacket::GroupAnnounce(c) => {
                 if let Channel::Group(g) = c.channel {
                     println!("Am in channel {:?} ({}) {:?}", g.name, g.id, g.r#type)
                 }
             }
-            Packet::MsgPrivate(m) => {
+            ReceivedPacket::MsgPrivate(m) => {
                 println!(
                     "Got a msg from {:?} in {:?} with text {}",
                     m.message.sender, m.message.channel, m.message.text
@@ -71,39 +72,39 @@ async fn main() -> Result<()> {
                     let pack = ClientLookupPacket {
                         character_name: arg.to_owned(),
                     };
-                    sock.send(pack).await?;
+                    sock.send(pack)?;
                 } else if m.message.text.starts_with("!rembuddy") {
                     let arg = m.message.text.split_whitespace().nth(1).unwrap_or("");
                     let pack = BuddyRemovePacket {
                         character_id: arg.parse().unwrap(),
                     };
-                    sock.send(pack).await?;
+                    sock.send(pack)?;
                 } else if m.message.text.starts_with("!addbuddy") {
                     let arg = m.message.text.split_whitespace().nth(1).unwrap_or("");
                     let pack = BuddyAddPacket {
                         character_id: arg.parse().unwrap(),
                     };
-                    sock.send(pack).await?;
+                    sock.send(pack)?;
                 } else if m.message.text.starts_with("!join") {
                     let pack = OutPrivgrpInvitePacket {
                         character_id: m.message.sender.unwrap(),
                     };
-                    sock.send(pack).await?;
+                    sock.send(pack)?;
                 } else if m.message.text.starts_with("!kickall") {
                     let pack = PrivgrpKickallPacket {};
-                    sock.send(pack).await?;
+                    sock.send(pack)?;
                 } else if m.message.text.starts_with("!kick") {
                     let arg = m.message.text.split_whitespace().nth(1).unwrap_or("");
                     let pack = OutPrivgrpKickPacket {
                         character_id: arg.parse().unwrap(),
                     };
-                    sock.send(pack).await?;
+                    sock.send(pack)?;
                 } else if m.message.text.starts_with("!leave") {
                     let arg = m.message.text.split_whitespace().nth(1).unwrap_or("");
                     let pack = PrivgrpPartPacket {
                         channel: Channel::PrivateChannel(arg.parse().unwrap()),
                     };
-                    sock.send(pack).await?;
+                    sock.send(pack)?;
                 } else if m.message.text.starts_with("!say") {
                     let arg = m.message.text.split_whitespace().nth(1).unwrap_or("");
                     let pack = MsgPrivatePacket {
@@ -113,16 +114,16 @@ async fn main() -> Result<()> {
                             text: arg.to_owned(),
                         },
                     };
-                    sock.send(pack).await?;
+                    sock.send(pack)?;
                 }
             }
-            Packet::GroupMessage(m) => {
+            ReceivedPacket::GroupMessage(m) => {
                 println!(
                     "Got a msg from {:?} in {:?} with text {}",
                     m.message.sender, m.message.channel, m.message.text
                 );
             }
-            Packet::PrivgrpMessage(m) => {
+            ReceivedPacket::PrivgrpMessage(m) => {
                 println!(
                     "Got a msg from {:?} in {:?} with text {}",
                     m.message.sender, m.message.channel, m.message.text
@@ -136,40 +137,43 @@ async fn main() -> Result<()> {
                             text: arg.to_owned(),
                         },
                     };
-                    sock.send(pack).await?;
+                    sock.send(pack)?;
                 }
             }
-            Packet::ChatNotice(c) => {
+            ReceivedPacket::ChatNotice(c) => {
                 println!(
                     "Got a chat notice from {}: {}",
                     c.notice.sender, c.notice.text
                 )
             }
-            Packet::ClientLookup(c) => {
+            ReceivedPacket::ClientLookup(c) => {
                 println!("User {} has ID {}", c.character_name, c.character_id)
             }
-            Packet::PrivgrpInvite(p) => {
+            ReceivedPacket::PrivgrpInvite(p) => {
                 println!("Got invited to private group {:?}", p.channel);
                 let pack = PrivgrpJoinPacket { channel: p.channel };
-                sock.send(pack).await?;
+                sock.send(pack)?;
             }
-            Packet::PrivgrpClijoin(p) => {
+            ReceivedPacket::PrivgrpClijoin(p) => {
                 println!(
                     "{} joined the private channel {:?}",
                     p.character_id, p.channel
                 )
             }
-            Packet::PrivgrpClipart(p) => {
+            ReceivedPacket::PrivgrpClipart(p) => {
                 println!("{} left the private channel", p.character_id)
             }
-            Packet::PrivgrpKick(k) => {
+            ReceivedPacket::PrivgrpKick(k) => {
                 println!("Got kicked from {:?}", k.channel)
             }
-            Packet::BuddyRemove(b) => {
+            ReceivedPacket::BuddyRemove(b) => {
                 println!("Buddy {} successfully removed", b.character_id)
             }
-            Packet::MsgSystem(m) => {
+            ReceivedPacket::MsgSystem(m) => {
                 println!("Got a system message: {}", m.text)
+            }
+            ReceivedPacket::Ping(p) => {
+                println!("Got a ping from {}", p.client)
             }
             _ => {}
         }

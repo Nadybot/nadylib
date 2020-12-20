@@ -1,39 +1,41 @@
-use crate::crypto::generate_key;
-use crate::error::Result;
-use crate::packets::{LoginRequestPacket, OutgoingPacket, Packet, PacketType};
+use crate::{
+    crypto::generate_key,
+    error::Result,
+    packets::{
+        LoginRequestPacket, OutgoingPacket, PacketType, PingPacket, ReceivedPacket,
+        SerializedPacket,
+    },
+};
 
 use byteorder::{ByteOrder, NetworkEndian};
-use tokio::io::{AsyncReadExt, AsyncWriteExt};
-use tokio::net::{TcpStream, ToSocketAddrs};
+use tokio::{
+    io::{AsyncReadExt, AsyncWriteExt},
+    net::{
+        tcp::{OwnedReadHalf, OwnedWriteHalf},
+        TcpStream, ToSocketAddrs,
+    },
+    spawn,
+    sync::{
+        mpsc::{unbounded_channel, UnboundedReceiver, UnboundedSender},
+        watch::{channel, Receiver, Sender},
+    },
+    time::{timeout_at, Instant},
+};
 
-use std::convert::TryFrom;
+use std::{convert::TryFrom, time::Duration};
 
 pub struct AOSocket {
-    socket: TcpStream,
+    read_half: OwnedReadHalf,
+    packet_queue_send: UnboundedSender<SerializedPacket>,
+    last_packet: Sender<Instant>,
 }
 
-impl AOSocket {
-    /// Opens a TCP connection to the chat server specified in the address.
-    pub async fn connect<A: ToSocketAddrs>(addr: A) -> Result<Self> {
-        let sock = TcpStream::connect(addr).await?;
-        Ok(Self { socket: sock })
-    }
-
-    /// Sends a login packet to the server.
-    pub async fn login(&mut self, username: &str, password: &str, login_seed: &str) -> Result<()> {
-        let key = generate_key(username, password, login_seed);
-        let packet = LoginRequestPacket {
-            username: username.to_owned(),
-            key,
-        };
-        self.send(packet).await?;
-
-        Ok(())
-    }
-
-    /// Sends a `Packet` over the TCP connection.
-    pub async fn send<O: OutgoingPacket>(&mut self, packet: O) -> Result<()> {
-        let (packet_type, mut packet_body) = packet.serialize();
+async fn send_task(
+    mut packet_queue: UnboundedReceiver<SerializedPacket>,
+    mut sock: OwnedWriteHalf,
+) -> Result<()> {
+    loop {
+        let (packet_type, mut packet_body) = packet_queue.recv().await.unwrap();
         let mut buf = Vec::with_capacity(4 + packet_body.len());
         let mut pkt_type_buf = vec![0; 2];
         let mut pkt_len_buf = vec![0; 2];
@@ -43,15 +45,78 @@ impl AOSocket {
         buf.append(&mut pkt_len_buf);
         buf.append(&mut packet_body);
 
-        self.socket.write_all(&buf).await?;
+        sock.write_all(&buf).await?;
+    }
+}
+
+async fn keepalive(
+    sender: UnboundedSender<SerializedPacket>,
+    mut last_packet: Receiver<Instant>,
+) -> Result<()> {
+    let mut last_p = *last_packet.borrow();
+    loop {
+        let res = timeout_at(last_p + Duration::from_secs(55), last_packet.changed()).await;
+
+        match res {
+            Ok(_) => {
+                last_p = *last_packet.borrow();
+            }
+            Err(_) => {
+                let pack = PingPacket {
+                    client: String::from("nadylib"),
+                };
+                sender.send(pack.serialize())?;
+                last_p = Instant::now();
+            }
+        }
+    }
+}
+
+impl AOSocket {
+    /// Opens a TCP connection to the chat server specified in the address.
+    pub async fn connect<A: ToSocketAddrs>(addr: A) -> Result<Self> {
+        let sock = TcpStream::connect(addr).await?;
+        let (rx, tx) = sock.into_split();
+        let (send, recv) = unbounded_channel();
+        let (lp_send, lp_recv) = channel(Instant::now());
+
+        let sock = Self {
+            read_half: rx,
+            packet_queue_send: send.clone(),
+            last_packet: lp_send,
+        };
+
+        spawn(keepalive(send, lp_recv));
+        spawn(send_task(recv, tx));
+
+        Ok(sock)
+    }
+
+    /// Sends a login packet to the server.
+    pub fn login(&self, username: &str, password: &str, login_seed: &str) -> Result<()> {
+        let key = generate_key(username, password, login_seed);
+        let packet = LoginRequestPacket {
+            username: username.to_owned(),
+            key,
+        };
+        self.send(packet)?;
+
+        Ok(())
+    }
+
+    /// Queues sending a `Packet` over the TCP connection.
+    pub fn send<O: OutgoingPacket>(&self, packet: O) -> Result<()> {
+        self.packet_queue_send.send(packet.serialize())?;
+        self.last_packet.send(Instant::now())?;
+
         Ok(())
     }
 
     /// Attempts to read an entire packet from the underlying connection.
     /// Returns a `Packet` or an `Error` if reading failed.
-    pub async fn read_packet(&mut self) -> Result<Packet> {
+    pub async fn read_packet(&mut self) -> Result<ReceivedPacket> {
         let mut header_buf = [0; 4];
-        self.socket.read_exact(&mut header_buf).await?;
+        self.read_half.read_exact(&mut header_buf).await?;
 
         // The header consists of 4 bytes = 2 unsigned 16 bit integers for packet type and length
         let packet_type_int = NetworkEndian::read_u16(&header_buf[0..2]);
@@ -61,9 +126,9 @@ impl AOSocket {
 
         // Read the rest of the packet
         let mut packet_body = vec![0; packet_length as usize];
-        self.socket.read_exact(&mut packet_body).await?;
+        self.read_half.read_exact(&mut packet_body).await?;
 
-        let packet = Packet::try_from((packet_type, packet_body.as_slice()))?;
+        let packet = ReceivedPacket::try_from((packet_type, packet_body.as_slice()))?;
 
         Ok(packet)
     }

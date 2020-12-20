@@ -16,7 +16,7 @@ rand = "0.7"
 regex = { version = "1.4", default-features = false, features = ["std", "unicode-perl"] }
 serde_json = "1.0"
 strfmt = "0.1"
-tokio = { version = "0.3", default-features = false, features = ["net", "rt", "stream", "io-util"] }
+tokio = { version = "0.3", default-features = false, features = ["net", "rt", "stream", "io-util", "time", "sync"] }
 
 [features]
 default = []
