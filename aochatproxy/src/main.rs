@@ -3,7 +3,8 @@ use nadylib::error::Result;
 use nadylib::models::Channel;
 use nadylib::packets::{
     BuddyAddPacket, BuddyRemovePacket, ClientLookupPacket, LoginSelectPacket,
-    OutPrivgrpInvitePacket, Packet,
+    OutPrivgrpInvitePacket, OutPrivgrpKickPacket, Packet, PrivgrpJoinPacket, PrivgrpKickallPacket,
+    PrivgrpPartPacket,
 };
 
 use std::env::var;
@@ -88,6 +89,21 @@ async fn main() -> Result<()> {
                         character_id: m.message.sender.unwrap(),
                     };
                     sock.send(pack).await?;
+                } else if m.message.text.starts_with("!kickall") {
+                    let pack = PrivgrpKickallPacket {};
+                    sock.send(pack).await?;
+                } else if m.message.text.starts_with("!kick") {
+                    let arg = m.message.text.split_whitespace().nth(1).unwrap_or("");
+                    let pack = OutPrivgrpKickPacket {
+                        character_id: arg.parse().unwrap(),
+                    };
+                    sock.send(pack).await?;
+                } else if m.message.text.starts_with("!leave") {
+                    let arg = m.message.text.split_whitespace().nth(1).unwrap_or("");
+                    let pack = PrivgrpPartPacket {
+                        channel: Channel::PrivateChannel(arg.parse().unwrap()),
+                    };
+                    sock.send(pack).await?;
                 }
             }
             Packet::GroupMessage(m) => {
@@ -112,13 +128,21 @@ async fn main() -> Result<()> {
                 println!("User {} has ID {}", c.character_name, c.character_id)
             }
             Packet::PrivgrpInvite(p) => {
-                println!("Got invited to private group {:?}", p.channel)
+                println!("Got invited to private group {:?}", p.channel);
+                let pack = PrivgrpJoinPacket { channel: p.channel };
+                sock.send(pack).await?;
             }
             Packet::PrivgrpClijoin(p) => {
-                println!("{} joined the private channel", p.character_id)
+                println!(
+                    "{} joined the private channel {:?}",
+                    p.character_id, p.channel
+                )
             }
             Packet::PrivgrpClipart(p) => {
                 println!("{} left the private channel", p.character_id)
+            }
+            Packet::PrivgrpKick(k) => {
+                println!("Got kicked from {:?}", k.channel)
             }
             Packet::BuddyRemove(b) => {
                 println!("Buddy {} successfully removed", b.character_id)

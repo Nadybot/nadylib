@@ -215,7 +215,7 @@ pub trait IncomingPacket {
 // AOCP_BUDDY_ADD        (Buddy Added)                     IIS       DONE
 // AOCP_BUDDY_REMOVE     (Buddy Removed)                   I         DONE
 // AOCP_PRIVGRP_INVITE   (Privategroup Invited)            I         DONE
-// AOCP_PRIVGRP_KICK     (Privategroup Kicked)             I
+// AOCP_PRIVGRP_KICK     (Privategroup Kicked)             I         DONE
 // AOCP_PRIVGRP_PART     (Privategroup Part)               I
 // AOCP_PRIVGRP_CLIJOIN  (Privategroup Client Join)        II        DONE
 // AOCP_PRIVGRP_CLIPART  (Privategroup Client Part)        II        DONE
@@ -225,8 +225,8 @@ pub trait IncomingPacket {
 // AOCP_GROUP_PART       (Group Part)                      G
 // AOCP_GROUP_MESSAGE    (Group Message)                   GISS      DONE
 // AOCP_PING             (Pong)                            S
-// AOCP_FORWARD          (Forward)                         IM
-// AOCP_ADM_MUX_INFO     (Adm Mux Info)                    iii
+// AOCP_FORWARD          (Forward)                         IM        Can't be added
+// AOCP_ADM_MUX_INFO     (Adm Mux Info)                    iii       Can't be added
 //
 // Outgoing:
 // AOCP_LOGIN_REQUEST    (Login Response GetCharLst)       ISS       DONE
@@ -237,10 +237,10 @@ pub trait IncomingPacket {
 // AOCP_BUDDY_REMOVE     (Buddy Remove)                    I         DONE
 // AOCP_ONLINE_SET       (Onlinestatus Set)                I
 // AOCP_PRIVGRP_INVITE   (Privategroup Invite)             I         DONE
-// AOCP_PRIVGRP_KICK     (Privategroup Kick)               I
-// AOCP_PRIVGRP_JOIN     (Privategroup Join)               I
-// AOCP_PRIVGRP_PART     (Privategroup Part)               I
-// AOCP_PRIVGRP_KICKALL  (Privategroup Kickall)
+// AOCP_PRIVGRP_KICK     (Privategroup Kick)               I         DONE
+// AOCP_PRIVGRP_JOIN     (Privategroup Join)               I         DONE
+// AOCP_PRIVGRP_PART     (Privategroup Part)               I         DONE
+// AOCP_PRIVGRP_KICKALL  (Privategroup Kickall)                      DONE
 // AOCP_PRIVGRP_MESSAGE  (Privategroup Message)            ISS
 // AOCP_GROUP_DATA_SET   (Group Data Set)                  GIS
 // AOCP_GROUP_MESSAGE    (Group Message)                   GSS
@@ -248,7 +248,7 @@ pub trait IncomingPacket {
 // AOCP_CLIENTMODE_GET   (Clientmode Get)                  IG
 // AOCP_CLIENTMODE_SET   (Clientmode Set)                  IIII
 // AOCP_PING             (Ping)                            S
-// AOCP_CC               (CC)                              s
+// AOCP_CC               (CC)                              s         Can't be added
 
 #[derive(Debug)]
 pub enum Packet {
@@ -269,6 +269,7 @@ pub enum Packet {
     PrivgrpClijoin(PrivgrpClijoinPacket),
     PrivgrpClipart(PrivgrpClipartPacket),
     PrivgrpMessage(PrivgrpMessagePacket),
+    PrivgrpKick(IncPrivgrpKickPacket),
     MsgSystem(MsgSystemPacket),
 }
 
@@ -308,6 +309,7 @@ impl TryFrom<(PacketType, &[u8])> for Packet {
             PacketType::PrivgrpMessage => {
                 Ok(Self::PrivgrpMessage(PrivgrpMessagePacket::load(value.1)?))
             }
+            PacketType::PrivgrpKick => Ok(Self::PrivgrpKick(IncPrivgrpKickPacket::load(value.1)?)),
             PacketType::MsgSystem => Ok(Self::MsgSystem(MsgSystemPacket::load(value.1)?)),
             _ => Err(Error::UnknownPacket(Some(value.0))),
         }
@@ -446,6 +448,34 @@ pub struct PrivgrpClipartPacket {
 pub struct PrivgrpMessagePacket {
     pub message: Message,
 }
+
+/// Packet to join a private group.
+#[derive(Debug)]
+pub struct PrivgrpJoinPacket {
+    pub channel: Channel,
+}
+
+/// Packet to leave a private group.
+#[derive(Debug)]
+pub struct PrivgrpPartPacket {
+    pub channel: Channel,
+}
+
+/// Packet indicating the client got kicked from a private channel.
+#[derive(Debug)]
+pub struct IncPrivgrpKickPacket {
+    pub channel: Channel,
+}
+
+/// Packet to kick someone from the private group.
+#[derive(Debug)]
+pub struct OutPrivgrpKickPacket {
+    pub character_id: u32,
+}
+
+/// Packet to kick all members from the private group.
+#[derive(Debug)]
+pub struct PrivgrpKickallPacket {}
 
 /// Packet with a system message.
 #[derive(Debug)]
@@ -752,6 +782,59 @@ impl IncomingPacket for PrivgrpMessagePacket {
         };
 
         Ok(Self { message })
+    }
+}
+
+impl OutgoingPacket for PrivgrpJoinPacket {
+    fn serialize(&self) -> (PacketType, Vec<u8>) {
+        if let Channel::PrivateChannel(id) = self.channel {
+            let mut buf = Vec::with_capacity(4);
+            write_u32(&mut buf, id);
+
+            (PacketType::PrivgrpJoin, buf)
+        } else {
+            panic!("Can only join private channels with this packet")
+        }
+    }
+}
+
+impl OutgoingPacket for PrivgrpPartPacket {
+    fn serialize(&self) -> (PacketType, Vec<u8>) {
+        if let Channel::PrivateChannel(id) = self.channel {
+            let mut buf = Vec::with_capacity(4);
+            write_u32(&mut buf, id);
+
+            (PacketType::PrivgrpPart, buf)
+        } else {
+            panic!("Can only leave private channels with this packet")
+        }
+    }
+}
+
+impl IncomingPacket for IncPrivgrpKickPacket {
+    fn load(mut data: &[u8]) -> Result<Self> {
+        let channel_id = read_u32(&mut data);
+
+        let channel = Channel::PrivateChannel(channel_id);
+
+        Ok(Self { channel })
+    }
+}
+
+impl OutgoingPacket for OutPrivgrpKickPacket {
+    fn serialize(&self) -> (PacketType, Vec<u8>) {
+        let mut buf = Vec::with_capacity(4);
+        write_u32(&mut buf, self.character_id);
+
+        (PacketType::PrivgrpKick, buf)
+    }
+}
+
+impl OutgoingPacket for PrivgrpKickallPacket {
+    fn serialize(&self) -> (PacketType, Vec<u8>) {
+        let buf = Vec::new();
+
+        (PacketType::PrivgrpKickall, buf)
     }
 }
 
