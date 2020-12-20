@@ -7,18 +7,23 @@ use std::{
 
 const MMDB: &[u8] = include_bytes!("../data/text.mdb");
 
+/// An entry in the message database.
 #[derive(Clone, Copy, Debug)]
 pub struct Entry {
+    /// The position in the database.
     pub offset: u64,
+    /// The ID of the entry.
     pub entry_id: u32,
 }
 
+/// A parser for the Funcom message database format.
 pub struct MmdbParser<'a> {
     cache: HashMap<u32, HashMap<u32, String>>,
     buf: Cursor<&'a [u8]>,
 }
 
 impl MmdbParser<'_> {
+    /// Creates a new [`MmdbParser`].
     pub fn new() -> Self {
         Self {
             cache: HashMap::new(),
@@ -26,6 +31,7 @@ impl MmdbParser<'_> {
         }
     }
 
+    /// Tries to find a message in the database.
     pub fn get_message(&mut self, category_id: u32, instance_id: u32) -> Option<String> {
         let cached = self
             .cache
@@ -98,6 +104,7 @@ impl MmdbParser<'_> {
         msg
     }
 
+    /// Lists all entries in a category of the database.
     pub fn find_all_instances_in_category(&mut self, category_id: u32) -> Option<Vec<Entry>> {
         let category = self.find_entry(category_id, 8)?;
         self.buf.seek(SeekFrom::Start(category.offset)).unwrap();
@@ -115,6 +122,7 @@ impl MmdbParser<'_> {
         Some(instances)
     }
 
+    /// Lists all categories in the database.
     pub fn get_categories(&mut self) -> Vec<Entry> {
         self.buf.seek(SeekFrom::Start(8)).unwrap();
         let mut categories = Vec::with_capacity(1);

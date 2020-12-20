@@ -11,6 +11,7 @@ use num_enum::TryFromPrimitive;
 
 use std::{convert::TryFrom, result::Result as OrigResult};
 
+/// The maximum unsigned 32-bit integer, used to check if character lookup failed.
 const MAXINT: u32 = 4294967295;
 
 fn read_u8(data: &mut &[u8]) -> u8 {
@@ -51,6 +52,10 @@ fn read_string_array(data: &mut &[u8]) -> Vec<String> {
         *data = &data[2 + slen..];
     }
     buf
+}
+
+fn write_u8(target: &mut Vec<u8>, integer: u8) {
+    target.push(integer);
 }
 
 fn write_u16(target: &mut Vec<u8>, integer: u16) {
@@ -146,6 +151,7 @@ fn parse_ext_params(msg: String) -> Option<Vec<FormattingArgument>> {
     Some(args)
 }
 
+/// Represents a kind of packet in the chat protocol.
 #[derive(Debug, TryFromPrimitive)]
 #[repr(u16)]
 pub enum PacketType {
@@ -188,11 +194,15 @@ pub enum PacketType {
     AdmMuxInfo = 1100,
 }
 
+/// A trait for packets that can be sent to the server.
 pub trait OutgoingPacket {
+    /// Serializes a packet in the AOCP format.
     fn serialize(&self) -> SerializedPacket;
 }
 
+/// A trait for packets that can be received from the server.
 pub trait IncomingPacket {
+    /// Loads a packet in AOCP format and parses it to the appropiate packet.
     fn load(data: &[u8]) -> Result<Self>
     where
         Self: Sized;
@@ -222,7 +232,7 @@ pub trait IncomingPacket {
 // AOCP_PRIVGRP_MESSAGE  (Privategroup Message)            IISS      DONE
 // AOCP_PRIVGRP_REFUSE   (Privategroup Refuse Invite)      II        Does not seem to exist
 // AOCP_GROUP_ANNOUNCE   (Group Announce)                  GSIS      DONE
-// AOCP_GROUP_PART       (Group Part)                      G
+// AOCP_GROUP_PART       (Group Part)                      G         Does not seem to exist
 // AOCP_GROUP_MESSAGE    (Group Message)                   GISS      DONE
 // AOCP_PING             (Pong)                            S         DONE
 // AOCP_FORWARD          (Forward)                         IM        Can't be added
@@ -235,21 +245,22 @@ pub trait IncomingPacket {
 // AOCP_MSG_PRIVATE      (Message Private)                 ISS       DONE
 // AOCP_BUDDY_ADD        (Buddy Add)                       IS        DONE
 // AOCP_BUDDY_REMOVE     (Buddy Remove)                    I         DONE
-// AOCP_ONLINE_SET       (Onlinestatus Set)                I
+// AOCP_ONLINE_SET       (Onlinestatus Set)                I         Can't be added
 // AOCP_PRIVGRP_INVITE   (Privategroup Invite)             I         DONE
 // AOCP_PRIVGRP_KICK     (Privategroup Kick)               I         DONE
 // AOCP_PRIVGRP_JOIN     (Privategroup Join)               I         DONE
 // AOCP_PRIVGRP_PART     (Privategroup Part)               I         DONE
 // AOCP_PRIVGRP_KICKALL  (Privategroup Kickall)                      DONE
 // AOCP_PRIVGRP_MESSAGE  (Privategroup Message)            ISS       DONE
-// AOCP_GROUP_DATA_SET   (Group Data Set)                  GIS
-// AOCP_GROUP_MESSAGE    (Group Message)                   GSS
-// AOCP_GROUP_CM_SET     (Group Clientmode Set)            GIIII
-// AOCP_CLIENTMODE_GET   (Clientmode Get)                  IG
-// AOCP_CLIENTMODE_SET   (Clientmode Set)                  IIII
+// AOCP_GROUP_DATA_SET   (Group Data Set)                  GIS       Does not seem to exist
+// AOCP_GROUP_MESSAGE    (Group Message)                   GSS       DONE
+// AOCP_GROUP_CM_SET     (Group Clientmode Set)            GIIII     Can't be added
+// AOCP_CLIENTMODE_GET   (Clientmode Get)                  IG        Can't be added
+// AOCP_CLIENTMODE_SET   (Clientmode Set)                  IIII      Can't be added
 // AOCP_PING             (Ping)                            S         DONE
 // AOCP_CC               (CC)                              s         Can't be added
 
+/// Enum for all packets possible to be received from the server.
 #[derive(Debug)]
 pub enum ReceivedPacket {
     LoginSeed(LoginSeedPacket),
@@ -274,6 +285,7 @@ pub enum ReceivedPacket {
     Ping(PingPacket),
 }
 
+/// A packet serialized for sending over the TCP connection.
 pub type SerializedPacket = (PacketType, Vec<u8>);
 
 impl TryFrom<(PacketType, &[u8])> for ReceivedPacket {
@@ -323,157 +335,189 @@ impl TryFrom<(PacketType, &[u8])> for ReceivedPacket {
 /// Packet that contains the login seed for authenticating.
 #[derive(Debug)]
 pub struct LoginSeedPacket {
+    /// The seed for generating a login key.
     pub login_seed: String,
 }
 
 /// Packet for logging in to the server.
 #[derive(Debug)]
 pub struct LoginRequestPacket {
+    /// The account name to log in on.
     pub username: String,
+    /// The login key to log in with.
     pub key: String,
 }
 
 /// Packet indicating that a login failed.
 #[derive(Debug)]
 pub struct LoginErrorPacket {
+    /// The error message from the server.
     pub message: String,
 }
 
 /// Packet listing the characters on an account.
 #[derive(Debug)]
 pub struct LoginCharlistPacket {
+    /// A list of all `Character`s on the account.
     pub characters: Vec<Character>,
 }
 
 /// Packet used for choosing a character to log in with.
 #[derive(Debug)]
 pub struct LoginSelectPacket {
+    /// The character ID to log in on.
     pub character_id: u32,
 }
 
-/// Packet indicating the client name.
+/// Packet with information about a player's name and ID.
 #[derive(Debug)]
 pub struct ClientNamePacket {
+    /// The character ID.
     pub character_id: u32,
+    /// The name of the character.
     pub character_name: String,
 }
 
 /// Anonymous vicinity message packet.
 #[derive(Debug)]
 pub struct MsgVicinityaPacket {
+    /// The message as received.
     pub message: Message,
 }
 
 /// A buddy went online or offline.
 #[derive(Debug)]
 pub struct BuddyStatusPacket {
+    /// Character ID of the buddy.
     pub character_id: u32,
+    /// Whether the buddy is now online or not.
     pub online: bool,
 }
 
 /// Add a buddy.
 #[derive(Debug)]
 pub struct BuddyAddPacket {
+    /// The character to add as a buddy.
     pub character_id: u32,
 }
 
 /// Remove a buddy or confirmation of success.
 #[derive(Debug)]
 pub struct BuddyRemovePacket {
+    /// The buddy to removed or that was removed.
     pub character_id: u32,
 }
 
 /// A channel becomes available.
 #[derive(Debug)]
 pub struct GroupAnnouncePacket {
+    /// The channel that is now available.
     pub channel: Channel,
 }
 
 /// A message from a channel.
 #[derive(Debug)]
 pub struct GroupMessagePacket {
+    /// The message received or to be sent.
     pub message: Message,
 }
 
 /// A chat notice like AFK.
 #[derive(Debug)]
 pub struct ChatNoticePacket {
+    /// The chat noticed received.
     pub notice: ChatNotice,
 }
 
 /// A message from tells.
 #[derive(Debug)]
 pub struct MsgPrivatePacket {
+    /// The message received.
     pub message: Message,
 }
 
 /// Packet for looking up a character by name.
 #[derive(Debug)]
 pub struct ClientLookupPacket {
+    /// The character name to look up by.
     pub character_name: String,
 }
 
 /// Packet with a lookup result.
 #[derive(Debug)]
 pub struct ClientLookupResultPacket {
+    /// Name of the character.
     pub character_name: String,
+    /// ID of the character.
     pub character_id: u32,
+    /// Whether this character exists or not.
     pub exists: bool,
 }
 
 /// Packet with an invite to a private group.
 #[derive(Debug)]
 pub struct IncPrivgrpInvitePacket {
+    /// The channel the bot was invited to.
     pub channel: Channel,
 }
 
 /// Packet to invite someone to the private group.
 #[derive(Debug)]
 pub struct OutPrivgrpInvitePacket {
+    /// The character to invite to the private group.
     pub character_id: u32,
 }
 
 /// Packet indicating someone joined a private group.
 #[derive(Debug)]
 pub struct PrivgrpClijoinPacket {
+    /// The channel that the character joined.
     pub channel: Channel,
+    /// Character that joined a private group.
     pub character_id: u32,
 }
 
 /// Packet indicating someone left a private group.
 #[derive(Debug)]
 pub struct PrivgrpClipartPacket {
+    /// The channel that the character left.
     pub channel: Channel,
+    /// The character that left a private group.
     pub character_id: u32,
 }
 
 /// Packet with a private group message.
 #[derive(Debug)]
 pub struct PrivgrpMessagePacket {
+    /// The message to be sent or received.
     pub message: Message,
 }
 
 /// Packet to join a private group.
 #[derive(Debug)]
 pub struct PrivgrpJoinPacket {
+    /// The private group to join.
     pub channel: Channel,
 }
 
 /// Packet to leave a private group.
 #[derive(Debug)]
 pub struct PrivgrpPartPacket {
+    /// The private group to leave.
     pub channel: Channel,
 }
 
 /// Packet indicating the client got kicked from a private channel.
 #[derive(Debug)]
 pub struct IncPrivgrpKickPacket {
+    /// The private channel the bot was kicked from.
     pub channel: Channel,
 }
 
 /// Packet to kick someone from the private group.
 #[derive(Debug)]
 pub struct OutPrivgrpKickPacket {
+    /// The character to kick from the group.
     pub character_id: u32,
 }
 
@@ -484,12 +528,14 @@ pub struct PrivgrpKickallPacket {}
 /// Packet with a system message.
 #[derive(Debug)]
 pub struct MsgSystemPacket {
+    /// The message as received from the server.
     pub text: String,
 }
 
 /// Packet for keeping the connection open.
 #[derive(Debug)]
 pub struct PingPacket {
+    /// The ping message to send or received.
     pub client: String,
 }
 
@@ -625,9 +671,7 @@ impl IncomingPacket for GroupAnnouncePacket {
         let channel_type = read_u8(&mut data);
         let channel_id = read_u32(&mut data);
         let channel_name = read_string(&mut data);
-        // We do not know what this is
-        // it seems to depend on the type
-        // let _ = read_u32(&mut data);
+        let status = read_u32(&mut data);
         // This is always empty
         // let d = read_string(&mut data);
 
@@ -635,6 +679,7 @@ impl IncomingPacket for GroupAnnouncePacket {
             name: Some(channel_name),
             id: channel_id,
             r#type: ChannelType::try_from(channel_type).unwrap(),
+            status: Some(status),
         });
 
         Ok(Self { channel })
@@ -653,6 +698,7 @@ impl IncomingPacket for GroupMessagePacket {
             name: None,
             id: channel_id,
             r#type: ChannelType::try_from(channel_type).unwrap(),
+            status: None,
         });
 
         let message = Message {
@@ -662,6 +708,22 @@ impl IncomingPacket for GroupMessagePacket {
         };
 
         Ok(Self { message })
+    }
+}
+
+impl OutgoingPacket for GroupMessagePacket {
+    fn serialize(&self) -> SerializedPacket {
+        if let Channel::Group(g) = &self.message.channel {
+            let mut buf = Vec::with_capacity(5 + 2 + self.message.text.len() + 1);
+            write_u8(&mut buf, g.r#type as u8);
+            write_u32(&mut buf, g.id);
+            write_string(&mut buf, &self.message.text);
+            write_string(&mut buf, "\u{0}");
+
+            (PacketType::GroupMessage, buf)
+        } else {
+            panic!("Can only send this packet to group channels");
+        }
     }
 }
 

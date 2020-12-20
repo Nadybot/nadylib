@@ -50,12 +50,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "futures-core"
-version = "0.3.8"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "847ce131b72ffb13b6109a221da9ad97a64cbe48feb1028356b836b47b8f1748"
-
-[[package]]
 name = "getrandom"
 version = "0.1.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -379,7 +373,6 @@ checksum = "720ba21c25078711bf456d607987d95bce90f7c3bea5abe1db587862e7a1e87c"
 dependencies = [
  "autocfg",
  "bytes",
- "futures-core",
  "libc",
  "memchr",
  "mio",

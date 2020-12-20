@@ -6,14 +6,20 @@ use tokio::{
 
 use std::{io::Error as IoError, result::Result as OrigResult, string::FromUtf8Error};
 
-use crate::packets::PacketType;
+use crate::packets::{PacketType, SerializedPacket};
 
+/// An error in the library.
 #[derive(Debug)]
 pub enum Error {
+    /// Failed to read from underlying connections.
     IoError(IoError),
+    /// Unknown packet encountered.
     UnknownPacket(Option<PacketType>),
+    /// Payload malformed or incomplete.
     PayloadError,
+    /// Could not queue packet for sending.
     QueueError,
+    /// Unable to update last ping time.
     PingError,
 }
 
@@ -35,8 +41,8 @@ impl From<FromUtf8Error> for Error {
     }
 }
 
-impl From<MpscError<(PacketType, Vec<u8>)>> for Error {
-    fn from(_: MpscError<(PacketType, Vec<u8>)>) -> Self {
+impl From<MpscError<SerializedPacket>> for Error {
+    fn from(_: MpscError<SerializedPacket>) -> Self {
         Self::QueueError
     }
 }
@@ -47,4 +53,7 @@ impl From<WatchError<Instant>> for Error {
     }
 }
 
+/// Wrapper for [`Result`].
+///
+/// [`Result`]: OrigResult
 pub type Result<T> = OrigResult<T, Error>;

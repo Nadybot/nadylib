@@ -24,6 +24,7 @@ use tokio::{
 
 use std::{convert::TryFrom, time::Duration};
 
+/// A TCP connection to the Funcom servers.
 pub struct AOSocket {
     read_half: OwnedReadHalf,
     packet_queue_send: UnboundedSender<SerializedPacket>,
@@ -92,7 +93,7 @@ impl AOSocket {
         Ok(sock)
     }
 
-    /// Sends a login packet to the server.
+    /// Wrapper for generating a login key and sending a [`LoginRequestPacket`] to the server.
     pub fn login(&self, username: &str, password: &str, login_seed: &str) -> Result<()> {
         let key = generate_key(username, password, login_seed);
         let packet = LoginRequestPacket {
@@ -104,7 +105,7 @@ impl AOSocket {
         Ok(())
     }
 
-    /// Queues sending a `Packet` over the TCP connection.
+    /// Queues sending an [`OutgoingPacket`] over the TCP connection.
     pub fn send<O: OutgoingPacket>(&self, packet: O) -> Result<()> {
         self.packet_queue_send.send(packet.serialize())?;
         self.last_packet.send(Instant::now())?;
@@ -113,7 +114,9 @@ impl AOSocket {
     }
 
     /// Attempts to read an entire packet from the underlying connection.
-    /// Returns a `Packet` or an `Error` if reading failed.
+    /// Returns a [`ReceivedPacket`] or an [`IoError`] if reading failed.
+    ///
+    /// [`IoError`]: crate::error::Error
     pub async fn read_packet(&mut self) -> Result<ReceivedPacket> {
         let mut header_buf = [0; 4];
         self.read_half.read_exact(&mut header_buf).await?;

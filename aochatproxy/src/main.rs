@@ -3,9 +3,10 @@ use nadylib::{
     error::Result,
     models::{Channel, Message},
     packets::{
-        BuddyAddPacket, BuddyRemovePacket, ClientLookupPacket, LoginSelectPacket, MsgPrivatePacket,
-        OutPrivgrpInvitePacket, OutPrivgrpKickPacket, PrivgrpJoinPacket, PrivgrpKickallPacket,
-        PrivgrpMessagePacket, PrivgrpPartPacket, ReceivedPacket,
+        BuddyAddPacket, BuddyRemovePacket, ClientLookupPacket, GroupMessagePacket,
+        LoginSelectPacket, MsgPrivatePacket, OutPrivgrpInvitePacket, OutPrivgrpKickPacket,
+        PrivgrpJoinPacket, PrivgrpKickallPacket, PrivgrpMessagePacket, PrivgrpPartPacket,
+        ReceivedPacket,
     },
 };
 
@@ -18,6 +19,7 @@ async fn main() -> Result<()> {
     // only a playground for the library
     let mut sock = AOSocket::connect("chat.d1.funcom.com:7105").await?;
     let mut my_id: u32 = 0;
+    let mut groups = Vec::new();
 
     loop {
         let packet = sock.read_packet().await?;
@@ -58,9 +60,10 @@ async fn main() -> Result<()> {
                 println!("Buddy {} online? {}", b.character_id, b.online)
             }
             ReceivedPacket::GroupAnnounce(c) => {
-                if let Channel::Group(g) = c.channel {
+                if let Channel::Group(g) = &c.channel {
                     println!("Am in channel {:?} ({}) {:?}", g.name, g.id, g.r#type)
                 }
+                groups.push(c.channel);
             }
             ReceivedPacket::MsgPrivate(m) => {
                 println!(
@@ -122,6 +125,11 @@ async fn main() -> Result<()> {
                     "Got a msg from {:?} in {:?} with text {}",
                     m.message.sender, m.message.channel, m.message.text
                 );
+                // Echo it back
+                if m.message.sender.unwrap() != my_id {
+                    let pack = GroupMessagePacket { message: m.message };
+                    sock.send(pack)?;
+                }
             }
             ReceivedPacket::PrivgrpMessage(m) => {
                 println!(
@@ -175,7 +183,6 @@ async fn main() -> Result<()> {
             ReceivedPacket::Ping(p) => {
                 println!("Got a ping from {}", p.client)
             }
-            _ => {}
         }
     }
 }

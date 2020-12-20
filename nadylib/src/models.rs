@@ -9,7 +9,8 @@ pub struct Character {
     pub id: u32,
 }
 
-#[derive(Debug, TryFromPrimitive)]
+/// Type of group channel.
+#[derive(Debug, TryFromPrimitive, Clone, Copy)]
 #[repr(u8)]
 pub enum ChannelType {
     Org = 3,
@@ -19,14 +20,17 @@ pub enum ChannelType {
     Faction = 135,
 }
 
-#[derive(Debug)]
+/// A group channel in the game.
+#[derive(Debug, Clone)]
 pub struct Group {
     pub name: Option<String>,
     pub id: u32,
     pub r#type: ChannelType,
+    pub status: Option<u32>,
 }
 
-#[derive(Debug)]
+/// A channel that messages can be sent to or received from.
+#[derive(Debug, Clone)]
 pub enum Channel {
     Group(Group),
     PrivateChannel(u32),
