@@ -3,8 +3,8 @@ use dotenv::dotenv;
 use log::{debug, info, log_enabled, trace, Level::Trace};
 use nadylib::{
     packets::{
-        BuddyRemovePacket, IncomingPacket, MsgPrivatePacket, OutgoingPacket, PacketType,
-        ReceivedPacket,
+        BuddyRemovePacket, BuddyStatusPacket, IncomingPacket, MsgPrivatePacket, OutgoingPacket,
+        PacketType, ReceivedPacket,
     },
     AOSocket, Result,
 };
@@ -40,14 +40,18 @@ async fn main() -> Result<()> {
 
     // List of all buddies
     let buddies: Arc<DashMap<usize, DashMap<u32, ()>>> =
-        Arc::new(DashMap::with_capacity(account_num));
-    let local_buddies = buddies.clone();
+        Arc::new(DashMap::with_capacity(account_num + 1));
+    // The main bot buddies
+    buddies.insert(0, DashMap::new());
+    let task1_buddies = buddies.clone();
+    let task2_buddies = buddies.clone();
     // List of communication channels to the workers
-    let mut senders = HashMap::with_capacity(account_num);
+    let mut senders = HashMap::with_capacity(account_num + 1);
     let mut receivers = HashMap::with_capacity(account_num);
+    senders.insert(0, real_sock.get_sender());
     for i in 0..account_num {
         let (s, r) = unbounded_channel();
-        senders.insert(i, s);
+        senders.insert(i + 1, s);
         receivers.insert(i, r);
     }
 
@@ -71,8 +75,19 @@ async fn main() -> Result<()> {
                 }
             }
 
-            if let PacketType::LoginOk = packet.0 {
-                logged_in_setter.notify_one();
+            match packet.0 {
+                PacketType::LoginOk => logged_in_setter.notify_one(),
+                PacketType::BuddyAdd => {
+                    let b = BuddyStatusPacket::load(&packet.1).unwrap();
+                    debug!("Buddy {} is online: {}", b.character_id, b.online);
+                    task1_buddies.get(&0).unwrap().insert(b.character_id, ());
+                }
+                PacketType::BuddyRemove => {
+                    let b = BuddyRemovePacket::load(&packet.1).unwrap();
+                    debug!("Buddy {} removed", b.character_id);
+                    task1_buddies.get(&0).unwrap().remove(&b.character_id);
+                }
+                _ => {}
             }
 
             let _ = sock_sender.send(packet);
@@ -99,9 +114,9 @@ async fn main() -> Result<()> {
                 PacketType::BuddyAdd => {
                     // Add the buddy on the slave with least buddies
                     let mut least_buddies = 0;
-                    let mut buddy_count = local_buddies.get(&0).unwrap().value().len();
+                    let mut buddy_count = task2_buddies.get(&0).unwrap().value().len();
 
-                    for elem in local_buddies.iter().skip(1) {
+                    for elem in task2_buddies.iter().skip(1) {
                         let val = elem.value().len();
                         if val < buddy_count {
                             buddy_count = val;
@@ -109,24 +124,31 @@ async fn main() -> Result<()> {
                         }
                     }
 
-                    debug!(
-                        "Adding buddy on worker #{} ({} current buddies)",
-                        least_buddies + 1,
-                        buddy_count
-                    );
+                    if least_buddies == 0 {
+                        debug!("Adding buddy on main ({} current buddies)", buddy_count);
+                    } else {
+                        debug!(
+                            "Adding buddy on worker #{} ({} current buddies)",
+                            least_buddies, buddy_count
+                        );
+                    }
                     let _ = senders.get(&least_buddies).unwrap().send(packet);
                 }
                 PacketType::BuddyRemove => {
                     let b = BuddyRemovePacket::load(&packet.1).unwrap();
                     // Remove the buddy on the slaves that have it on the buddy list
-                    for elem in local_buddies.iter() {
+                    for elem in task2_buddies.iter() {
                         if elem.value().get(&b.character_id).is_some() {
                             let worker_id = elem.key();
-                            debug!(
-                                "Removing buddy {} on worker #{}",
-                                b.character_id,
-                                worker_id + 1
-                            );
+                            if worker_id == &0 {
+                                debug!("Removing buddy {} on main", b.character_id);
+                            } else {
+                                debug!(
+                                    "Removing buddy {} on worker #{}",
+                                    b.character_id,
+                                    worker_id + 1
+                                );
+                            }
                             let _ = senders.get(worker_id).unwrap().send(packet.clone());
                         }
                     }
@@ -166,7 +188,7 @@ async fn main() -> Result<()> {
     for (idx, acc) in config.accounts.iter().enumerate() {
         info!("Spawning worker for {}", acc.character);
         tasks.push(spawn(worker::worker_main(
-            idx,
+            idx + 1,
             config.clone(),
             acc.clone(),
             duplicate_sock_sender.clone(),

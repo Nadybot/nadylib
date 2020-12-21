@@ -30,7 +30,7 @@ pub async fn worker_main(
     spawn(async move {
         loop {
             let packet = packet_reader.recv().await.unwrap();
-            debug!("Sending {:?} packet from buddy #{}", packet.0, id + 1);
+            debug!("Sending {:?} packet from worker #{}", packet.0, id);
 
             if log_enabled!(Trace) {
                 let loaded = ReceivedPacket::try_from((packet.0, packet.1.as_slice()));
@@ -45,7 +45,7 @@ pub async fn worker_main(
     loop {
         // Read a packet and handle it if interested
         let (packet_type, body) = socket.read_raw_packet().await?;
-        debug!("Received {:?} packet for buddy #{}", packet_type, id + 1);
+        debug!("Received {:?} packet for worker #{}", packet_type, id);
 
         if log_enabled!(Trace) {
             let loaded = ReceivedPacket::try_from((packet_type, body.as_slice()));
@@ -86,12 +86,15 @@ pub async fn worker_main(
                         break;
                     }
                     ReceivedPacket::BuddyStatus(b) => {
-                        debug!("Buddy {} is online: {}", b.character_id, b.online);
+                        debug!(
+                            "Worker #{}: Buddy {} is online: {}",
+                            id, b.character_id, b.online
+                        );
                         buddies.get(&id).unwrap().insert(b.character_id, ());
                         sender.send((packet_type, body))?;
                     }
                     ReceivedPacket::BuddyRemove(b) => {
-                        debug!("Buddy {} removed", b.character_id);
+                        debug!("Worker #{}: Buddy {} removed", id, b.character_id);
                         buddies.get(&id).unwrap().remove(&b.character_id);
                         sender.send((packet_type, body))?;
                     }
