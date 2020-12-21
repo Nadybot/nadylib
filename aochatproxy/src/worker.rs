@@ -63,6 +63,7 @@ pub async fn worker_main(
                     }
                     ReceivedPacket::LoginOk => {
                         info!("{} logged in", account.character);
+                        sender.send((packet_type, body))?;
                     }
                     ReceivedPacket::LoginError(e) => {
                         error!("{} failed to log in: {}", account.character, e.message);
