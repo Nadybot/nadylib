@@ -22,3 +22,4 @@ tokio = { version = "0.3", default-features = false, features = ["net", "rt", "i
 [features]
 default = []
 mmdb-parser = []
+mmdb = []

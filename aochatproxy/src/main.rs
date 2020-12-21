@@ -126,7 +126,8 @@ async fn main() -> Result<()> {
                     let mut least_buddies = 0;
                     let mut buddy_count = task2_buddies.get(&0).unwrap().value().len();
 
-                    for elem in task2_buddies.iter().skip(1) {
+                    for key in 1..task2_buddies.len() {
+                        let elem = task2_buddies.get(&key).unwrap();
                         let val = elem.value().len();
                         if val < buddy_count {
                             buddy_count = val;

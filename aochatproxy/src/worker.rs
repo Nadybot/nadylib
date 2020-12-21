@@ -102,7 +102,7 @@ pub async fn worker_main(
                     }
                     ReceivedPacket::BuddyRemove(b) => {
                         debug!("Worker #{}: Buddy {} removed", id, b.character_id);
-                        debug!("Sending BuddyRemove packet from worrker #{} to main", id);
+                        debug!("Sending BuddyRemove packet from worker #{} to main", id);
                         buddies.get(&id).unwrap().remove(&b.character_id);
                         sender.send((packet_type, body))?;
                     }

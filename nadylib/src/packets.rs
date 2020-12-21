@@ -1,15 +1,20 @@
+#[cfg(feature = "mmdb")]
+use crate::mmdb::get_message;
 use crate::{
     error::{Error, Result},
     formatter::{format_string, FormattingArgument},
-    mmdb,
     models::{Channel, ChannelType, Character, ChatNotice, Group, Message},
 };
 
 use byteorder::{ByteOrder, NetworkEndian};
-use mmdb::get_message;
 use num_enum::TryFromPrimitive;
 
 use std::{convert::TryFrom, result::Result as OrigResult};
+
+#[cfg(not(feature = "mmdb"))]
+fn get_message(_: u32, _: u32) -> Option<String> {
+    Some(String::from(""))
+}
 
 /// The maximum unsigned 32-bit integer, used to check if character lookup failed.
 const MAXINT: u32 = 4294967295;
@@ -725,10 +730,13 @@ impl IncomingPacket for ChatNoticePacket {
         // This is constant for chat notices.
         let category_id = 20000;
 
-        let message = mmdb::get_message(category_id, instance_id).ok_or(Error::PayloadError)?;
-        let params = parse_ext_params(&mut arguments.as_slice()).ok_or(Error::PayloadError)?;
-
-        let text = format_string(&message, params).unwrap_or(message);
+        let text = if cfg!(feature = "mmdb") {
+            let message = get_message(category_id, instance_id).ok_or(Error::PayloadError)?;
+            let params = parse_ext_params(&mut arguments.as_slice()).ok_or(Error::PayloadError)?;
+            format_string(&message, params).unwrap_or(message)
+        } else {
+            String::from("")
+        };
 
         let notice = ChatNotice {
             sender: sender_id,
