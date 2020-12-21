@@ -3,7 +3,7 @@ use crate::config::{AccountData, Config};
 use dashmap::DashMap;
 use log::{debug, error, info, log_enabled, trace, Level::Trace};
 use nadylib::{
-    packets::{LoginSelectPacket, PacketType, SerializedPacket},
+    packets::{LoginSelectPacket, OutgoingPacket, PacketType, SerializedPacket},
     AOSocket, ReceivedPacket, Result,
 };
 use tokio::{
@@ -61,7 +61,8 @@ pub async fn worker_main(
             | PacketType::LoginError
             | PacketType::BuddyAdd
             | PacketType::BuddyRemove
-            | PacketType::ClientName => {
+            | PacketType::ClientName
+            | PacketType::MsgPrivate => {
                 let packet = ReceivedPacket::try_from((packet_type, body.as_slice()))?;
 
                 match packet {
@@ -105,6 +106,13 @@ pub async fn worker_main(
                         debug!("Sending BuddyRemove packet from worker #{} to main", id);
                         buddies.get(&id).unwrap().remove(&b.character_id);
                         sender.send((packet_type, body))?;
+                    }
+                    ReceivedPacket::MsgPrivate(mut m) => {
+                        if config.relay_slave_tells {
+                            debug!("Relaying tell message from worker #{} to main", id);
+                            m.message.send_tag = id.to_string();
+                            sender.send(m.serialize())?;
+                        }
                     }
                     _ => {}
                 }

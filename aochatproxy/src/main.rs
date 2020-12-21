@@ -166,9 +166,20 @@ async fn main() -> Result<()> {
                 }
                 PacketType::MsgPrivate => {
                     let mut m = MsgPrivatePacket::load(&packet.1).unwrap();
-                    if m.message.send_tag == "spam" {
+                    if m.message.send_tag.starts_with("spam") {
+                        let worker_id = m.message.send_tag.split("-").last();
+
+                        // If a worker ID is provided via spam-N, use that one next
+                        if let Some(id) = worker_id {
+                            let num: usize = id.parse().unwrap_or(current_buddy);
+                            if num <= account_num {
+                                current_buddy = num;
+                            }
+                        }
+
                         m.message.send_tag = String::from("\u{0}");
                         let serialized = m.serialize();
+
                         if spam_bot_support && current_buddy != 0 {
                             let _ = senders.get(&current_buddy).unwrap().send(serialized);
                         } else {

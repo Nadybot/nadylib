@@ -14,13 +14,14 @@ pub struct Config {
     pub server_address: String,
     pub spam_bot_support: bool,
     pub send_tells_over_main: bool,
+    pub relay_slave_tells: bool,
 }
 
 pub fn load_config() -> Option<Config> {
     let mut next_number = 1;
     let mut account_data = Vec::new();
 
-    while account_data.is_empty() {
+    loop {
         let username = var(format!("SLAVE{}_USERNAME", next_number)).ok();
         let password = var(format!("SLAVE{}_PASSWORD", next_number)).ok();
         let character = var(format!("SLAVE{}_CHARACTERNAME", next_number)).ok();
@@ -57,6 +58,10 @@ pub fn load_config() -> Option<Config> {
         })
         .parse()
         .ok()?;
+    let relay_slave_tells: bool = var("RELAY_SLAVE_TELLS")
+        .unwrap_or_else(|_| String::from("false"))
+        .parse()
+        .ok()?;
 
     // We cannot send tells in this case
     if !send_tells_over_main && account_data.is_empty() {
@@ -69,5 +74,6 @@ pub fn load_config() -> Option<Config> {
         server_address,
         spam_bot_support,
         send_tells_over_main,
+        relay_slave_tells,
     })
 }
