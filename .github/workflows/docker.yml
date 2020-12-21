@@ -30,16 +30,16 @@ jobs:
           run: |
             docker build --file Dockerfile \
               --tag "quay.io/nadyita/aochatproxy:rust-rewrite-amd64" \
-              --tag "ghcr.io/nadybot/aochatproxy:rust-rewrite-amd64"
+              --tag "ghcr.io/nadybot/aochatproxy:rust-rewrite-amd64" .
         - name: Build the docker image for aarch64
           shell: bash
           run: |
             docker build --file Dockerfile \
               --build-arg RUST_TARGET=aarch64-unknown-linux-musl \
               --build-arg MUSL_TARGET=aarch64-linux-musl \
-              --build-arg FINAL_TARGET=arm64v8
+              --build-arg FINAL_TARGET=arm64v8 \
               --tag "quay.io/nadyita/aochatproxy:rust-rewrite-armv8" \
-              --tag "ghcr.io/nadybot/aochatproxy:rust-rewrite-armv8"
+              --tag "ghcr.io/nadybot/aochatproxy:rust-rewrite-armv8" .
         - name: Push the tagged Docker image
           shell: bash
           run: |
