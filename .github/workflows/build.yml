@@ -1,0 +1,86 @@
+name: Build binaries
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  linux:
+    name: Linux
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: nightly
+          override: true
+
+      - name: Build
+        run: |
+          cargo build --release
+          cp target/release/aochatproxy .
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: aochatproxy-linux
+          path: |
+            aochatproxy
+
+  macos:
+    name: MacOS
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: nightly
+          override: true
+
+      - name: Build
+        run: |
+          cargo build --release
+          cp target/release/aochatproxy .
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: aochatproxy-macos
+          path: |
+            aochatproxy
+
+  windows:
+    name: Windows
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: nightly
+          override: true
+
+      - name: Build
+        run: |
+          cargo build --release
+          cp target/release/aochatproxy.exe .
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: aochatproxy-windows
+          path: |
+            aochatproxy.exe
