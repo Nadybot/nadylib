@@ -3,7 +3,10 @@ name: Build binaries
 on:
   push:
     branches:
-      - master
+      - unstable
+      - stable
+    tags:
+      - '*'
   pull_request:
 
 jobs:
