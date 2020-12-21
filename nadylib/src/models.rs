@@ -14,6 +14,7 @@ pub struct Character {
 #[repr(u8)]
 pub enum ChannelType {
     Org = 3,
+    FactionLeaders = 4,
     OrgMsg = 10,
     Announcements = 12,
     Shopping = 134,
@@ -44,6 +45,7 @@ pub struct Message {
     pub sender: Option<u32>,
     pub channel: Channel,
     pub text: String,
+    pub send_tag: String,
 }
 
 /// Represents a chat notice.

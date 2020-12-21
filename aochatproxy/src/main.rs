@@ -1,188 +1,168 @@
+use dashmap::DashMap;
+use dotenv::dotenv;
+use log::{debug, info};
 use nadylib::{
-    client_socket::AOSocket,
-    error::Result,
-    models::{Channel, Message},
-    packets::{
-        BuddyAddPacket, BuddyRemovePacket, ClientLookupPacket, GroupMessagePacket,
-        LoginSelectPacket, MsgPrivatePacket, OutPrivgrpInvitePacket, OutPrivgrpKickPacket,
-        PrivgrpJoinPacket, PrivgrpKickallPacket, PrivgrpMessagePacket, PrivgrpPartPacket,
-        ReceivedPacket,
-    },
+    packets::{BuddyRemovePacket, IncomingPacket, MsgPrivatePacket, OutgoingPacket, PacketType},
+    AOSocket, Result,
+};
+use tokio::{
+    net::TcpListener,
+    spawn,
+    sync::{mpsc::unbounded_channel, Notify},
 };
 
-use std::env::var;
+use std::{
+    collections::{HashMap, HashSet},
+    sync::Arc,
+};
+
+mod config;
+mod worker;
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    // This is not actually the aochatproxy
-    // but until nadylib is finished
-    // only a playground for the library
-    let mut sock = AOSocket::connect("chat.d1.funcom.com:7105").await?;
-    let mut my_id: u32 = 0;
-    let mut groups = Vec::new();
+    dotenv().ok();
+    env_logger::init();
 
-    loop {
-        let packet = sock.read_packet().await?;
+    let config = config::load_config().expect("Invalid configuration");
+    let spam_bot_support = config.spam_bot_support;
+    let account_num = config.accounts.len();
+    let tcp_server = TcpListener::bind(format!("0.0.0.0:{}", config.port_number)).await?;
 
-        match packet {
-            ReceivedPacket::LoginSeed(l) => {
-                sock.login(
-                    &var("AO_ACCOUNT").unwrap(),
-                    &var("AO_PASSWORD").unwrap(),
-                    &l.login_seed,
-                )?;
+    info!("Listening on port {}", config.port_number);
+    info!("Waiting for client to connect...");
+    let (client, addr) = tcp_server.accept().await?;
+    info!("Client connected from {}", addr);
+
+    // Create the main connection to the chat servers
+    let mut sock = AOSocket::from_stream(client);
+    let mut real_sock = AOSocket::connect(config.server_address.clone()).await?;
+
+    // List of all buddies
+    let buddies: Arc<DashMap<usize, HashSet<u32>>> = Arc::new(DashMap::with_capacity(account_num));
+    let local_buddies = buddies.clone();
+    // List of communication channels to the workers
+    let mut senders = HashMap::with_capacity(account_num);
+    let mut receivers = HashMap::with_capacity(account_num);
+    for i in 0..config.accounts.len() {
+        let (s, r) = unbounded_channel();
+        senders.insert(i, s);
+        receivers.insert(i, r);
+    }
+
+    let sock_sender = sock.get_sender();
+    let duplicate_sock_sender = sock_sender.clone();
+    let real_sock_sender = real_sock.get_sender();
+
+    let logged_in = Arc::new(Notify::new());
+    let logged_in_setter = logged_in.clone();
+
+    // Forward all incoming packets to the client
+    spawn(async move {
+        loop {
+            let packet = real_sock.read_raw_packet().await.unwrap();
+
+            if let PacketType::LoginOk = packet.0 {
+                logged_in_setter.notify_one();
             }
-            ReceivedPacket::LoginError(e) => println!("Error: {}", e.message),
-            ReceivedPacket::LoginCharlist(c) => {
-                let char_name = var("AO_CHAR").unwrap();
-                let char_id = c
-                    .characters
-                    .iter()
-                    .find(|i| i.name == char_name)
-                    .unwrap()
-                    .id;
-                let pack = LoginSelectPacket {
-                    character_id: char_id,
-                };
-                sock.send(pack)?;
-            }
-            ReceivedPacket::LoginOk => println!("Successfully logged in"),
-            ReceivedPacket::ClientName(c) => {
-                if my_id == 0 {
-                    my_id = c.character_id;
+
+            let _ = sock_sender.send(packet);
+        }
+    });
+
+    // Loop over incoming packets and depending on the type, round robin them
+    // If not, we just send them over the normal FC connection
+    spawn(async move {
+        // For round robin on private msgs
+        let mut current_buddy = 0;
+        loop {
+            let packet = sock.read_raw_packet().await.unwrap();
+
+            match packet.0 {
+                PacketType::BuddyAdd => {
+                    // Add the buddy on the slave with least buddies
+                    let mut least_buddies = 0;
+                    let mut buddy_count = local_buddies.get(&0).unwrap().value().len();
+
+                    for elem in local_buddies.iter().skip(1) {
+                        let val = elem.value().len();
+                        if val < buddy_count {
+                            buddy_count = val;
+                            least_buddies = *elem.key();
+                        }
+                    }
+
+                    debug!(
+                        "Adding buddy on worker #{} ({} current buddies)",
+                        least_buddies + 1,
+                        buddy_count
+                    );
+                    let _ = senders.get(&least_buddies).unwrap().send(packet);
                 }
-                println!("Character {} has ID {}", c.character_name, c.character_id)
-            }
-            ReceivedPacket::MsgVicinitya(m) => {
-                println!("{:?}", m.message);
-            }
-            ReceivedPacket::BuddyStatus(b) => {
-                println!("Buddy {} online? {}", b.character_id, b.online)
-            }
-            ReceivedPacket::GroupAnnounce(c) => {
-                if let Channel::Group(g) = &c.channel {
-                    println!("Am in channel {:?} ({}) {:?}", g.name, g.id, g.r#type)
+                PacketType::BuddyRemove => {
+                    let b = BuddyRemovePacket::load(&packet.1).unwrap();
+                    // Remove the buddy on the slaves that have it on the buddy list
+                    for elem in local_buddies.iter() {
+                        if elem.value().contains(&b.character_id) {
+                            let worker_id = elem.key();
+                            debug!(
+                                "Removing buddy {} on worker #{}",
+                                b.character_id,
+                                worker_id + 1
+                            );
+                            let _ = senders.get(worker_id).unwrap().send(packet.clone());
+                        }
+                    }
                 }
-                groups.push(c.channel);
-            }
-            ReceivedPacket::MsgPrivate(m) => {
-                println!(
-                    "Got a msg from {:?} in {:?} with text {}",
-                    m.message.sender, m.message.channel, m.message.text
-                );
-                if m.message.text.starts_with("!lookup") {
-                    let arg = m.message.text.split_whitespace().nth(1).unwrap_or("");
-                    let pack = ClientLookupPacket {
-                        character_name: arg.to_owned(),
-                    };
-                    sock.send(pack)?;
-                } else if m.message.text.starts_with("!rembuddy") {
-                    let arg = m.message.text.split_whitespace().nth(1).unwrap_or("");
-                    let pack = BuddyRemovePacket {
-                        character_id: arg.parse().unwrap(),
-                    };
-                    sock.send(pack)?;
-                } else if m.message.text.starts_with("!addbuddy") {
-                    let arg = m.message.text.split_whitespace().nth(1).unwrap_or("");
-                    let pack = BuddyAddPacket {
-                        character_id: arg.parse().unwrap(),
-                    };
-                    sock.send(pack)?;
-                } else if m.message.text.starts_with("!join") {
-                    let pack = OutPrivgrpInvitePacket {
-                        character_id: m.message.sender.unwrap(),
-                    };
-                    sock.send(pack)?;
-                } else if m.message.text.starts_with("!kickall") {
-                    let pack = PrivgrpKickallPacket {};
-                    sock.send(pack)?;
-                } else if m.message.text.starts_with("!kick") {
-                    let arg = m.message.text.split_whitespace().nth(1).unwrap_or("");
-                    let pack = OutPrivgrpKickPacket {
-                        character_id: arg.parse().unwrap(),
-                    };
-                    sock.send(pack)?;
-                } else if m.message.text.starts_with("!leave") {
-                    let arg = m.message.text.split_whitespace().nth(1).unwrap_or("");
-                    let pack = PrivgrpPartPacket {
-                        channel: Channel::PrivateChannel(arg.parse().unwrap()),
-                    };
-                    sock.send(pack)?;
-                } else if m.message.text.starts_with("!say") {
-                    let arg = m.message.text.split_whitespace().nth(1).unwrap_or("");
-                    let pack = MsgPrivatePacket {
-                        message: Message {
-                            sender: None,
-                            channel: Channel::Tell(m.message.sender.unwrap()),
-                            text: arg.to_owned(),
-                        },
-                    };
-                    sock.send(pack)?;
+                PacketType::MsgPrivate => {
+                    let mut m = MsgPrivatePacket::load(&packet.1).unwrap();
+                    if m.message.send_tag == "spam" {
+                        m.message.send_tag = String::from("\u{0}");
+                        let serialized = m.serialize();
+                        if spam_bot_support {
+                            debug!("Sending spam tell: {:?}", m.message);
+                            let _ = senders.get(&current_buddy).unwrap().send(serialized);
+                        } else {
+                            debug!("Sending regular tell: {:?}", m.message);
+                            let _ = real_sock_sender.send(serialized);
+                        }
+                        if current_buddy == account_num - 1 {
+                            current_buddy = 0;
+                        } else {
+                            current_buddy += 1;
+                        }
+                    } else {
+                        debug!("Sending regular tell");
+                        let _ = real_sock_sender.send(packet);
+                    }
                 }
-            }
-            ReceivedPacket::GroupMessage(m) => {
-                println!(
-                    "Got a msg from {:?} in {:?} with text {}",
-                    m.message.sender, m.message.channel, m.message.text
-                );
-                // Echo it back
-                if m.message.sender.unwrap() != my_id {
-                    let pack = GroupMessagePacket { message: m.message };
-                    sock.send(pack)?;
+                _ => {
+                    let _ = real_sock_sender.send(packet);
                 }
-            }
-            ReceivedPacket::PrivgrpMessage(m) => {
-                println!(
-                    "Got a msg from {:?} in {:?} with text {}",
-                    m.message.sender, m.message.channel, m.message.text
-                );
-                if m.message.text.starts_with("!say") {
-                    let arg = m.message.text.split_whitespace().nth(1).unwrap_or("");
-                    let pack = PrivgrpMessagePacket {
-                        message: Message {
-                            sender: None,
-                            channel: m.message.channel,
-                            text: arg.to_owned(),
-                        },
-                    };
-                    sock.send(pack)?;
-                }
-            }
-            ReceivedPacket::ChatNotice(c) => {
-                println!(
-                    "Got a chat notice from {}: {}",
-                    c.notice.sender, c.notice.text
-                )
-            }
-            ReceivedPacket::ClientLookup(c) => {
-                println!("User {} has ID {}", c.character_name, c.character_id)
-            }
-            ReceivedPacket::PrivgrpInvite(p) => {
-                println!("Got invited to private group {:?}", p.channel);
-                let pack = PrivgrpJoinPacket { channel: p.channel };
-                sock.send(pack)?;
-            }
-            ReceivedPacket::PrivgrpClijoin(p) => {
-                println!(
-                    "{} joined the private channel {:?}",
-                    p.character_id, p.channel
-                )
-            }
-            ReceivedPacket::PrivgrpClipart(p) => {
-                println!("{} left the private channel", p.character_id)
-            }
-            ReceivedPacket::PrivgrpKick(k) => {
-                println!("Got kicked from {:?}", k.channel)
-            }
-            ReceivedPacket::BuddyRemove(b) => {
-                println!("Buddy {} successfully removed", b.character_id)
-            }
-            ReceivedPacket::MsgSystem(m) => {
-                println!("Got a system message: {}", m.text)
-            }
-            ReceivedPacket::Ping(p) => {
-                println!("Got a ping from {}", p.client)
             }
         }
+    });
+
+    // Wait until logged in
+    logged_in.notified().await;
+
+    // Create all slaves
+    let mut tasks = Vec::new();
+    for (idx, acc) in config.accounts.iter().enumerate() {
+        info!("Spawning worker for {}", acc.character);
+        tasks.push(spawn(worker::worker_main(
+            idx,
+            config.clone(),
+            acc.clone(),
+            duplicate_sock_sender.clone(),
+            buddies.clone(),
+            receivers.remove(&idx).unwrap(),
+        )));
     }
+
+    for task in tasks {
+        let _ = task.await;
+    }
+
+    Ok(())
 }

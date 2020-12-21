@@ -1,5 +1,8 @@
 //! Low-level library for the Anarchy Online Chat Protocol and interacting with the chat servers based on tokio.
 
+/// User-friendly bot wrapper class (WIP).
+#[allow(dead_code)]
+mod bot;
 /// Networking structs and methods for connecting to the chat servers.
 pub mod client_socket;
 /// Cryptographic helpers for generating login keys.
@@ -17,6 +20,7 @@ pub mod models;
 /// Packets for receiving and sending data to the servers.
 pub mod packets;
 
+// pub use bot::Bot;
 pub use client_socket::AOSocket;
 pub use error::Result;
 pub use packets::ReceivedPacket;

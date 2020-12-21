@@ -152,7 +152,7 @@ fn parse_ext_params(msg: String) -> Option<Vec<FormattingArgument>> {
 }
 
 /// Represents a kind of packet in the chat protocol.
-#[derive(Debug, TryFromPrimitive)]
+#[derive(Debug, TryFromPrimitive, Clone, Copy)]
 #[repr(u16)]
 pub enum PacketType {
     LoginSeed = 0,
@@ -612,13 +612,13 @@ impl IncomingPacket for MsgVicinityaPacket {
         // Sender, not interesting for anon
         let _ = read_string(&mut data);
         let content = read_string(&mut data);
-        // always 0
-        // let key = read_string(&mut data);
+        let send_tag = read_string(&mut data);
 
         let msg = Message {
             sender: None,
             channel: Channel::Vicinity,
             text: content,
+            send_tag,
         };
 
         Ok(Self { message: msg })
@@ -692,8 +692,7 @@ impl IncomingPacket for GroupMessagePacket {
         let channel_id = read_u32(&mut data);
         let sender_id = read_u32(&mut data);
         let content = read_string(&mut data);
-        // This seems to be empty
-        // let c = read_string(&mut data);
+        let send_tag = read_string(&mut data);
         let channel = Channel::Group(Group {
             name: None,
             id: channel_id,
@@ -705,6 +704,7 @@ impl IncomingPacket for GroupMessagePacket {
             sender: Some(sender_id),
             channel,
             text: content,
+            send_tag,
         };
 
         Ok(Self { message })
@@ -757,13 +757,13 @@ impl IncomingPacket for MsgPrivatePacket {
     fn load(mut data: &[u8]) -> Result<Self> {
         let sender_id = read_u32(&mut data);
         let content = read_string(&mut data);
-        // Last part is always \0
-        // let c = read_string(&mut data);
+        let send_tag = read_string(&mut data);
 
         let message = Message {
             sender: Some(sender_id),
             channel: Channel::Tell(sender_id),
             text: content,
+            send_tag,
         };
 
         Ok(Self { message })
@@ -859,13 +859,13 @@ impl IncomingPacket for PrivgrpMessagePacket {
         let channel_id = read_u32(&mut data);
         let sender_id = read_u32(&mut data);
         let content = read_string(&mut data);
-        // Seems to be empty always
-        // let d = read_string(&mut data);
+        let send_tag = read_string(&mut data);
 
         let message = Message {
             sender: Some(sender_id),
             channel: Channel::PrivateChannel(channel_id),
             text: content,
+            send_tag,
         };
 
         Ok(Self { message })

@@ -25,15 +25,16 @@ use tokio::{
 use std::{convert::TryFrom, time::Duration};
 
 /// A TCP connection to the Funcom servers.
+#[derive(Debug)]
 pub struct AOSocket {
     read_half: OwnedReadHalf,
     packet_queue_send: UnboundedSender<SerializedPacket>,
-    last_packet: Sender<Instant>,
 }
 
 async fn send_task(
     mut packet_queue: UnboundedReceiver<SerializedPacket>,
     mut sock: OwnedWriteHalf,
+    last_packet: Sender<Instant>,
 ) -> Result<()> {
     loop {
         let (packet_type, mut packet_body) = packet_queue.recv().await.unwrap();
@@ -47,6 +48,7 @@ async fn send_task(
         buf.append(&mut packet_body);
 
         sock.write_all(&buf).await?;
+        last_packet.send(Instant::now())?;
     }
 }
 
@@ -77,6 +79,12 @@ impl AOSocket {
     /// Opens a TCP connection to the chat server specified in the address.
     pub async fn connect<A: ToSocketAddrs>(addr: A) -> Result<Self> {
         let sock = TcpStream::connect(addr).await?;
+
+        Ok(Self::from_stream(sock))
+    }
+
+    /// Starts the socket from an existing [`TcpStream`].
+    pub fn from_stream(sock: TcpStream) -> Self {
         let (rx, tx) = sock.into_split();
         let (send, recv) = unbounded_channel();
         let (lp_send, lp_recv) = channel(Instant::now());
@@ -84,13 +92,12 @@ impl AOSocket {
         let sock = Self {
             read_half: rx,
             packet_queue_send: send.clone(),
-            last_packet: lp_send,
         };
 
         spawn(keepalive(send, lp_recv));
-        spawn(send_task(recv, tx));
+        spawn(send_task(recv, tx, lp_send));
 
-        Ok(sock)
+        sock
     }
 
     /// Wrapper for generating a login key and sending a [`LoginRequestPacket`] to the server.
@@ -105,19 +112,26 @@ impl AOSocket {
         Ok(())
     }
 
+    /// Gets a handle to a send end of the internal receiver.
+    pub fn get_sender(&self) -> UnboundedSender<SerializedPacket> {
+        self.packet_queue_send.clone()
+    }
+
     /// Queues sending an [`OutgoingPacket`] over the TCP connection.
     pub fn send<O: OutgoingPacket>(&self, packet: O) -> Result<()> {
-        self.packet_queue_send.send(packet.serialize())?;
-        self.last_packet.send(Instant::now())?;
+        let serialized = packet.serialize();
+        self.send_raw(serialized.0, serialized.1)
+    }
+
+    /// Queues sending a raw packet over the TCP connection.
+    pub fn send_raw(&self, packet_type: PacketType, body: Vec<u8>) -> Result<()> {
+        self.packet_queue_send.send((packet_type, body))?;
 
         Ok(())
     }
 
-    /// Attempts to read an entire packet from the underlying connection.
-    /// Returns a [`ReceivedPacket`] or an [`IoError`] if reading failed.
-    ///
-    /// [`IoError`]: crate::error::Error
-    pub async fn read_packet(&mut self) -> Result<ReceivedPacket> {
+    /// Attempts to read a raw packet from the underlying connection.
+    pub async fn read_raw_packet(&mut self) -> Result<SerializedPacket> {
         let mut header_buf = [0; 4];
         self.read_half.read_exact(&mut header_buf).await?;
 
@@ -131,7 +145,17 @@ impl AOSocket {
         let mut packet_body = vec![0; packet_length as usize];
         self.read_half.read_exact(&mut packet_body).await?;
 
-        let packet = ReceivedPacket::try_from((packet_type, packet_body.as_slice()))?;
+        Ok((packet_type, packet_body))
+    }
+
+    /// Attempts to read an entire packet from the underlying connection.
+    /// Returns a [`ReceivedPacket`] or an [`IoError`] if reading failed.
+    ///
+    /// [`IoError`]: crate::error::Error
+    pub async fn read_packet(&mut self) -> Result<ReceivedPacket> {
+        let raw = self.read_raw_packet().await?;
+
+        let packet = ReceivedPacket::try_from((raw.0, raw.1.as_slice()))?;
 
         Ok(packet)
     }
