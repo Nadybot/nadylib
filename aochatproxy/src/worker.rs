@@ -60,7 +60,8 @@ pub async fn worker_main(
             | PacketType::LoginOk
             | PacketType::LoginError
             | PacketType::BuddyAdd
-            | PacketType::BuddyRemove => {
+            | PacketType::BuddyRemove
+            | PacketType::ClientName => {
                 let packet = ReceivedPacket::try_from((packet_type, body.as_slice()))?;
 
                 match packet {
@@ -79,22 +80,29 @@ pub async fn worker_main(
                     }
                     ReceivedPacket::LoginOk => {
                         info!("{} logged in", account.character);
+                        debug!("Sending LoginOk packet from worker #{} to main", id);
                         sender.send((packet_type, body))?;
                     }
                     ReceivedPacket::LoginError(e) => {
                         error!("{} failed to log in: {}", account.character, e.message);
                         break;
                     }
+                    ReceivedPacket::ClientName(_) => {
+                        debug!("Sending ClientName packet from worker #{} to main", id);
+                        sender.send((packet_type, body))?;
+                    }
                     ReceivedPacket::BuddyStatus(b) => {
                         debug!(
                             "Worker #{}: Buddy {} is online: {}",
                             id, b.character_id, b.online
                         );
+                        debug!("Sending BuddyAdd packet from worker #{} to main", id);
                         buddies.get(&id).unwrap().insert(b.character_id, ());
                         sender.send((packet_type, body))?;
                     }
                     ReceivedPacket::BuddyRemove(b) => {
                         debug!("Worker #{}: Buddy {} removed", id, b.character_id);
+                        debug!("Sending BuddyRemove packet from worrker #{} to main", id);
                         buddies.get(&id).unwrap().remove(&b.character_id);
                         sender.send((packet_type, body))?;
                     }
