@@ -1,0 +1,54 @@
+name: Build and push docker image
+on:
+  push:
+    branches:
+      - stable
+      - unstable
+    tags:
+      - '*'
+
+jobs:
+  build:
+    name: Create docker images
+    runs-on: ubuntu-20.04
+    steps:
+        - name: Checkout sources
+          uses: actions/checkout@v2.2.0
+          with:
+            fetch-depth: 0
+        - name: Enable experimental Docker features
+          run: |
+            mkdir -p ~/.docker
+            echo "{\"experimental\": \"enabled\"}" > ~/.docker/config.json
+        - name: Login to registries
+          shell: bash
+          run: |
+            echo "${{ secrets.QUAY_PASSWORD }}" | docker login -u "${{ secrets.QUAY_USERNAME }}" --password-stdin quay.io/nadyita
+            echo "${{ secrets.GH_TOKEN }}" | docker login -u gelbpunkt --password-stdin ghcr.io
+        - name: Build the docker image for x86_64
+          shell: bash
+          run: |
+            docker build --file Dockerfile \
+              --tag "quay.io/nadyita/aochatproxy:rust-rewrite-amd64" \
+              --tag "ghcr.io/nadybot/aochatproxy:rust-rewrite-amd64"
+        - name: Build the docker image for aarch64
+          shell: bash
+          run: |
+            docker build --file Dockerfile \
+              --build-arg RUST_TARGET=aarch64-unknown-linux-musl \
+              --build-arg MUSL_TARGET=aarch64-linux-musl \
+              --build-arg FINAL_TARGET=arm64v8
+              --tag "quay.io/nadyita/aochatproxy:rust-rewrite-armv8" \
+              --tag "ghcr.io/nadybot/aochatproxy:rust-rewrite-armv8"
+        - name: Push the tagged Docker image
+          shell: bash
+          run: |
+            docker push "quay.io/nadyita/aochatproxy:rust-rewrite-amd64"
+            docker push "quay.io/nadyita/aochatproxy:rust-rewrite-armv8"
+            docker push "ghcr.io/nadyita/aochatproxy:rust-rewrite-amd64"
+            docker push "ghcr.io/nadybot/aochatproxy:rust-rewrite-armv8"
+            docker manifest create "quay.io/nadyita/aochatproxy:rust-rewrite" "quay.io/nadyita/aochatproxy:rust-rewrite-amd64" "quay.io/nadyita/aochatproxy:rust-rewrite-armv8"
+            docker manifest push "quay.io/nadyita/aochatproxy:rust-rewrite"
+            docker manifest create "ghcr.io/nadyita/aochatproxy:rust-rewrite" "ghcr.io/nadyita/aochatproxy:rust-rewrite-amd64" "ghcr.io/nadybot/aochatproxy:rust-rewrite-armv8"
+            docker manifest push "ghcr.io/nadyita/aochatproxy:rust-rewrite"
+
