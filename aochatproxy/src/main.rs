@@ -44,7 +44,7 @@ async fn main() -> Result<()> {
     // List of communication channels to the workers
     let mut senders = HashMap::with_capacity(account_num);
     let mut receivers = HashMap::with_capacity(account_num);
-    for i in 0..config.accounts.len() {
+    for i in 0..account_num {
         let (s, r) = unbounded_channel();
         senders.insert(i, s);
         receivers.insert(i, r);
