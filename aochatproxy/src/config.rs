@@ -13,6 +13,7 @@ pub struct Config {
     pub accounts: Vec<AccountData>,
     pub server_address: String,
     pub spam_bot_support: bool,
+    pub send_tells_over_main: bool,
 }
 
 pub fn load_config() -> Option<Config> {
@@ -36,11 +37,6 @@ pub fn load_config() -> Option<Config> {
         next_number += 1;
     }
 
-    if account_data.is_empty() {
-        // At least one account needed
-        return None;
-    }
-
     let server_address =
         var("SERVER_ADDRESS").unwrap_or_else(|_| String::from("chat.d1.funcom.com:7105"));
     let port_number: u32 = var("PROXY_PORT_NUMBER")
@@ -51,11 +47,27 @@ pub fn load_config() -> Option<Config> {
         .unwrap_or_else(|_| String::from("false"))
         .parse()
         .ok()?;
+    let send_tells_over_main: bool = var("SEND_TELLS_OVER_MAIN")
+        .unwrap_or_else(|_| {
+            if account_data.is_empty() {
+                String::from("true")
+            } else {
+                String::from("false")
+            }
+        })
+        .parse()
+        .ok()?;
+
+    // We cannot send tells in this case
+    if !send_tells_over_main && account_data.is_empty() {
+        return None;
+    }
 
     Some(Config {
         port_number,
         accounts: account_data,
         server_address,
         spam_bot_support,
+        send_tells_over_main,
     })
 }

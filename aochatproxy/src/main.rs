@@ -26,6 +26,7 @@ async fn main() -> Result<()> {
 
     let config = config::load_config().expect("Invalid configuration");
     let spam_bot_support = config.spam_bot_support;
+    let send_tells_over_main = config.send_tells_over_main;
     let account_num = config.accounts.len();
     let tcp_server = TcpListener::bind(format!("0.0.0.0:{}", config.port_number)).await?;
 
@@ -62,8 +63,10 @@ async fn main() -> Result<()> {
     let logged_in = Arc::new(Notify::new());
     let logged_in_setter = logged_in.clone();
 
+    let mut tasks = Vec::new();
+
     // Forward all incoming packets to the client
-    spawn(async move {
+    tasks.push(spawn(async move {
         loop {
             let packet = real_sock.read_raw_packet().await.unwrap();
             debug!("Received {:?} packet for main", packet.0);
@@ -92,13 +95,20 @@ async fn main() -> Result<()> {
 
             let _ = sock_sender.send(packet);
         }
-    });
+    }));
 
     // Loop over incoming packets and depending on the type, round robin them
     // If not, we just send them over the normal FC connection
-    spawn(async move {
+    tasks.push(spawn(async move {
         // For round robin on private msgs
-        let mut current_buddy = 0;
+        let start_at = {
+            if send_tells_over_main {
+                0
+            } else {
+                1
+            }
+        };
+        let mut current_buddy = start_at;
         loop {
             let packet = sock.read_raw_packet().await.unwrap();
             debug!("Received {:?} packet from main", packet.0);
@@ -158,14 +168,13 @@ async fn main() -> Result<()> {
                     if m.message.send_tag == "spam" {
                         m.message.send_tag = String::from("\u{0}");
                         let serialized = m.serialize();
-                        if spam_bot_support {
-                            debug!("Sending spam tell");
+                        if spam_bot_support && current_buddy != 0 {
                             let _ = senders.get(&current_buddy).unwrap().send(serialized);
                         } else {
                             let _ = real_sock_sender.send(serialized);
                         }
-                        if current_buddy == account_num - 1 {
-                            current_buddy = 0;
+                        if current_buddy == account_num {
+                            current_buddy = start_at;
                         } else {
                             current_buddy += 1;
                         }
@@ -178,13 +187,12 @@ async fn main() -> Result<()> {
                 }
             }
         }
-    });
+    }));
 
     // Wait until logged in
     logged_in.notified().await;
 
     // Create all slaves
-    let mut tasks = Vec::new();
     for (idx, acc) in config.accounts.iter().enumerate() {
         info!("Spawning worker for {}", acc.character);
         tasks.push(spawn(worker::worker_main(
