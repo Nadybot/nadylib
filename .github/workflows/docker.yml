@@ -54,7 +54,7 @@ jobs:
           run: |
             docker push "quay.io/nadyita/aochatproxy:rust-rewrite-amd64"
             docker push "quay.io/nadyita/aochatproxy:rust-rewrite-armv8"
-            docker push "quay.io/nadyita/aochatproxy:rust-rewrite-arm7l"
+            docker push "quay.io/nadyita/aochatproxy:rust-rewrite-armv7l"
             docker push "ghcr.io/nadyita/aochatproxy:rust-rewrite-amd64"
             docker push "ghcr.io/nadybot/aochatproxy:rust-rewrite-armv8"
             docker push "ghcr.io/nadybot/aochatproxy:rust-rewrite-armv7l"
