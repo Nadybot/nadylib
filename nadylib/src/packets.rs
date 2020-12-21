@@ -75,72 +75,58 @@ fn write_string(target: &mut Vec<u8>, string: &str) {
     target.extend_from_slice(string.as_bytes());
 }
 
-fn parse_ext_params(msg: String) -> Option<Vec<FormattingArgument>> {
-    // TODO: Refactor to use bytes because this is abominable
+fn parse_ext_params(msg: &mut &[u8]) -> Option<Vec<FormattingArgument>> {
     let mut args = Vec::new();
-    let mut characters = msg.chars().peekable();
-    while characters.peek().is_some() {
-        let data_type = characters.next()?;
+    while !msg.is_empty() {
+        let data_type = msg[0] as char;
+        *msg = &msg[1..];
 
         match data_type {
             'S' => {
-                let len = (characters.next()? as u32) * 256 + characters.next()? as u32;
+                let len = ((msg[0] as u32) * 256 + msg[1] as u32) as usize;
 
-                let mut string = String::with_capacity(len as usize);
-                for _ in 0..len {
-                    string.push(characters.next()?);
-                }
+                let string = String::from_utf8(msg[2..2 + len].to_vec()).ok()?;
+                *msg = &msg[2 + len..];
                 args.push(FormattingArgument::String(string));
             }
             's' => {
-                let len = characters.next()? as usize;
-
-                let mut string = String::with_capacity(len as usize);
-                for _ in 0..len - 2 {
-                    string.push(characters.next()?);
-                }
+                let len = msg[0] as usize;
+                let string = String::from_utf8(msg[1..1 + len - 2].to_vec()).ok()?;
+                *msg = &msg[1 + len - 2..];
                 args.push(FormattingArgument::String(string));
             }
             'I' => {
-                let stuff = vec![
-                    characters.next()? as u8,
-                    characters.next()? as u8,
-                    characters.next()? as u8,
-                    characters.next()? as u8,
-                ];
-                let num = NetworkEndian::read_u32(&stuff);
+                let num = NetworkEndian::read_u32(&msg[..4]);
+                *msg = &msg[4..];
                 args.push(FormattingArgument::U32(num));
             }
             'i' => {}
             'u' => {
                 let mut n = 0;
-                for _ in 0..5 {
-                    n = n * 85 + (characters.next()? as u32) - 33;
+                for i in 0..5 {
+                    n = n * 85 + (msg[i] as u32) - 33;
                 }
+                *msg = &msg[5..];
                 args.push(FormattingArgument::U32(n));
             }
             'R' => {
                 let mut cat = 0;
-                for _ in 0..5 {
-                    cat = cat * 85 + (characters.next()? as u32) - 33;
+                for i in 0..5 {
+                    cat = cat * 85 + (msg[i] as u32) - 33;
                 }
                 let mut ins = 0;
-                for _ in 0..5 {
-                    ins = ins * 85 + (characters.next()? as u32) - 33;
+                for i in 5..10 {
+                    ins = ins * 85 + (msg[i] as u32) - 33;
                 }
+                *msg = &msg[10..];
                 let string = get_message(cat, ins)?;
                 args.push(FormattingArgument::String(string));
             }
             'l' => {
-                let stuff = vec![
-                    characters.next()? as u8,
-                    characters.next()? as u8,
-                    characters.next()? as u8,
-                    characters.next()? as u8,
-                ];
-                let ins = NetworkEndian::read_u32(&stuff);
+                let ins = NetworkEndian::read_u32(&msg[..4]);
                 let cat = 20000;
                 let string = get_message(cat, ins)?;
+                *msg = &msg[4..];
                 args.push(FormattingArgument::String(string));
             }
             '~' => return Some(args),
@@ -734,13 +720,13 @@ impl IncomingPacket for ChatNoticePacket {
         let _ = read_u32(&mut data);
         // MMDB instance ID.
         let instance_id = read_u32(&mut data);
-        let arguments = read_string(&mut data);
+        let arguments = read_string(&mut data).into_bytes();
 
         // This is constant for chat notices.
         let category_id = 20000;
 
         let message = mmdb::get_message(category_id, instance_id).ok_or(Error::PayloadError)?;
-        let params = parse_ext_params(arguments).ok_or(Error::PayloadError)?;
+        let params = parse_ext_params(&mut arguments.as_slice()).ok_or(Error::PayloadError)?;
 
         let text = format_string(&message, params).unwrap_or(message);
 
