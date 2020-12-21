@@ -27,14 +27,14 @@ jobs:
       - name: Build
         run: |
           cargo build --release
-          cp target/release/aochatproxy .
+          cp target/release/aochatproxy aochatproxy-linux
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
           name: aochatproxy-linux
           path: |
-            aochatproxy
+            aochatproxy-linux
 
   macos:
     name: MacOS
@@ -53,14 +53,14 @@ jobs:
       - name: Build
         run: |
           cargo build --release
-          cp target/release/aochatproxy .
+          cp target/release/aochatproxy aochatproxy-macos
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
           name: aochatproxy-macos
           path: |
-            aochatproxy
+            aochatproxy-macos
 
   windows:
     name: Windows
@@ -79,11 +79,11 @@ jobs:
       - name: Build
         run: |
           cargo build --release
-          cp target/release/aochatproxy.exe .
+          cp target/release/aochatproxy.exe aochatproxy-windows.exe
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
           name: aochatproxy-windows
           path: |
-            aochatproxy.exe
+            aochatproxy-windows.exe
