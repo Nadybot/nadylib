@@ -40,15 +40,32 @@ jobs:
               --build-arg FINAL_TARGET=arm64v8 \
               --tag "quay.io/nadyita/aochatproxy:rust-rewrite-armv8" \
               --tag "ghcr.io/nadybot/aochatproxy:rust-rewrite-armv8" .
+        - name: Build the docker image for armv7l
+          shell: bash
+          run: |
+            docker build --file Dockerfile \
+              --build-arg RUST_TARGET=armv7-unknown-linux-musleabihf \
+              --build-arg MUSL_TARGET=armv7l-linux-musleabihf \
+              --build-arg FINAL_TARGET=arm32v7 \
+              --tag "quay.io/nadyita/aochatproxy:rust-rewrite-armv7l" \
+              --tag "ghcr.io/nadybot/aochatproxy:rust-rewrite-armv7l" .
         - name: Push the tagged Docker image
           shell: bash
           run: |
             docker push "quay.io/nadyita/aochatproxy:rust-rewrite-amd64"
             docker push "quay.io/nadyita/aochatproxy:rust-rewrite-armv8"
+            docker push "quay.io/nadyita/aochatproxy:rust-rewrite-arm7l"
             docker push "ghcr.io/nadyita/aochatproxy:rust-rewrite-amd64"
             docker push "ghcr.io/nadybot/aochatproxy:rust-rewrite-armv8"
-            docker manifest create "quay.io/nadyita/aochatproxy:rust-rewrite" "quay.io/nadyita/aochatproxy:rust-rewrite-amd64" "quay.io/nadyita/aochatproxy:rust-rewrite-armv8"
+            docker push "ghcr.io/nadybot/aochatproxy:rust-rewrite-armv7l"
+            docker manifest create "quay.io/nadyita/aochatproxy:rust-rewrite" \
+                "quay.io/nadyita/aochatproxy:rust-rewrite-amd64" \
+                "quay.io/nadyita/aochatproxy:rust-rewrite-armv8" \
+                "quay.io/nadyita/aochatproxy:rust-rewrite-armv7l"
             docker manifest push "quay.io/nadyita/aochatproxy:rust-rewrite"
-            docker manifest create "ghcr.io/nadyita/aochatproxy:rust-rewrite" "ghcr.io/nadyita/aochatproxy:rust-rewrite-amd64" "ghcr.io/nadybot/aochatproxy:rust-rewrite-armv8"
+            docker manifest create "ghcr.io/nadyita/aochatproxy:rust-rewrite" \
+                "ghcr.io/nadyita/aochatproxy:rust-rewrite-amd64" \
+                "ghcr.io/nadybot/aochatproxy:rust-rewrite-armv8" \
+                "ghcr.io/nadybot/aochatproxy:rust-rewrite-armv7l"
             docker manifest push "ghcr.io/nadyita/aochatproxy:rust-rewrite"
 
