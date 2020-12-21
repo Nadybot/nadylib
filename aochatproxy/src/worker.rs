@@ -11,7 +11,7 @@ use tokio::{
     sync::mpsc::{UnboundedReceiver, UnboundedSender},
 };
 
-use std::{collections::HashSet, convert::TryFrom, sync::Arc};
+use std::{convert::TryFrom, sync::Arc};
 
 // The main helper bot task
 pub async fn worker_main(
@@ -19,12 +19,12 @@ pub async fn worker_main(
     config: Config,
     account: AccountData,
     sender: UnboundedSender<SerializedPacket>,
-    buddies: Arc<DashMap<usize, HashSet<u32>>>,
+    buddies: Arc<DashMap<usize, DashMap<u32, ()>>>,
     mut packet_reader: UnboundedReceiver<SerializedPacket>,
 ) -> Result<()> {
     let mut socket = AOSocket::connect(config.server_address).await?;
     let socket_sender = socket.get_sender();
-    buddies.insert(id, HashSet::new());
+    buddies.insert(id, DashMap::new());
 
     // Forward all incoming packets from the master bot to this slave connection
     spawn(async move {
@@ -70,20 +70,12 @@ pub async fn worker_main(
                     }
                     ReceivedPacket::BuddyStatus(b) => {
                         debug!("Buddy {} is online: {}", b.character_id, b.online);
-                        buddies.update(&id, |_, v| {
-                            let mut w = v.clone();
-                            w.insert(b.character_id);
-                            w
-                        });
+                        buddies.get(&id).unwrap().insert(b.character_id, ());
                         sender.send((packet_type, body))?;
                     }
                     ReceivedPacket::BuddyRemove(b) => {
                         debug!("Buddy {} removed", b.character_id);
-                        buddies.update(&id, |_, v| {
-                            let mut w = v.clone();
-                            w.remove(&b.character_id);
-                            w
-                        });
+                        buddies.get(&id).unwrap().remove(&b.character_id);
                         sender.send((packet_type, body))?;
                     }
                     _ => {}

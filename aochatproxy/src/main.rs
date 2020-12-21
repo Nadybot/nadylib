@@ -11,10 +11,7 @@ use tokio::{
     sync::{mpsc::unbounded_channel, Notify},
 };
 
-use std::{
-    collections::{HashMap, HashSet},
-    sync::Arc,
-};
+use std::{collections::HashMap, sync::Arc};
 
 mod config;
 mod worker;
@@ -39,7 +36,8 @@ async fn main() -> Result<()> {
     let mut real_sock = AOSocket::connect(config.server_address.clone()).await?;
 
     // List of all buddies
-    let buddies: Arc<DashMap<usize, HashSet<u32>>> = Arc::new(DashMap::with_capacity(account_num));
+    let buddies: Arc<DashMap<usize, DashMap<u32, ()>>> =
+        Arc::new(DashMap::with_capacity(account_num));
     let local_buddies = buddies.clone();
     // List of communication channels to the workers
     let mut senders = HashMap::with_capacity(account_num);
@@ -103,7 +101,7 @@ async fn main() -> Result<()> {
                     let b = BuddyRemovePacket::load(&packet.1).unwrap();
                     // Remove the buddy on the slaves that have it on the buddy list
                     for elem in local_buddies.iter() {
-                        if elem.value().contains(&b.character_id) {
+                        if elem.value().get(&b.character_id).is_some() {
                             let worker_id = elem.key();
                             debug!(
                                 "Removing buddy {} on worker #{}",
