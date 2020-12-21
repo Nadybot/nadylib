@@ -1,7 +1,7 @@
 use crate::config::{AccountData, Config};
 
 use dashmap::DashMap;
-use log::{debug, error, info};
+use log::{debug, error, info, log_enabled, trace, Level::Trace};
 use nadylib::{
     packets::{LoginSelectPacket, PacketType, SerializedPacket},
     AOSocket, ReceivedPacket, Result,
@@ -30,6 +30,14 @@ pub async fn worker_main(
     spawn(async move {
         loop {
             let packet = packet_reader.recv().await.unwrap();
+            debug!("Sending {:?} packet from buddy #{}", packet.0, id + 1);
+
+            if log_enabled!(Trace) {
+                let loaded = ReceivedPacket::try_from((packet.0, packet.1.as_slice()));
+                if let Ok(pack) = loaded {
+                    trace!("Packet body: {:?}", pack);
+                }
+            }
             let _ = socket_sender.send(packet);
         }
     });
@@ -37,6 +45,14 @@ pub async fn worker_main(
     loop {
         // Read a packet and handle it if interested
         let (packet_type, body) = socket.read_raw_packet().await?;
+        debug!("Received {:?} packet for buddy #{}", packet_type, id + 1);
+
+        if log_enabled!(Trace) {
+            let loaded = ReceivedPacket::try_from((packet_type, body.as_slice()));
+            if let Ok(pack) = loaded {
+                trace!("Packet body: {:?}", pack);
+            }
+        }
 
         match packet_type {
             PacketType::LoginSeed

@@ -1,8 +1,11 @@
 use dashmap::DashMap;
 use dotenv::dotenv;
-use log::{debug, info};
+use log::{debug, info, log_enabled, trace, Level::Trace};
 use nadylib::{
-    packets::{BuddyRemovePacket, IncomingPacket, MsgPrivatePacket, OutgoingPacket, PacketType},
+    packets::{
+        BuddyRemovePacket, IncomingPacket, MsgPrivatePacket, OutgoingPacket, PacketType,
+        ReceivedPacket,
+    },
     AOSocket, Result,
 };
 use tokio::{
@@ -11,7 +14,7 @@ use tokio::{
     sync::{mpsc::unbounded_channel, Notify},
 };
 
-use std::{collections::HashMap, sync::Arc};
+use std::{collections::HashMap, convert::TryFrom, sync::Arc};
 
 mod config;
 mod worker;
@@ -59,6 +62,14 @@ async fn main() -> Result<()> {
     spawn(async move {
         loop {
             let packet = real_sock.read_raw_packet().await.unwrap();
+            debug!("Received {:?} packet for main", packet.0);
+
+            if log_enabled!(Trace) {
+                let loaded = ReceivedPacket::try_from((packet.0, packet.1.as_slice()));
+                if let Ok(pack) = loaded {
+                    trace!("Packet body: {:?}", pack);
+                }
+            }
 
             if let PacketType::LoginOk = packet.0 {
                 logged_in_setter.notify_one();
@@ -75,6 +86,14 @@ async fn main() -> Result<()> {
         let mut current_buddy = 0;
         loop {
             let packet = sock.read_raw_packet().await.unwrap();
+            debug!("Received {:?} packet from main", packet.0);
+
+            if log_enabled!(Trace) {
+                let loaded = ReceivedPacket::try_from((packet.0, packet.1.as_slice()));
+                if let Ok(pack) = loaded {
+                    trace!("Packet body: {:?}", pack);
+                }
+            }
 
             match packet.0 {
                 PacketType::BuddyAdd => {
@@ -118,10 +137,9 @@ async fn main() -> Result<()> {
                         m.message.send_tag = String::from("\u{0}");
                         let serialized = m.serialize();
                         if spam_bot_support {
-                            debug!("Sending spam tell: {:?}", m.message);
+                            debug!("Sending spam tell");
                             let _ = senders.get(&current_buddy).unwrap().send(serialized);
                         } else {
-                            debug!("Sending regular tell: {:?}", m.message);
                             let _ = real_sock_sender.send(serialized);
                         }
                         if current_buddy == account_num - 1 {
@@ -130,7 +148,6 @@ async fn main() -> Result<()> {
                             current_buddy += 1;
                         }
                     } else {
-                        debug!("Sending regular tell");
                         let _ = real_sock_sender.send(packet);
                     }
                 }
