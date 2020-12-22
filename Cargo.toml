@@ -15,11 +15,11 @@ num-traits = "0.2"
 num_enum = "0.5"
 rand = "0.7"
 regex = { version = "1.4", default-features = false, features = ["std", "unicode-perl"] }
-serde_json = "1.0"
+serde_json = { version = "1.0", optional = true }
 strfmt = "0.1"
 tokio = { version = "0.3", default-features = false, features = ["net", "rt", "io-util", "time", "sync"] }
 
 [features]
 default = ["mmdb"]
 mmdb-parser = []
-mmdb = []
+mmdb = ["serde_json"]
