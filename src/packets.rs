@@ -770,7 +770,7 @@ impl OutgoingPacket for MsgPrivatePacket {
             let mut buf = Vec::with_capacity(4 + 2 + self.message.text.len() + 3);
             write_u32(&mut buf, recipient);
             write_string(&mut buf, &self.message.text);
-            write_string(&mut buf, "\u{0}");
+            write_string(&mut buf, &self.message.send_tag);
 
             (PacketType::MsgPrivate, buf)
         } else {
