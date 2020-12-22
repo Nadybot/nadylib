@@ -1,6 +1,6 @@
 use dashmap::DashMap;
 use dotenv::dotenv;
-use log::{debug, info, log_enabled, trace, Level::Trace};
+use log::{debug, error, info, log_enabled, trace, Level::Trace};
 use nadylib::{
     packets::{
         BuddyRemovePacket, BuddyStatusPacket, IncomingPacket, MsgPrivatePacket, OutgoingPacket,
@@ -14,7 +14,7 @@ use tokio::{
     sync::{mpsc::unbounded_channel, Notify},
 };
 
-use std::{collections::HashMap, convert::TryFrom, sync::Arc};
+use std::{collections::HashMap, convert::TryFrom, process::exit, sync::Arc};
 
 mod config;
 mod worker;
@@ -24,7 +24,10 @@ async fn main() -> Result<()> {
     dotenv().ok();
     env_logger::init();
 
-    let config = config::load_config().expect("Invalid configuration");
+    let config = config::load_config().unwrap_or_else(|e| {
+        error!("Configuration Error: {}", e);
+        exit(1)
+    });
     let spam_bot_support = config.spam_bot_support;
     let send_tells_over_main = config.send_tells_over_main;
     let account_num = config.accounts.len();

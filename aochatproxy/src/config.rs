@@ -1,4 +1,7 @@
-use std::env::var;
+use std::{
+    env::var,
+    fmt::{Display, Formatter, Result as FmtResult},
+};
 
 #[derive(Clone)]
 pub struct AccountData {
@@ -17,16 +20,38 @@ pub struct Config {
     pub relay_slave_tells: bool,
 }
 
-pub fn load_config() -> Option<Config> {
+pub enum ConfigError {
+    NotNumber(String),
+    NotBoolean(String),
+    InvalidConfig(String),
+}
+
+impl Display for ConfigError {
+    fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
+        match self {
+            Self::NotNumber(s) => {
+                write!(f, "{} is not a valid number", s)
+            }
+            Self::NotBoolean(b) => {
+                write!(f, "{} must be true or false", b)
+            }
+            Self::InvalidConfig(s) => {
+                write!(f, "{}", s)
+            }
+        }
+    }
+}
+
+pub fn load_config() -> Result<Config, ConfigError> {
     let mut next_number = 1;
     let mut account_data = Vec::new();
 
     loop {
-        let username = var(format!("SLAVE{}_USERNAME", next_number)).ok();
-        let password = var(format!("SLAVE{}_PASSWORD", next_number)).ok();
-        let character = var(format!("SLAVE{}_CHARACTERNAME", next_number)).ok();
+        let username = var(format!("SLAVE{}_USERNAME", next_number));
+        let password = var(format!("SLAVE{}_PASSWORD", next_number));
+        let character = var(format!("SLAVE{}_CHARACTERNAME", next_number));
 
-        if username.is_none() || password.is_none() || character.is_none() {
+        if username.is_err() || password.is_err() || character.is_err() {
             break;
         }
         let account = AccountData {
@@ -43,11 +68,11 @@ pub fn load_config() -> Option<Config> {
     let port_number: u32 = var("PROXY_PORT_NUMBER")
         .unwrap_or_else(|_| String::from("9993"))
         .parse()
-        .ok()?;
+        .map_err(|_| ConfigError::NotNumber(String::from("PROXY_PORT_NUMBER")))?;
     let spam_bot_support: bool = var("SPAM_BOT_SUPPORT")
         .unwrap_or_else(|_| String::from("false"))
         .parse()
-        .ok()?;
+        .map_err(|_| ConfigError::NotBoolean(String::from("SPAM_BOT_SUPPORT")))?;
     let send_tells_over_main: bool = var("SEND_TELLS_OVER_MAIN")
         .unwrap_or_else(|_| {
             if account_data.is_empty() {
@@ -57,18 +82,20 @@ pub fn load_config() -> Option<Config> {
             }
         })
         .parse()
-        .ok()?;
+        .map_err(|_| ConfigError::NotBoolean(String::from("SEND_TELLS_OVER_MAIN")))?;
     let relay_slave_tells: bool = var("RELAY_SLAVE_TELLS")
         .unwrap_or_else(|_| String::from("false"))
         .parse()
-        .ok()?;
+        .map_err(|_| ConfigError::NotBoolean(String::from("RELAY_SLAVE_TELLS")))?;
 
     // We cannot send tells in this case
     if !send_tells_over_main && account_data.is_empty() {
-        return None;
+        return Err(ConfigError::InvalidConfig(String::from(
+            "When SEND_TELLS_OVER_MAIN is disabled, at least one slave needs to be configured",
+        )));
     }
 
-    Some(Config {
+    Ok(Config {
         port_number,
         accounts: account_data,
         server_address,
