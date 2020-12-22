@@ -1,5 +1,0 @@
-[target.aarch64-unknown-linux-musl]
-linker = "aarch64-linux-musl-ld"
-
-[target.armv7-unknown-linux-musleabihf]
-linker = "armv7l-linux-musleabihf-ld"
