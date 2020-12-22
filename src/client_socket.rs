@@ -22,7 +22,7 @@ use tokio::{
     time::{timeout_at, Instant},
 };
 
-use std::{convert::TryFrom, time::Duration};
+use std::{convert::TryFrom, net::Shutdown, time::Duration};
 
 /// A TCP connection to the Funcom servers.
 #[derive(Debug)]
@@ -98,6 +98,11 @@ impl AOSocket {
         spawn(send_task(recv, tx, lp_send));
 
         sock
+    }
+
+    /// Close the underlying [`TcpStream`].
+    pub fn close(&self) -> Result<()> {
+        Ok(self.read_half.as_ref().shutdown(Shutdown::Both)?)
     }
 
     /// Wrapper for generating a login key and sending a [`LoginRequestPacket`] to the server.
