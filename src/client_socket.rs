@@ -102,7 +102,7 @@ impl AOSocket {
 
     /// Close the underlying [`TcpStream`].
     pub fn close(&self) -> Result<()> {
-        Ok(self.read_half.as_ref().shutdown(Shutdown::Both)?)
+        Ok(self.read_half.as_ref().shutdown(Shutdown::Write)?)
     }
 
     /// Wrapper for generating a login key and sending a [`LoginRequestPacket`] to the server.
@@ -163,5 +163,11 @@ impl AOSocket {
         let packet = ReceivedPacket::try_from((raw.0, raw.1.as_slice()))?;
 
         Ok(packet)
+    }
+}
+
+impl Drop for AOSocket {
+    fn drop(&mut self) {
+        let _ = self.close();
     }
 }
