@@ -1,5 +1,5 @@
+mod db;
 mod formatter;
-mod mmdb;
 
+pub use db::get_message;
 pub use formatter::{format_string, FormattingArgument};
-pub use mmdb::get_message;

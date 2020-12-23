@@ -19,16 +19,18 @@ use tokio::{
         mpsc::{unbounded_channel, UnboundedReceiver, UnboundedSender},
         watch::{channel, Receiver, Sender},
     },
+    task::JoinHandle,
     time::{timeout_at, Instant},
 };
 
-use std::{convert::TryFrom, net::Shutdown, time::Duration};
+use std::{convert::TryFrom, time::Duration};
 
 /// A TCP connection to the Funcom servers.
 #[derive(Debug)]
 pub struct AOSocket {
     read_half: OwnedReadHalf,
     packet_queue_send: UnboundedSender<SerializedPacket>,
+    tasks: Vec<JoinHandle<Result<()>>>,
 }
 
 async fn send_task(
@@ -89,20 +91,15 @@ impl AOSocket {
         let (send, recv) = unbounded_channel();
         let (lp_send, lp_recv) = channel(Instant::now());
 
-        let sock = Self {
+        let mut tasks = Vec::with_capacity(2);
+        tasks.push(spawn(keepalive(send.clone(), lp_recv)));
+        tasks.push(spawn(send_task(recv, tx, lp_send)));
+
+        Self {
             read_half: rx,
-            packet_queue_send: send.clone(),
-        };
-
-        spawn(keepalive(send, lp_recv));
-        spawn(send_task(recv, tx, lp_send));
-
-        sock
-    }
-
-    /// Close the underlying [`TcpStream`].
-    pub fn close(&self) -> Result<()> {
-        Ok(self.read_half.as_ref().shutdown(Shutdown::Write)?)
+            packet_queue_send: send,
+            tasks,
+        }
     }
 
     /// Wrapper for generating a login key and sending a [`LoginRequestPacket`] to the server.
@@ -168,6 +165,8 @@ impl AOSocket {
 
 impl Drop for AOSocket {
     fn drop(&mut self) {
-        let _ = self.close();
+        for task in self.tasks.iter() {
+            task.abort();
+        }
     }
 }
