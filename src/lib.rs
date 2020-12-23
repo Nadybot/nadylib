@@ -9,7 +9,6 @@ pub mod client_socket;
 pub mod crypto;
 /// Error and Result types for the library.
 pub mod error;
-mod formatter;
 #[cfg(feature = "mmdb")]
 /// Lightweight version of a parser for the in-game message database in JSON format.
 pub mod mmdb;

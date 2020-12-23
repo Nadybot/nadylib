@@ -1,8 +1,7 @@
 #[cfg(feature = "mmdb")]
-use crate::mmdb::get_message;
+use crate::mmdb;
 use crate::{
     error::{Error, Result},
-    formatter::{format_string, FormattingArgument},
     models::{Channel, ChannelType, Character, ChatNotice, Group, Message},
 };
 
@@ -10,11 +9,6 @@ use byteorder::{ByteOrder, NetworkEndian};
 use num_enum::TryFromPrimitive;
 
 use std::{convert::TryFrom, result::Result as OrigResult};
-
-#[cfg(not(feature = "mmdb"))]
-fn get_message(_: u32, _: u32) -> Option<String> {
-    Some(String::from(""))
-}
 
 /// The maximum unsigned 32-bit integer, used to check if character lookup failed.
 const MAXINT: u32 = 4294967295;
@@ -80,7 +74,8 @@ fn write_string(target: &mut Vec<u8>, string: &str) {
     target.extend_from_slice(string.as_bytes());
 }
 
-fn parse_ext_params(msg: &mut &[u8]) -> Option<Vec<FormattingArgument>> {
+#[cfg(feature = "mmdb")]
+fn parse_ext_params(msg: &mut &[u8]) -> Option<Vec<mmdb::FormattingArgument>> {
     let mut args = Vec::new();
     while !msg.is_empty() {
         let data_type = msg[0] as char;
@@ -92,18 +87,18 @@ fn parse_ext_params(msg: &mut &[u8]) -> Option<Vec<FormattingArgument>> {
 
                 let string = String::from_utf8(msg[2..2 + len].to_vec()).ok()?;
                 *msg = &msg[2 + len..];
-                args.push(FormattingArgument::String(string));
+                args.push(mmdb::FormattingArgument::String(string));
             }
             's' => {
                 let len = msg[0] as usize;
                 let string = String::from_utf8(msg[1..1 + len - 2].to_vec()).ok()?;
                 *msg = &msg[1 + len - 2..];
-                args.push(FormattingArgument::String(string));
+                args.push(mmdb::FormattingArgument::String(string));
             }
             'I' => {
                 let num = NetworkEndian::read_u32(&msg[..4]);
                 *msg = &msg[4..];
-                args.push(FormattingArgument::U32(num));
+                args.push(mmdb::FormattingArgument::U32(num));
             }
             'i' => {}
             'u' => {
@@ -112,7 +107,7 @@ fn parse_ext_params(msg: &mut &[u8]) -> Option<Vec<FormattingArgument>> {
                     n = n * 85 + (msg[i] as u32) - 33;
                 }
                 *msg = &msg[5..];
-                args.push(FormattingArgument::U32(n));
+                args.push(mmdb::FormattingArgument::U32(n));
             }
             'R' => {
                 let mut cat = 0;
@@ -124,15 +119,15 @@ fn parse_ext_params(msg: &mut &[u8]) -> Option<Vec<FormattingArgument>> {
                     ins = ins * 85 + (msg[i] as u32) - 33;
                 }
                 *msg = &msg[10..];
-                let string = get_message(cat, ins)?;
-                args.push(FormattingArgument::String(string));
+                let string = mmdb::get_message(cat, ins)?;
+                args.push(mmdb::FormattingArgument::String(string));
             }
             'l' => {
                 let ins = NetworkEndian::read_u32(&msg[..4]);
                 let cat = 20000;
-                let string = get_message(cat, ins)?;
+                let string = mmdb::get_message(cat, ins)?;
                 *msg = &msg[4..];
-                args.push(FormattingArgument::String(string));
+                args.push(mmdb::FormattingArgument::String(string));
             }
             '~' => return Some(args),
             _ => return None,
@@ -738,13 +733,14 @@ impl IncomingPacket for ChatNoticePacket {
         // This is constant for chat notices.
         let category_id = 20000;
 
-        let text = if cfg!(feature = "mmdb") {
-            let message = get_message(category_id, instance_id).ok_or(Error::PayloadError)?;
+        #[cfg(feature = "mmdb")]
+        let text = {
+            let message = mmdb::get_message(category_id, instance_id).ok_or(Error::PayloadError)?;
             let params = parse_ext_params(&mut arguments.as_slice()).ok_or(Error::PayloadError)?;
-            format_string(&message, params).unwrap_or(message)
-        } else {
-            String::from("")
+            mmdb::format_string(&message, params).unwrap_or(message)
         };
+        #[cfg(not(feature = "mmdb"))]
+        let text = String::from("");
 
         let notice = ChatNotice {
             sender: sender_id,
