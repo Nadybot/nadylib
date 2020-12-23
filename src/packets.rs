@@ -640,6 +640,14 @@ impl OutgoingPacket for BuddyAddPacket {
     }
 }
 
+impl IncomingPacket for BuddyAddPacket {
+    fn load(mut data: &[u8]) -> Result<Self> {
+        let character_id = read_u32(&mut data);
+
+        Ok(Self { character_id })
+    }
+}
+
 impl IncomingPacket for BuddyRemovePacket {
     fn load(mut data: &[u8]) -> Result<Self> {
         let character_id = read_u32(&mut data);
