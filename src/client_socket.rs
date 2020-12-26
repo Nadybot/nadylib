@@ -36,7 +36,7 @@ pub struct AOSocket {
 async fn send_task(
     mut packet_queue: UnboundedReceiver<SerializedPacket>,
     mut sock: OwnedWriteHalf,
-    last_packet: Sender<Instant>,
+    last_packet: Option<Sender<Instant>>,
 ) -> Result<()> {
     loop {
         let (packet_type, mut packet_body) = packet_queue.recv().await.unwrap();
@@ -50,7 +50,10 @@ async fn send_task(
         buf.append(&mut packet_body);
 
         sock.write_all(&buf).await?;
-        last_packet.send(Instant::now())?;
+
+        if let Some(sender) = &last_packet {
+            sender.send(Instant::now())?;
+        }
     }
 }
 
@@ -106,13 +109,16 @@ impl AOSocket {
     pub fn from_stream(sock: TcpStream, config: SocketConfig) -> Self {
         let (rx, tx) = sock.into_split();
         let (send, recv) = unbounded_channel();
-        let (lp_send, lp_recv) = channel(Instant::now());
 
         let mut tasks = Vec::with_capacity(2);
+
         if config.keepalive {
+            let (lp_send, lp_recv) = channel(Instant::now());
             tasks.push(spawn(keepalive(send.clone(), lp_recv)));
+            tasks.push(spawn(send_task(recv, tx, Some(lp_send))));
+        } else {
+            tasks.push(spawn(send_task(recv, tx, None)));
         }
-        tasks.push(spawn(send_task(recv, tx, lp_send)));
 
         Self {
             read_half: rx,
