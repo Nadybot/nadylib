@@ -1,5 +1,5 @@
 use crate::{
-    client_socket::AOSocket,
+    client_socket::{AOSocket, SocketConfig},
     error::Result,
     models::Channel,
     packets::{BuddyAddPacket, LoginSelectPacket, ReceivedPacket},
@@ -25,7 +25,7 @@ pub struct Bot {
 impl Bot {
     /// Creates a new RK5 bot.
     pub async fn new(username: String, password: String, character: String) -> Result<Self> {
-        let socket = AOSocket::connect("chat.d1.funcom.com:7105").await?;
+        let socket = AOSocket::connect("chat.d1.funcom.com:7105", SocketConfig::default()).await?;
 
         Ok(Self {
             socket,

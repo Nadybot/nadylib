@@ -77,22 +77,41 @@ async fn keepalive(
     }
 }
 
+pub struct SocketConfig {
+    keepalive: bool,
+}
+
+impl Default for SocketConfig {
+    fn default() -> Self {
+        Self { keepalive: true }
+    }
+}
+
+impl SocketConfig {
+    pub fn keepalive(mut self, value: bool) -> Self {
+        self.keepalive = value;
+        self
+    }
+}
+
 impl AOSocket {
     /// Opens a TCP connection to the chat server specified in the address.
-    pub async fn connect<A: ToSocketAddrs>(addr: A) -> Result<Self> {
+    pub async fn connect<A: ToSocketAddrs>(addr: A, config: SocketConfig) -> Result<Self> {
         let sock = TcpStream::connect(addr).await?;
 
-        Ok(Self::from_stream(sock))
+        Ok(Self::from_stream(sock, config))
     }
 
     /// Starts the socket from an existing [`TcpStream`].
-    pub fn from_stream(sock: TcpStream) -> Self {
+    pub fn from_stream(sock: TcpStream, config: SocketConfig) -> Self {
         let (rx, tx) = sock.into_split();
         let (send, recv) = unbounded_channel();
         let (lp_send, lp_recv) = channel(Instant::now());
 
         let mut tasks = Vec::with_capacity(2);
-        tasks.push(spawn(keepalive(send.clone(), lp_recv)));
+        if config.keepalive {
+            tasks.push(spawn(keepalive(send.clone(), lp_recv)));
+        }
         tasks.push(spawn(send_task(recv, tx, lp_send)));
 
         Self {

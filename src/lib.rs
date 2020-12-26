@@ -21,6 +21,6 @@ pub mod models;
 pub mod packets;
 
 // pub use bot::Bot;
-pub use client_socket::AOSocket;
+pub use client_socket::{AOSocket, SocketConfig};
 pub use error::Result;
 pub use packets::ReceivedPacket;
