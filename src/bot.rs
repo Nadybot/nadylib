@@ -54,7 +54,10 @@ impl Bot {
         match self.buddies.get(&character_id) {
             Some(online) => Some(*online),
             None => {
-                let packet = BuddyAddPacket { character_id };
+                let packet = BuddyAddPacket {
+                    character_id,
+                    send_tag: String::from("\u{1}"),
+                };
                 self.socket.send(packet).ok()?;
                 sleep(Duration::from_millis(500)).await;
                 self.buddies.get(&character_id).cloned()

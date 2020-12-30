@@ -385,6 +385,8 @@ pub struct BuddyStatusPacket {
 pub struct BuddyAddPacket {
     /// The character to add as a buddy.
     pub character_id: u32,
+    /// Send tag, should always be \u{1}
+    pub send_tag: String,
 }
 
 /// Remove a buddy or confirmation of success.
@@ -629,7 +631,7 @@ impl OutgoingPacket for BuddyAddPacket {
     fn serialize(&self) -> SerializedPacket {
         let mut buf = Vec::with_capacity(7);
         write_u32(&mut buf, self.character_id);
-        write_string(&mut buf, "\u{1}");
+        write_string(&mut buf, &self.send_tag);
 
         (PacketType::BuddyAdd, buf)
     }
@@ -638,8 +640,12 @@ impl OutgoingPacket for BuddyAddPacket {
 impl IncomingPacket for BuddyAddPacket {
     fn load(mut data: &[u8]) -> Result<Self> {
         let character_id = read_u32(&mut data);
+        let send_tag = read_string(&mut data);
 
-        Ok(Self { character_id })
+        Ok(Self {
+            character_id,
+            send_tag,
+        })
     }
 }
 
