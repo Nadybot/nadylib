@@ -174,8 +174,8 @@ impl AOSocket {
                         LeakyBucket::builder()
                             .refill_amount(1)
                             .refill_interval(Duration::from_secs(2))
-                            .max(8)
-                            .tokens(8)
+                            .max(5)
+                            .tokens(5)
                             .build()
                             .unwrap(),
                     ),
