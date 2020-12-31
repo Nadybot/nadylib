@@ -30,11 +30,20 @@ use std::{convert::TryFrom, time::Duration};
 #[derive(Debug, Clone)]
 pub struct SocketSendHandle {
     sender: UnboundedSender<SerializedPacket>,
-    ratelimiter: LeakyBucket,
-    limit_tells: bool,
+    ratelimiter: Option<LeakyBucket>,
 }
 
 impl SocketSendHandle {
+    pub fn new(
+        sender: UnboundedSender<SerializedPacket>,
+        ratelimiter: Option<LeakyBucket>,
+    ) -> Self {
+        Self {
+            sender,
+            ratelimiter,
+        }
+    }
+
     pub async fn send<O: OutgoingPacket>(&self, packet: O) -> Result<()> {
         let (t, b) = packet.serialize();
         self.send_raw(t, b).await?;
@@ -42,8 +51,10 @@ impl SocketSendHandle {
     }
 
     pub async fn send_raw(&self, packet_type: PacketType, body: Vec<u8>) -> Result<()> {
-        if packet_type == PacketType::MsgPrivate && self.limit_tells {
-            self.ratelimiter.acquire_one().await?;
+        if packet_type == PacketType::MsgPrivate {
+            if let Some(limiter) = &self.ratelimiter {
+                limiter.acquire_one().await?;
+            }
         }
 
         self.sender.send((packet_type, body))?;
@@ -155,16 +166,23 @@ impl AOSocket {
             tasks.push(spawn(send_task(recv, tx, None)));
         }
 
-        let sender = SocketSendHandle {
-            sender: send,
-            ratelimiter: LeakyBucket::builder()
-                .refill_amount(1)
-                .refill_interval(Duration::from_secs(2))
-                .max(8)
-                .tokens(8)
-                .build()
-                .unwrap(),
-            limit_tells: config.limit_tells,
+        let sender = {
+            if config.limit_tells {
+                SocketSendHandle::new(
+                    send,
+                    Some(
+                        LeakyBucket::builder()
+                            .refill_amount(1)
+                            .refill_interval(Duration::from_secs(2))
+                            .max(8)
+                            .tokens(8)
+                            .build()
+                            .unwrap(),
+                    ),
+                )
+            } else {
+                SocketSendHandle::new(send, None)
+            }
         };
 
         Self {
