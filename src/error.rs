@@ -1,3 +1,4 @@
+use leaky_bucket::Error as BucketError;
 use num_enum::TryFromPrimitiveError;
 use tokio::{
     sync::{mpsc::error::SendError as MpscError, watch::error::SendError as WatchError},
@@ -21,6 +22,8 @@ pub enum Error {
     QueueError,
     /// Unable to update last ping time.
     PingError,
+    /// The ratelimiter failed to acquire.
+    RatelimitError,
 }
 
 impl From<IoError> for Error {
@@ -50,6 +53,12 @@ impl From<MpscError<SerializedPacket>> for Error {
 impl From<WatchError<Instant>> for Error {
     fn from(_: WatchError<Instant>) -> Self {
         Self::PingError
+    }
+}
+
+impl From<BucketError> for Error {
+    fn from(_: BucketError) -> Self {
+        Self::RatelimitError
     }
 }
 

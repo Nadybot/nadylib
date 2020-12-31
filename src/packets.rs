@@ -138,7 +138,7 @@ fn parse_ext_params(msg: &mut &[u8]) -> Option<Vec<mmdb::FormattingArgument>> {
 }
 
 /// Represents a kind of packet in the chat protocol.
-#[derive(Debug, TryFromPrimitive, Clone, Copy)]
+#[derive(Debug, TryFromPrimitive, Clone, Copy, PartialEq)]
 #[repr(u16)]
 pub enum PacketType {
     LoginSeed = 0,

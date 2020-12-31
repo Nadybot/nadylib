@@ -58,7 +58,7 @@ impl Bot {
                     character_id,
                     send_tag: String::from("\u{1}"),
                 };
-                self.socket.send(packet).ok()?;
+                self.socket.send(packet).await.ok()?;
                 sleep(Duration::from_millis(500)).await;
                 self.buddies.get(&character_id).cloned()
             }
@@ -98,7 +98,8 @@ impl Bot {
                 }
                 ReceivedPacket::LoginSeed(l) => {
                     self.socket
-                        .login(&self.username, &self.password, &l.login_seed)?;
+                        .login(&self.username, &self.password, &l.login_seed)
+                        .await?;
                 }
                 ReceivedPacket::LoginCharlist(c) => {
                     let character_id = c
@@ -108,7 +109,7 @@ impl Bot {
                         .unwrap()
                         .id;
                     let pack = LoginSelectPacket { character_id };
-                    self.socket.send(pack)?;
+                    self.socket.send(pack).await?;
                 }
                 ReceivedPacket::LoginOk => info!("Successfully logged in"),
                 ReceivedPacket::LoginError(e) => error!("{}", e.message),

@@ -8,6 +8,7 @@ use crate::{
 };
 
 use byteorder::{ByteOrder, NetworkEndian};
+use leaky_bucket::LeakyBucket;
 use tokio::{
     io::{AsyncReadExt, AsyncWriteExt},
     net::{
@@ -25,11 +26,36 @@ use tokio::{
 
 use std::{convert::TryFrom, time::Duration};
 
+/// A send handle for sending packets to an [`AOSocket`].
+#[derive(Debug, Clone)]
+pub struct SocketSendHandle {
+    sender: UnboundedSender<SerializedPacket>,
+    ratelimiter: LeakyBucket,
+    limit_tells: bool,
+}
+
+impl SocketSendHandle {
+    pub async fn send<O: OutgoingPacket>(&self, packet: O) -> Result<()> {
+        let (t, b) = packet.serialize();
+        self.send_raw(t, b).await?;
+        Ok(())
+    }
+
+    pub async fn send_raw(&self, packet_type: PacketType, body: Vec<u8>) -> Result<()> {
+        if packet_type == PacketType::MsgPrivate && self.limit_tells {
+            self.ratelimiter.acquire_one().await?;
+        }
+
+        self.sender.send((packet_type, body))?;
+        Ok(())
+    }
+}
+
 /// A TCP connection to the Funcom servers.
 #[derive(Debug)]
 pub struct AOSocket {
     read_half: OwnedReadHalf,
-    packet_queue_send: UnboundedSender<SerializedPacket>,
+    sender: SocketSendHandle,
     tasks: Vec<JoinHandle<Result<()>>>,
 }
 
@@ -80,19 +106,28 @@ async fn keepalive(
     }
 }
 
+#[derive(Debug)]
 pub struct SocketConfig {
     keepalive: bool,
+    limit_tells: bool,
 }
 
 impl Default for SocketConfig {
     fn default() -> Self {
-        Self { keepalive: true }
+        Self {
+            keepalive: true,
+            limit_tells: true,
+        }
     }
 }
 
 impl SocketConfig {
     pub fn keepalive(mut self, value: bool) -> Self {
         self.keepalive = value;
+        self
+    }
+    pub fn limit_tells(mut self, value: bool) -> Self {
+        self.limit_tells = value;
         self
     }
 }
@@ -120,40 +155,51 @@ impl AOSocket {
             tasks.push(spawn(send_task(recv, tx, None)));
         }
 
+        let sender = SocketSendHandle {
+            sender: send,
+            ratelimiter: LeakyBucket::builder()
+                .refill_amount(1)
+                .refill_interval(Duration::from_secs(2))
+                .max(8)
+                .tokens(8)
+                .build()
+                .unwrap(),
+            limit_tells: config.limit_tells,
+        };
+
         Self {
             read_half: rx,
-            packet_queue_send: send,
             tasks,
+            sender,
         }
     }
 
     /// Wrapper for generating a login key and sending a [`LoginRequestPacket`] to the server.
-    pub fn login(&self, username: &str, password: &str, login_seed: &str) -> Result<()> {
+    pub async fn login(&self, username: &str, password: &str, login_seed: &str) -> Result<()> {
         let key = generate_key(username, password, login_seed);
         let packet = LoginRequestPacket {
             username: username.to_owned(),
             key,
         };
-        self.send(packet)?;
+        self.send(packet).await?;
 
         Ok(())
     }
 
     /// Gets a handle to a send end of the internal receiver.
-    pub fn get_sender(&self) -> UnboundedSender<SerializedPacket> {
-        self.packet_queue_send.clone()
+    pub fn get_sender(&self) -> SocketSendHandle {
+        self.sender.clone()
     }
 
     /// Queues sending an [`OutgoingPacket`] over the TCP connection.
-    pub fn send<O: OutgoingPacket>(&self, packet: O) -> Result<()> {
-        let serialized = packet.serialize();
-        self.send_raw(serialized.0, serialized.1)
+    pub async fn send<O: OutgoingPacket>(&self, packet: O) -> Result<()> {
+        self.sender.send(packet).await?;
+        Ok(())
     }
 
     /// Queues sending a raw packet over the TCP connection.
-    pub fn send_raw(&self, packet_type: PacketType, body: Vec<u8>) -> Result<()> {
-        self.packet_queue_send.send((packet_type, body))?;
-
+    pub async fn send_raw(&self, packet_type: PacketType, body: Vec<u8>) -> Result<()> {
+        self.sender.send_raw(packet_type, body).await?;
         Ok(())
     }
 
