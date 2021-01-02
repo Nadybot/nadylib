@@ -629,6 +629,17 @@ impl IncomingPacket for BuddyStatusPacket {
     }
 }
 
+impl OutgoingPacket for BuddyStatusPacket {
+    fn serialize(&self) -> SerializedPacket {
+        let mut buf = Vec::with_capacity(8 + 2 + self.send_tag.len());
+        write_u32(&mut buf, self.character_id);
+        write_u32(&mut buf, self.online as u32);
+        write_string(&mut buf, &self.send_tag);
+
+        (PacketType::BuddyAdd, buf)
+    }
+}
+
 impl OutgoingPacket for BuddyAddPacket {
     fn serialize(&self) -> SerializedPacket {
         let mut buf = Vec::with_capacity(7);
