@@ -378,6 +378,8 @@ pub struct BuddyStatusPacket {
     pub character_id: u32,
     /// Whether the buddy is now online or not.
     pub online: bool,
+    /// Send tag from the server.
+    pub send_tag: String,
 }
 
 /// Add a buddy.
@@ -617,12 +619,12 @@ impl IncomingPacket for BuddyStatusPacket {
     fn load(mut data: &[u8]) -> Result<Self> {
         let character_id = read_u32(&mut data);
         let online = read_u32(&mut data) == 1;
-        // Seems unneeded
-        // let c = read_string(&mut data);
+        let send_tag = read_string(&mut data);
 
         Ok(Self {
             character_id,
             online,
+            send_tag,
         })
     }
 }
