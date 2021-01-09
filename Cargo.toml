@@ -5,20 +5,37 @@ authors = ["Jens Reidel <adrian@travitia.xyz>"]
 edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
-byteorder = "1.3"
+byteorder = "1.4"
 lazy_static = { version = "1.4", optional = true }
-leaky-bucket = { git = "https://github.com/Gelbpunkt/leaky-bucket", branch = "main" }
+leaky-bucket = "0.10"
 log = "0.4"
 num-bigint = { version = "0.3", features = ["rand"] }
 num-traits = "0.2"
 num_enum = "0.5"
-rand = "0.7"
-regex = { version = "1.4", default-features = false, features = ["std", "unicode-perl"], optional = true }
+rand = "0.8"
+regex = { version = "1.4", default-features = false, features = [
+    "std",
+    "unicode-perl"
+], optional = true }
 serde_json = { version = "1.0", optional = true }
 strfmt = { version = "0.1", optional = true }
-tokio = { version = "1.0", default-features = false, features = ["net", "rt", "io-util", "time", "sync"] }
+tokio = { version = "1.0", default-features = false, features = [
+    "net",
+    "rt",
+    "io-util",
+    "time",
+    "sync"
+] }
+
+[patch.crates-io]
+# leaky-bucket uses futures-util by default
+# this fork uses unicycle
+leaky-bucket = { git = "https://github.com/Gelbpunkt/leaky-bucket.git", branch = "main" }
+# num-bigint is on rand 0.7, see https://github.com/rust-num/num-bigint/pull/185
+num-bigint = { git = "https://github.com/Gelbpunkt/num-bigint.git", branch = "rand-0.8", features = [
+    "rand"
+] }
 
 [features]
 default = ["mmdb"]
