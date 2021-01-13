@@ -8,7 +8,7 @@ use crate::{
 use byteorder::{ByteOrder, NetworkEndian};
 use num_enum::TryFromPrimitive;
 
-use std::{convert::TryFrom, result::Result as OrigResult};
+use std::{convert::TryFrom, fmt::Display, result::Result as OrigResult};
 
 /// The maximum unsigned 32-bit integer, used to check if character lookup failed.
 const MAXINT: u32 = 4294967295;
@@ -75,8 +75,8 @@ fn write_string(target: &mut Vec<u8>, string: &str) {
 }
 
 #[cfg(feature = "mmdb")]
-fn parse_ext_params(msg: &mut &[u8]) -> Option<Vec<mmdb::FormattingArgument>> {
-    let mut args = Vec::new();
+fn parse_ext_params(msg: &mut &[u8]) -> Option<Vec<Box<dyn Display>>> {
+    let mut args: Vec<Box<dyn Display>> = Vec::new();
     while !msg.is_empty() {
         let data_type = msg[0] as char;
         *msg = &msg[1..];
@@ -87,18 +87,18 @@ fn parse_ext_params(msg: &mut &[u8]) -> Option<Vec<mmdb::FormattingArgument>> {
 
                 let string = String::from_utf8(msg[2..2 + len].to_vec()).ok()?;
                 *msg = &msg[2 + len..];
-                args.push(mmdb::FormattingArgument::String(string));
+                args.push(Box::new(string));
             }
             's' => {
                 let len = msg[0] as usize;
                 let string = String::from_utf8(msg[1..1 + len - 2].to_vec()).ok()?;
                 *msg = &msg[1 + len - 2..];
-                args.push(mmdb::FormattingArgument::String(string));
+                args.push(Box::new(string));
             }
             'I' => {
                 let num = NetworkEndian::read_u32(&msg[..4]);
                 *msg = &msg[4..];
-                args.push(mmdb::FormattingArgument::U32(num));
+                args.push(Box::new(num));
             }
             'i' => {}
             'u' => {
@@ -107,7 +107,7 @@ fn parse_ext_params(msg: &mut &[u8]) -> Option<Vec<mmdb::FormattingArgument>> {
                     n = n * 85 + (msg[i] as u32) - 33;
                 }
                 *msg = &msg[5..];
-                args.push(mmdb::FormattingArgument::U32(n));
+                args.push(Box::new(n));
             }
             'R' => {
                 let mut cat = 0;
@@ -119,15 +119,15 @@ fn parse_ext_params(msg: &mut &[u8]) -> Option<Vec<mmdb::FormattingArgument>> {
                     ins = ins * 85 + (msg[i] as u32) - 33;
                 }
                 *msg = &msg[10..];
-                let string = mmdb::get_message(cat, ins)?;
-                args.push(mmdb::FormattingArgument::String(string));
+                let string = mmdb::format_message(cat, ins, vec![]);
+                args.push(Box::new(string));
             }
             'l' => {
                 let ins = NetworkEndian::read_u32(&msg[..4]);
                 let cat = 20000;
-                let string = mmdb::get_message(cat, ins)?;
+                let string = mmdb::format_message(cat, ins, vec![]);
                 *msg = &msg[4..];
-                args.push(mmdb::FormattingArgument::String(string));
+                args.push(Box::new(string));
             }
             '~' => return Some(args),
             _ => return None,
@@ -754,9 +754,8 @@ impl IncomingPacket for ChatNoticePacket {
 
         #[cfg(feature = "mmdb")]
         let text = {
-            let message = mmdb::get_message(category_id, instance_id).ok_or(Error::PayloadError)?;
             let params = parse_ext_params(&mut arguments.as_slice()).ok_or(Error::PayloadError)?;
-            mmdb::format_string(&message, params).unwrap_or(message)
+            mmdb::format_message(category_id, instance_id, params)
         };
         #[cfg(not(feature = "mmdb"))]
         let text = String::from("");
