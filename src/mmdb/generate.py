@@ -41,16 +41,17 @@ for category, items in stuff.items():
 
             nonlocl.code += f"\n            let {alphabet[nonlocl.i]} = &arguments[{nonlocl.i}];"
             nonlocl.current_args += f", {alphabet[nonlocl.i]}"
+            num = nonlocl.i
             nonlocl.i += 1
 
             if not width and not precision:
-                return "{}"
+                return f"{{{num}}}"
             elif width and not precision:
-                return f"{{:{flags}{width}}}"
+                return f"{{{num}:{flags}{width}}}"
             elif not width and precision:
-                return f"{{:.{precision}}}"
+                return f"{{{num}:.{precision}}}"
             else:
-                return f"{{:{flags}{width}.{precision}}}"
+                return f"{{{num}:{flags}{width}.{precision}}}"
 
         new_format_string = re.sub(argument_regex, replace, string).replace("\r", "\\r").replace("\n", "\\n").replace('"', '\\\"')
 
@@ -58,7 +59,25 @@ for category, items in stuff.items():
         matches = re.findall(plural_regex, new_format_string)
         if matches:
             def replace(match: re.Match):
-                return "TEMP"
+                variable_num = int(match.group(1))
+                number_to_match = match.group(2)
+                if_true = match.group(3)
+                if_false = match.group(4)
+                variable_name_in_rust = alphabet[variable_num - 1]
+                nonlocl.code += f"""
+            let {alphabet[nonlocl.i]} = {{
+                if {variable_name_in_rust}.to_string() == "{number_to_match}" {{
+                    "{if_true}"
+                }} else {{
+                    "{if_false}"
+                }}
+            }};"""
+                nonlocl.current_args += f", {alphabet[nonlocl.i]}"
+                num = nonlocl.i
+                nonlocl.i += 1
+
+                return f"{{{num}}}"
+
             new_format_string = re.sub(plural_regex, replace, new_format_string)
 
         if nonlocl.current_args != "":

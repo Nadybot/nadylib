@@ -44,11 +44,11 @@ pub fn format_message(
         }
         (10003, 131011846) => {
             let a = &arguments[0];
-            format!("Unknown playfield {}", a)
+            format!("Unknown playfield {0}", a)
         }
         (10003, 255984867) => {
             let a = &arguments[0];
-            format!("Total: {} credits", a)
+            format!("Total: {0} credits", a)
         }
         (10003, 261859141) => {
             String::from("Name")
@@ -129,7 +129,7 @@ pub fn format_message(
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("{} at ({}, {})", a, b, c)
+            format!("{0} at ({1}, {2})", a, b, c)
         }
         (10003, 67532660) => {
             String::from("Chest")
@@ -181,11 +181,11 @@ pub fn format_message(
         }
         (10003, 207793496) => {
             let a = &arguments[0];
-            format!("Trading with {}.", a)
+            format!("Trading with {0}.", a)
         }
         (10003, 122636030) => {
             let a = &arguments[0];
-            format!("Commission: {}%", a)
+            format!("Commission: {0}%", a)
         }
         (10003, 103551268) => {
             String::from("Right hand")
@@ -278,7 +278,7 @@ pub fn format_message(
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("The tower {} in {} was just reduced to {} % health!", a, b, c)
+            format!("The tower {0} in {1} was just reduced to {2} % health!", a, b, c)
         }
         (506, 304804) => {
             String::from("Cost: ")
@@ -304,7 +304,7 @@ pub fn format_message(
             let c = &arguments[2];
             let d = &arguments[3];
             let e = &arguments[4];
-            format!("{} just initiated an attack in {} at location ({},{}). That area is controlled by {}. All districts controlled by your organization are open to attack! You are in a state of war. Leader chat informed.", a, b, c, d, e)
+            format!("{0} just initiated an attack in {1} at location ({2},{3}). That area is controlled by {4}. All districts controlled by your organization are open to attack! You are in a state of war. Leader chat informed.", a, b, c, d, e)
         }
         (506, 195152259) => {
             String::from("Defence skills: ")
@@ -345,7 +345,7 @@ pub fn format_message(
             let c = &arguments[2];
             let d = &arguments[3];
             let e = &arguments[4];
-            format!("The tower {} in {} was just reduced to {} % health by {} from the {} organization!", a, b, c, d, e)
+            format!("The tower {0} in {1} was just reduced to {2} % health by {3} from the {4} organization!", a, b, c, d, e)
         }
         (506, 1605541) => {
             String::from("It will be almost impossible to kill this alone.")
@@ -361,7 +361,7 @@ pub fn format_message(
         }
         (506, 91903877) => {
             let a = &arguments[0];
-            format!("<div indent=wrapped><font color=CCRed>{}% Effective</font></div>", a)
+            format!("<div indent=wrapped><font color=CCRed>{0}% Effective</font></div>", a)
         }
         (506, 21331) => {
             String::from("Location: ")
@@ -385,7 +385,7 @@ pub fn format_message(
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("{} days, {:02} hours, {:02} minutes.", a, b, c)
+            format!("{0} days, {1:02} hours, {2:02} minutes.", a, b, c)
         }
         (506, 8124532) => {
             String::from("Ranged Weapons Initiative")
@@ -402,7 +402,7 @@ pub fn format_message(
             let c = &arguments[2];
             let d = &arguments[3];
             let e = &arguments[4];
-            format!("{} just initiated an attack on playfield {} at location ({},{}). That area is controlled by {}. All districts controlled by your organization are open to attack! You are in a state of war. Leader chat informed.", a, b, c, d, e)
+            format!("{0} just initiated an attack on playfield {1} at location ({2},{3}). That area is controlled by {4}. All districts controlled by your organization are open to attack! You are in a state of war. Leader chat informed.", a, b, c, d, e)
         }
         (506, 163785971) => {
             String::from("Bullets")
@@ -433,7 +433,7 @@ pub fn format_message(
         }
         (506, 137665476) => {
             let a = &arguments[0];
-            format!("(Up to) {} SK. ", a)
+            format!("(Up to) {0} SK. ", a)
         }
         (506, 5147209) => {
             String::from("Equip delay: ")
@@ -452,7 +452,7 @@ pub fn format_message(
             let b = &arguments[1];
             let c = &arguments[2];
             let d = &arguments[3];
-            format!("The tower {} in {} was just reduced to {} % health by {}!", a, b, c, d)
+            format!("The tower {0} in {1} was just reduced to {2} % health by {3}!", a, b, c, d)
         }
         (506, 142393411) => {
             String::from("Team mission rules:<br>")
@@ -487,7 +487,7 @@ pub fn format_message(
         (506, 147836847) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("<font color=CCInfoHeader>Organization:</font>\r\n<font color=CCInfoText>{}</font>\r\n<font color=CCInfoHeader>Created at UTC:</font>\r\n<font color=CCInfoText>{}</font>\r\n", a, b)
+            format!("<font color=CCInfoHeader>Organization:</font>\r\n<font color=CCInfoText>{0}</font>\r\n<font color=CCInfoHeader>Created at UTC:</font>\r\n<font color=CCInfoText>{1}</font>\r\n", a, b)
         }
         (506, 303742) => {
             String::from("Clan: ")
@@ -516,7 +516,7 @@ pub fn format_message(
         (506, 196662245) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Attack {:.2}s<br>Recharge {:.2}s", a, b)
+            format!("Attack {0:.2}s<br>Recharge {1:.2}s", a, b)
         }
         (506, 45657746) => {
             String::from("Leather")
@@ -586,7 +586,7 @@ pub fn format_message(
         }
         (506, 177147043) => {
             let a = &arguments[0];
-            format!("{} credits", a)
+            format!("{0} credits", a)
         }
         (506, 94561941) => {
             String::from("UNIQUE ")
@@ -608,7 +608,7 @@ pub fn format_message(
         }
         (506, 41267315) => {
             let a = &arguments[0];
-            format!("(Up to) {} XP. ", a)
+            format!("(Up to) {0} XP. ", a)
         }
         (506, 42706676) => {
             String::from("NCU cost: ")
@@ -622,7 +622,7 @@ pub fn format_message(
             let c = &arguments[2];
             let d = &arguments[3];
             let e = &arguments[4];
-            format!("Your tower {} at X:{} and Z:{} in {} was just destroyed by {}!", a, b, c, d, e)
+            format!("Your tower {0} at X:{1} and Z:{2} in {3} was just destroyed by {4}!", a, b, c, d, e)
         }
         (506, 1) => {
             String::from("On Self:")
@@ -660,7 +660,7 @@ pub fn format_message(
             let f = &arguments[5];
             let g = &arguments[6];
             let h = &arguments[7];
-            format!("The {} organization {} just entered a state of war! {} attacked the {} organization {}'s tower in {} at location ({},{}).", a, b, c, d, e, f, g, h)
+            format!("The {0} organization {1} just entered a state of war! {2} attacked the {3} organization {4}'s tower in {5} at location ({6},{7}).", a, b, c, d, e, f, g, h)
         }
         (506, 11481395) => {
             String::from("Duel losses:")
@@ -668,7 +668,7 @@ pub fn format_message(
         (506, 70914326) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Ammo: {}/{}", a, b)
+            format!("Ammo: {0}/{1}", a, b)
         }
         (506, 82101762) => {
             String::from("Fixture: ")
@@ -717,7 +717,7 @@ pub fn format_message(
         }
         (506, 138689044) => {
             let a = &arguments[0];
-            format!("Ammo: {} (Stackable)", a)
+            format!("Ammo: {0} (Stackable)", a)
         }
         (506, 204507263) => {
             String::from("FullAuto ")
@@ -753,7 +753,7 @@ pub fn format_message(
             let d = &arguments[3];
             let e = &arguments[4];
             let f = &arguments[5];
-            format!("Your tower {} at X:{} and Z:{} in {} was just destroyed by {}, from the {} organization!", a, b, c, d, e, f)
+            format!("Your tower {0} at X:{1} and Z:{2} in {3} was just destroyed by {4}, from the {5} organization!", a, b, c, d, e, f)
         }
         (506, 103463160) => {
             String::from("On Death: ")
@@ -766,7 +766,7 @@ pub fn format_message(
         }
         (506, 174832085) => {
             let a = &arguments[0];
-            format!("Recharge {:.2}s", a)
+            format!("Recharge {0:.2}s", a)
         }
         (506, 143294329) => {
             String::from("GrassDry")
@@ -794,7 +794,7 @@ pub fn format_message(
             let b = &arguments[1];
             let c = &arguments[2];
             let d = &arguments[3];
-            format!("Your tower {} at X:{} and Z:{} in {} was just destroyed!", a, b, c, d)
+            format!("Your tower {0} at X:{1} and Z:{2} in {3} was just destroyed!", a, b, c, d)
         }
         (506, 266646693) => {
             String::from("Detachment title: ")
@@ -812,7 +812,7 @@ pub fn format_message(
             let d = &arguments[3];
             let e = &arguments[4];
             let f = &arguments[5];
-            format!("Your tower {} at X:{} and Z:{} in {} was just destroyed by {} from the {} organization!", a, b, c, d, e, f)
+            format!("Your tower {0} at X:{1} and Z:{2} in {3} was just destroyed by {4} from the {5} organization!", a, b, c, d, e, f)
         }
         (506, 197231867) => {
             String::from("Duel rank:")
@@ -828,7 +828,7 @@ pub fn format_message(
         }
         (506, 174831828) => {
             let a = &arguments[0];
-            format!("Attack {:.2}s", a)
+            format!("Attack {0:.2}s", a)
         }
         (506, 80189683) => {
             String::from("Fabric: ")
@@ -864,7 +864,7 @@ pub fn format_message(
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("Notum Wars Update: The {} organization {} lost their base in {}.", a, b, c)
+            format!("Notum Wars Update: The {0} organization {1} lost their base in {2}.", a, b, c)
         }
         (2000, 228) => {
             String::from("ShieldEnergyAC")
@@ -2849,11 +2849,11 @@ pub fn format_message(
         (507, 99004953) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("The Quality Level of the Controller is outside the level range of this area! The lowest level controller this area can hold is {} and the highest {}.", a, b)
+            format!("The Quality Level of the Controller is outside the level range of this area! The lowest level controller this area can hold is {0} and the highest {1}.", a, b)
         }
         (507, 180544675) => {
             let a = &arguments[0];
-            format!("This item is not usable in 75{}uppression gas.", a)
+            format!("This item is not usable in 75{0}uppression gas.", a)
         }
         (507, 163210435) => {
             String::from("seconds")
@@ -2879,7 +2879,7 @@ pub fn format_message(
         (507, 206524449) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("You volunteered to remove your controller from this area. You will have to wait {} {} before you can place another controller here.", a, b)
+            format!("You volunteered to remove your controller from this area. You will have to wait {0} {1} before you can place another controller here.", a, b)
         }
         (507, 35264956) => {
             String::from("The defense shield disabler item will have to be of at least the Quality Level of the controller in this district.\r\n")
@@ -2907,7 +2907,7 @@ pub fn format_message(
         }
         (507, 208892434) => {
             let a = &arguments[0];
-            format!("\r\n<font color=CCInfoHeader>Owner:</font>{}", a)
+            format!("\r\n<font color=CCInfoHeader>Owner:</font>{0}", a)
         }
         (507, 227013842) => {
             String::from("You must have the \"Notum Wars\" booster pack installed to build landcontrol towers.")
@@ -2951,7 +2951,7 @@ pub fn format_message(
         (507, 117310593) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Your organization has just lost the area, and must wait {} {} before you can place another controller here.", a, b)
+            format!("Your organization has just lost the area, and must wait {0} {1} before you can place another controller here.", a, b)
         }
         (507, 247833570) => {
             String::from("A data error occurred; please report this with your current position in Rubi-Ka!\r\n")
@@ -3006,7 +3006,7 @@ pub fn format_message(
         }
         (508, 233638763) => {
             let a = &arguments[0];
-            format!("{} more members need to kick player.", a)
+            format!("{0} more members need to kick player.", a)
         }
         (508, 247974149) => {
             String::from("The target is not from your side.  All players must have the same side in your organization.")
@@ -3021,7 +3021,7 @@ pub fn format_message(
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("Your leader, {}, just changed the organizational tax. The new tax is {} credits (the old value was {}).", a, b, c)
+            format!("Your leader, {0}, just changed the organizational tax. The new tax is {1} credits (the old value was {2}).", a, b, c)
         }
         (508, 179440135) => {
             String::from("No voting in progress.")
@@ -3031,11 +3031,11 @@ pub fn format_message(
         }
         (508, 143442663) => {
             let a = &arguments[0];
-            format!("Org Message: Your leader, {} has disbanded your organization.", a)
+            format!("Org Message: Your leader, {0} has disbanded your organization.", a)
         }
         (508, 147071208) => {
             let a = &arguments[0];
-            format!("GM removed character {} from your organization.", a)
+            format!("GM removed character {0} from your organization.", a)
         }
         (508, 61873061) => {
             String::from("Previous voting results...\r\n")
@@ -3047,29 +3047,29 @@ pub fn format_message(
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("You are not allowed to {} while suspended. You have {} minutes left on your suspension.¨\r\nYour debt is {} credits.\r\nNOTE: Your debt is automatically paid back at the end of your suspension time when you have enough credits.", a, b, c)
+            format!("You are not allowed to {0} while suspended. You have {1} minutes left on your suspension.¨\r\nYour debt is {2} credits.\r\nNOTE: Your debt is automatically paid back at the end of your suspension time when you have enough credits.", a, b, c)
         }
         (508, 100) => {
             String::from("use this command")
         }
         (508, 145730516) => {
             let a = &arguments[0];
-            format!(":Your Organization cannot initiate a bombing raid at the moment. Please wait at least {} seconds.", a)
+            format!(":Your Organization cannot initiate a bombing raid at the moment. Please wait at least {0} seconds.", a)
         }
         (508, 122) => {
             String::from("show your debt to the organization")
         }
         (508, 182058216) => {
             let a = &arguments[0];
-            format!("Your debt to the organization is {} credits.", a)
+            format!("Your debt to the organization is {0} credits.", a)
         }
         (508, 197560331) => {
             let a = &arguments[0];
-            format!("Governing form: {}\r\nRanks: ", a)
+            format!("Governing form: {0}\r\nRanks: ", a)
         }
         (508, 120551141) => {
             let a = &arguments[0];
-            format!("{} Voting can begin in a few seconds. Use '/org vote <voteentry id>' to cast your vote.", a)
+            format!("{0} Voting can begin in a few seconds. Use '/org vote <voteentry id>' to cast your vote.", a)
         }
         (508, 121) => {
             String::from("distribute org bank credits to members")
@@ -3077,7 +3077,7 @@ pub fn format_message(
         (508, 37093479) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("{} kicked {} from your organization.", a, b)
+            format!("{0} kicked {1} from your organization.", a, b)
         }
         (508, 210090949) => {
             String::from("GM overriding auto-leadership-election.")
@@ -3091,23 +3091,30 @@ pub fn format_message(
         (508, 5931833) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("{} ( {} TEMP ):", a, b)
+            let c = {
+                if b.to_string() == "1" {
+                    "vote "
+                } else {
+                    " votes"
+                }
+            };
+            format!("{0} ( {1} {2} ):", a, b, c)
         }
         (508, 162192978) => {
             String::from("You cannot leave the organization without appointing another leader first!")
         }
         (508, 16378820) => {
             let a = &arguments[0];
-            format!("Results for \"{}\"...\r\nStatus: ", a)
+            format!("Results for \"{0}\"...\r\nStatus: ", a)
         }
         (508, 165930356) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Organizational tax changed from {} to {} credits.", a, b)
+            format!("Organizational tax changed from {0} to {1} credits.", a, b)
         }
         (508, 142934233) => {
             let a = &arguments[0];
-            format!(" Your rank is {}.", a)
+            format!(" Your rank is {0}.", a)
         }
         (508, 111) => {
             String::from("demote a member")
@@ -3150,14 +3157,21 @@ pub fn format_message(
             let b = &arguments[1];
             let c = &arguments[2];
             let d = &arguments[3];
-            format!("Your controller tower in {} in {} has had its defense shield disabled by {} ({}).", a, b, c, d)
+            format!("Your controller tower in {0} in {1} has had its defense shield disabled by {2} ({3}).", a, b, c, d)
         }
         (508, 68628373) => {
             String::from("The legal vote time is between 2 and 10080 minutes. ( 10080 minutes is 1 week ).")
         }
         (508, 112284196) => {
             let a = &arguments[0];
-            format!("{} TEMP voted.", a)
+            let b = {
+                if a.to_string() == "1" {
+                    "member "
+                } else {
+                    " members"
+                }
+            };
+            format!("{0} {1} voted.", a, b)
         }
         (508, 95062979) => {
             String::from("\r\nStatus: ")
@@ -3170,7 +3184,7 @@ pub fn format_message(
         }
         (508, 124161096) => {
             let a = &arguments[0];
-            format!("  The attacker is a member of the organization {}.", a)
+            format!("  The attacker is a member of the organization {0}.", a)
         }
         (508, 130903587) => {
             String::from("Only the leader is allowed to change the description.")
@@ -3178,12 +3192,12 @@ pub fn format_message(
         (508, 138965334) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("{} changed governing form to '{}'.", a, b)
+            format!("{0} changed governing form to '{1}'.", a, b)
         }
         (508, 173558247) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("{} invited {} to your organization.", a, b)
+            format!("{0} invited {1} to your organization.", a, b)
         }
         (508, 215) => {
             String::from("Unknown error.")
@@ -3202,14 +3216,14 @@ pub fn format_message(
             let b = &arguments[1];
             let c = &arguments[2];
             let d = &arguments[3];
-            format!("{}, {} and {} kicked {} from the organization.", a, b, c, d)
+            format!("{0}, {1} and {2} kicked {3} from the organization.", a, b, c, d)
         }
         (508, 88959635) => {
             String::from("No votes were cast.")
         }
         (508, 181849080) => {
             let a = &arguments[0];
-            format!(" You have voted for {}", a)
+            format!(" You have voted for {0}", a)
         }
         (508, 34648027) => {
             String::from("The defense shield is disabled.  The towers are attackable!")
@@ -3222,7 +3236,7 @@ pub fn format_message(
             let b = &arguments[1];
             let c = &arguments[2];
             let d = &arguments[3];
-            format!("<font color=CCInfoHeader>In: </font><font color=CCInfoText>\"{}\"</font>\r\n<font color=CCInfoHeader>Area: </font><font color=CCInfoText>{}</font>\r\n<font color=CCInfoHeader>Type: </font><font color=CCInfoText>{}</font>\r\n<font color=CCInfoHeader>Level: </font><font color=CCInfoText>{}</font>", a, b, c, d)
+            format!("<font color=CCInfoHeader>In: </font><font color=CCInfoText>\"{0}\"</font>\r\n<font color=CCInfoHeader>Area: </font><font color=CCInfoText>{1}</font>\r\n<font color=CCInfoHeader>Type: </font><font color=CCInfoText>{2}</font>\r\n<font color=CCInfoHeader>Level: </font><font color=CCInfoText>{3}</font>", a, b, c, d)
         }
         (508, 3) => {
             String::from("Fourth place")
@@ -3230,14 +3244,14 @@ pub fn format_message(
         (508, 201631363) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("\r\n<font color=CCInfoHeader>Controlled areas: </font><font color=CCInfoText>Currently in control of {} out of max {} areas.</font>\r\n", a, b)
+            format!("\r\n<font color=CCInfoHeader>Controlled areas: </font><font color=CCInfoText>Currently in control of {0} out of max {1} areas.</font>\r\n", a, b)
         }
         (508, 222804051) => {
             String::from("Only leaders can take credits out of the organization.")
         }
         (508, 233483144) => {
             let a = &arguments[0];
-            format!("Could not start vote for new leader! {} has been appointed as leader of this organization.", a)
+            format!("Could not start vote for new leader! {0} has been appointed as leader of this organization.", a)
         }
         (508, 63867572) => {
             String::from("Only the leader or a GM can disband your organization.")
@@ -3256,7 +3270,7 @@ pub fn format_message(
         }
         (508, 176308692) => {
             let a = &arguments[0];
-            format!("Blammo! {} has launched an orbital attack!", a)
+            format!("Blammo! {0} has launched an orbital attack!", a)
         }
         (508, 181351343) => {
             String::from("Your rank is not high enough for you to be able to invite new members. You must be at least 3 ranks above the lowest rank in your organization.  (The new member entry rank.) Use \"/org ranks\" to see the available ranks in your organization.")
@@ -3266,7 +3280,7 @@ pub fn format_message(
         }
         (508, 201946636) => {
             let a = &arguments[0];
-            format!("You cannot demote {} to that rank because it is filled up.", a)
+            format!("You cannot demote {0} to that rank because it is filled up.", a)
         }
         (508, 113) => {
             String::from("kick member by name")
@@ -3274,12 +3288,12 @@ pub fn format_message(
         (508, 67129906) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("You demoted {} to the rank of {}.", a, b)
+            format!("You demoted {0} to the rank of {1}.", a, b)
         }
         (508, 254100788) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Insufficient credits ({}) available in the organization bank to pay the city upkeep of {} credits. Your city has been demolished.", a, b)
+            format!("Insufficient credits ({0}) available in the organization bank to pay the city upkeep of {1} credits. Your city has been demolished.", a, b)
         }
         (508, 109) => {
             String::from("cast your vote")
@@ -3287,7 +3301,7 @@ pub fn format_message(
         (508, 139452332) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("You cannot promote {} to that rank because it is filled up. Please demote someone from rank {} first...", a, b)
+            format!("You cannot promote {0} to that rank because it is filled up. Please demote someone from rank {1} first...", a, b)
         }
         (508, 5) => {
             String::from("Sixth place")
@@ -3321,7 +3335,7 @@ pub fn format_message(
         }
         (508, 77728843) => {
             let a = &arguments[0];
-            format!("<font color=CCInfoHeader>Organization Rank: </font><fontcolor=CCInfoText>{}</font>\r\n", a)
+            format!("<font color=CCInfoHeader>Organization Rank: </font><fontcolor=CCInfoText>{0}</font>\r\n", a)
         }
         (508, 165999076) => {
             String::from("Governing form changed for the organization.")
@@ -3333,7 +3347,7 @@ pub fn format_message(
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("Online members will receive {} credits immediately. Members not online will receive {} credits when they login. Suspended members will have their debt reduced by {} credits.", a, b, c)
+            format!("Online members will receive {0} credits immediately. Members not online will receive {1} credits when they login. Suspended members will have their debt reduced by {2} credits.", a, b, c)
         }
         (508, 10672340) => {
             String::from("Voting has finished. Results will be shown in a few seconds.")
@@ -3349,19 +3363,19 @@ pub fn format_message(
         }
         (508, 166906756) => {
             let a = &arguments[0];
-            format!("Organization leader has stopped the voting with message : \"{}\"", a)
+            format!("Organization leader has stopped the voting with message : \"{0}\"", a)
         }
         (508, 213809944) => {
             let a = &arguments[0];
-            format!("Your vote has been cast. You voted for {}", a)
+            format!("Your vote has been cast. You voted for {0}", a)
         }
         (508, 5146599) => {
             let a = &arguments[0];
-            format!("{} has joined your organization.", a)
+            format!("{0} has joined your organization.", a)
         }
         (508, 240339044) => {
             let a = &arguments[0];
-            format!("Your Organization cannot initiate a laser strike at the moment. Please wait at least {} seconds.", a)
+            format!("Your Organization cannot initiate a laser strike at the moment. Please wait at least {0} seconds.", a)
         }
         (508, 124) => {
             String::from("change organization objective")
@@ -3372,7 +3386,14 @@ pub fn format_message(
         (508, 54457652) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("{} ( {} TEMP each ):", a, b)
+            let c = {
+                if b.to_string() == "1" {
+                    "vote "
+                } else {
+                    " votes"
+                }
+            };
+            format!("{0} ( {1} {2} each ):", a, b, c)
         }
         (508, 119) => {
             String::from("add money to the organization bank")
@@ -3397,7 +3418,7 @@ pub fn format_message(
         }
         (508, 236103944) => {
             let a = &arguments[0];
-            format!("You were just promoted by a GM to the rank of {}.", a)
+            format!("You were just promoted by a GM to the rank of {0}.", a)
         }
         (508, 5429092) => {
             String::from("The specified amount of credits is not allowed.")
@@ -3408,36 +3429,36 @@ pub fn format_message(
         (508, 192652356) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("{} credits have been deducted from the organization bank for the upkeep of your city. Next payment is due in {} days.", a, b)
+            format!("{0} credits have been deducted from the organization bank for the upkeep of your city. Next payment is due in {1} days.", a, b)
         }
         (508, 33183704) => {
             let a = &arguments[0];
-            format!("GM kicked {} from your organization.", a)
+            format!("GM kicked {0} from your organization.", a)
         }
         (508, 168300623) => {
             String::from("Voting is curently in progress. You cannot start voting on a new issue until the current voring has finished. If you enter /stopvote, you cancel the current voting without knowing the result.")
         }
         (508, 45978487) => {
             let a = &arguments[0];
-            format!("{} just left your organization.", a)
+            format!("{0} just left your organization.", a)
         }
         (508, 114148739) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("There is a minumum period of {} minutes between voting. Voting may be started in {} minutes from now.", a, b)
+            format!("There is a minumum period of {0} minutes between voting. Voting may be started in {1} minutes from now.", a, b)
         }
         (508, 206008469) => {
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("Voting notice for \"{}\"...\r\nDuration: {} minutes\r\nCandidates: {}\r\nVoting can begin in a few seconds. Use '/org vote <voteentry id>' to cast your vote.\r\n", a, b, c)
+            format!("Voting notice for \"{0}\"...\r\nDuration: {1} minutes\r\nCandidates: {2}\r\nVoting can begin in a few seconds. Use '/org vote <voteentry id>' to cast your vote.\r\n", a, b, c)
         }
         (508, 208492008) => {
             String::from("show organization tax")
         }
         (508, 241047288) => {
             let a = &arguments[0];
-            format!("Leadership has been given to {}.", a)
+            format!("Leadership has been given to {0}.", a)
         }
         (508, 114) => {
             String::from("invite a player to your organization")
@@ -3445,7 +3466,7 @@ pub fn format_message(
         (508, 105314766) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("You were just promoted by {} to the rank of {}.", a, b)
+            format!("You were just promoted by {0} to the rank of {1}.", a, b)
         }
         (508, 236096388) => {
             String::from("Tax owed to your organization has been paid. ( If you were on suspension, you have been reinstated. )")
@@ -3491,7 +3512,7 @@ pub fn format_message(
         }
         (508, 119220807) => {
             let a = &arguments[0];
-            format!("Org Message: The GM {} has disbanded your organization.", a)
+            format!("Org Message: The GM {0} has disbanded your organization.", a)
         }
         (508, 179467989) => {
             String::from("Could not understand vote. Example uses : /org vote info, /org vote 1")
@@ -3508,11 +3529,18 @@ pub fn format_message(
         (508, 116442029) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Leadership has been given to {} by GM {}.", a, b)
+            format!("Leadership has been given to {0} by GM {1}.", a, b)
         }
         (508, 67317284) => {
             let a = &arguments[0];
-            format!("{} TEMP remaining.", a)
+            let b = {
+                if a.to_string() == "1" {
+                    "minute "
+                } else {
+                    " minutes"
+                }
+            };
+            format!("{0} {1} remaining.", a, b)
         }
         (508, 192779843) => {
             String::from("Your organization already owns a city. You only have limited access to this city terminal.")
@@ -3520,29 +3548,29 @@ pub fn format_message(
         (508, 20908201) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("{} removed inactive character {} from your organization.", a, b)
+            format!("{0} removed inactive character {1} from your organization.", a, b)
         }
         (508, 102) => {
             String::from("get organization rank info")
         }
         (508, 108633128) => {
             let a = &arguments[0];
-            format!("You were deducted {} credits organization tax.", a)
+            format!("You were deducted {0} credits organization tax.", a)
         }
         (508, 101) => {
             String::from("create a new organization")
         }
         (508, 53724837) => {
             let a = &arguments[0];
-            format!("There is currently no active character called '{}'.", a)
+            format!("There is currently no active character called '{0}'.", a)
         }
         (508, 89144094) => {
             let a = &arguments[0];
-            format!("Voting information for \"{}\"...\r\nCandidates: ", a)
+            format!("Voting information for \"{0}\"...\r\nCandidates: ", a)
         }
         (508, 78644776) => {
             let a = &arguments[0];
-            format!("Organization bank account: {} credits.", a)
+            format!("Organization bank account: {0} credits.", a)
         }
         (508, 258658757) => {
             String::from("Only the leader or a GM can initiate voting for your organization.")
@@ -3555,7 +3583,7 @@ pub fn format_message(
         }
         (508, 177338229) => {
             let a = &arguments[0];
-            format!("Organization leader has stopped the voting with message \"{}\"", a)
+            format!("Organization leader has stopped the voting with message \"{0}\"", a)
         }
         (508, 104) => {
             String::from("close the organization contract container")
@@ -3563,7 +3591,7 @@ pub fn format_message(
         (508, 205958398) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("You were just demoted by {} to the rank of {}.", a, b)
+            format!("You were just demoted by {0} to the rank of {1}.", a, b)
         }
         (508, 137012854) => {
             String::from("Invalid governing form. Valid governing forms are:\r\n")
@@ -3573,7 +3601,7 @@ pub fn format_message(
         }
         (508, 248298914) => {
             let a = &arguments[0];
-            format!("{} is not a member.", a)
+            format!("{0} is not a member.", a)
         }
         (508, 117) => {
             String::from("set new organization tax for members")
@@ -3589,7 +3617,7 @@ pub fn format_message(
         }
         (508, 33524638) => {
             let a = &arguments[0];
-            format!("Only the leader is allowed to {}.", a)
+            format!("Only the leader is allowed to {0}.", a)
         }
         (508, 125) => {
             String::from("change organization description")
@@ -3601,7 +3629,7 @@ pub fn format_message(
             let d = &arguments[3];
             let e = &arguments[4];
             let f = &arguments[5];
-            format!("<font color=CCInfoHeadline>Organization information</font>\r\n<font color=CCInfoHeader>Name: </font><font color=CCInfoText>{}</font>\r\n<font color=CCInfoHeader>Leader: </font><font color=CCInfoText>{}</font>\r\n<font color=CCInfoHeader>GoverningForm: </font><font color=CCInfoText>{}</font>\r\n<font color=CCInfoHeader>Description: </font><font color=CCInfoText>{}</font>\r\n<font color=CCInfoHeader>Objective: </font><font color=CCInfoText>{}</font>\r\n<font color=CCInfoHeader>History: </font><font color=CCInfoText>{}</font>\r\n", a, b, c, d, e, f)
+            format!("<font color=CCInfoHeadline>Organization information</font>\r\n<font color=CCInfoHeader>Name: </font><font color=CCInfoText>{0}</font>\r\n<font color=CCInfoHeader>Leader: </font><font color=CCInfoText>{1}</font>\r\n<font color=CCInfoHeader>GoverningForm: </font><font color=CCInfoText>{2}</font>\r\n<font color=CCInfoHeader>Description: </font><font color=CCInfoText>{3}</font>\r\n<font color=CCInfoHeader>Objective: </font><font color=CCInfoText>{4}</font>\r\n<font color=CCInfoHeader>History: </font><font color=CCInfoText>{5}</font>\r\n", a, b, c, d, e, f)
         }
         (508, 111800288) => {
             String::from("Could not understand voting data. Usage : /org startvote <desc> <duration> <choices>. e.g. /org startvote \"Keep me as leader?\" 60 1:yes 2:no\r\n")
@@ -3615,7 +3643,7 @@ pub fn format_message(
         (508, 196585349) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Your city upkeep payment of {} credits is due in {} hour(s). Please make sure the full upkeep amount is available in the organization bank or you will lose your city.", a, b)
+            format!("Your city upkeep payment of {0} credits is due in {1} hour(s). Please make sure the full upkeep amount is available in the organization bank or you will lose your city.", a, b)
         }
         (508, 0) => {
             String::from("First place")
@@ -3625,11 +3653,11 @@ pub fn format_message(
         }
         (508, 224583380) => {
             let a = &arguments[0];
-            format!("Members were deducted {} credits each to pay your organizational debt.", a)
+            format!("Members were deducted {0} credits each to pay your organizational debt.", a)
         }
         (508, 87033703) => {
             let a = &arguments[0];
-            format!("{} is already member of another organization. Players must leave their current organizations before joining another.", a)
+            format!("{0} is already member of another organization. Players must leave their current organizations before joining another.", a)
         }
         (508, 135224629) => {
             String::from("This organization has a governing form with no structure for voting.")
@@ -3637,7 +3665,7 @@ pub fn format_message(
         (508, 173242677) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Voting notice for \"{}\"\r\nDuration: {}\r\nCandidates: ", a, b)
+            format!("Voting notice for \"{0}\"\r\nDuration: {1}\r\nCandidates: ", a, b)
         }
         (508, 203390621) => {
             String::from("You must target a player of your own organization to promote her/him.")
@@ -3686,15 +3714,15 @@ pub fn format_message(
         }
         (508, 134643352) => {
             let a = &arguments[0];
-            format!("Governing form changed to '{}'.", a)
+            format!("Governing form changed to '{0}'.", a)
         }
         (508, 147506147) => {
             let a = &arguments[0];
-            format!("\"{}\"...", a)
+            format!("\"{0}\"...", a)
         }
         (508, 147882695) => {
             let a = &arguments[0];
-            format!("The current level of organizational tax is {}.", a)
+            format!("The current level of organizational tax is {0}.", a)
         }
         (508, 167722847) => {
             String::from("You have to be the leader, or someone 3 organizational ranks above the player to kick him from the organization. Do /org ranks to see a list of the available ranks in your organization. If your organization does not support many organizational ranks, use /org contract to change the organizational hierarchy.")
@@ -3708,7 +3736,7 @@ pub fn format_message(
         (508, 39868162) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("You promoted {} to the rank of {}.", a, b)
+            format!("You promoted {0} to the rank of {1}.", a, b)
         }
         (508, 52554313) => {
             String::from("Only the leader is allowed to change the history.")
@@ -3718,7 +3746,7 @@ pub fn format_message(
         }
         (508, 99189171) => {
             let a = &arguments[0];
-            format!("The number [{}] exceeds the maximum number of options on vote. Please do a '/org vote info' for details.\r\n", a)
+            format!("The number [{0}] exceeds the maximum number of options on vote. Please do a '/org vote info' for details.\r\n", a)
         }
         (508, 110113751) => {
             String::from("You're not in an organization.")
@@ -3736,16 +3764,16 @@ pub fn format_message(
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("{}, {} and {} kicked you from the organization.", a, b, c)
+            format!("{0}, {1} and {2} kicked you from the organization.", a, b, c)
         }
         (508, 210489620) => {
             let a = &arguments[0];
-            format!("You cannot withdraw more credits from the organizational bank account than is currently in it. The account holds {} credits right now.", a)
+            format!("You cannot withdraw more credits from the organizational bank account than is currently in it. The account holds {0} credits right now.", a)
         }
         (101, 8) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("You unlearned a Perk {} hours ago. Perks can only be unlearned once every {} hours.", a, b)
+            format!("You unlearned a Perk {0} hours ago. Perks can only be unlearned once every {1} hours.", a, b)
         }
         (101, 113533356) => {
             String::from("Your target is normally not allowed to attack you, due to level restrictions in PvP.  Would you still like to attack?")
@@ -3756,7 +3784,7 @@ pub fn format_message(
         (101, 10) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("You lost faction with {}: {} faction points.", a, b)
+            format!("You lost faction with {0}: {1} faction points.", a, b)
         }
         (101, 1) => {
             String::from("You must be in a different form to perform this action!")
@@ -3764,25 +3792,25 @@ pub fn format_message(
         (101, 12) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("You just decreased your faction standing with {} to a whole new level! You are now a {} them!", a, b)
+            format!("You just decreased your faction standing with {0} to a whole new level! You are now a {1} them!", a, b)
         }
         (101, 88659692) => {
             let a = &arguments[0];
-            format!("Welcome to Shadowlevel {}.", a)
+            format!("Welcome to Shadowlevel {0}.", a)
         }
         (101, 11) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Congratulations! You just improved your faction standing with {} to a whole new degree! They now see you as {} them!", a, b)
+            format!("Congratulations! You just improved your faction standing with {0} to a whole new degree! They now see you as {1} them!", a, b)
         }
         (101, 7) => {
             let a = &arguments[0];
-            format!("You must have the {} Perk.", a)
+            format!("You must have the {0} Perk.", a)
         }
         (101, 9) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("You gained faction with {}: {} faction points.", a, b)
+            format!("You gained faction with {0}: {1} faction points.", a, b)
         }
         (101, 28798749) => {
             String::from("Your target is grouped with someone at a level where they would normally not be allowed to attack you, due to level restrictions in PvP.  Would you still like to attack?")
@@ -4123,16 +4151,16 @@ pub fn format_message(
         (1001, 4) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("{} removed the organization headquarters in {}!  All personal belongings or houses in the city were instantly destroyed!", a, b)
+            format!("{0} removed the organization headquarters in {1}!  All personal belongings or houses in the city were instantly destroyed!", a, b)
         }
         (1001, 1) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("{} turned the cloaking device in your city {}.", a, b)
+            format!("{0} turned the cloaking device in your city {1}.", a, b)
         }
         (1001, 3) => {
             let a = &arguments[0];
-            format!("Your city in {} has been targeted by hostile forces.", a)
+            format!("Your city in {0} has been targeted by hostile forces.", a)
         }
         (1001, 1781255) => {
             String::from("a disbanded organization")
@@ -4141,7 +4169,7 @@ pub fn format_message(
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("{} has initiated removal of a {} in {}!  The house and all belongings in the house will be destroyed in 2 minutes.", a, b, c)
+            format!("{0} has initiated removal of a {1} in {2}!  The house and all belongings in the house will be destroyed in 2 minutes.", a, b, c)
         }
         (1001, 2) => {
             String::from("Your radar station is picking up alien activity in the area surrounding your city.")
@@ -4153,16 +4181,16 @@ pub fn format_message(
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("{} removed a {} in {}!  All benefits from this house and all belongings in the house were instantly destroyed!", a, b, c)
+            format!("{0} removed a {1} in {2}!  All benefits from this house and all belongings in the house were instantly destroyed!", a, b, c)
         }
         (1001, 254018580) => {
             let a = &arguments[0];
-            format!("ICC planet-wide announcement: {} has been awarded the highest honorary rank for outstanding dedication to the defence of Rubi-Ka.", a)
+            format!("ICC planet-wide announcement: {0} has been awarded the highest honorary rank for outstanding dedication to the defence of Rubi-Ka.", a)
         }
         (1001, 7) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("{} has initiated removal of the HQ in {}!  The house and all belongings in the house will be destroyed in 2 minutes. This will also cause the other houses in the city to be deleted!", a, b)
+            format!("{0} has initiated removal of the HQ in {1}!  The house and all belongings in the house will be destroyed in 2 minutes. This will also cause the other houses in the city to be deleted!", a, b)
         }
         (700, 179922163) => {
             String::from("strong3")
@@ -4855,7 +4883,7 @@ pub fn format_message(
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("Your character '{}' is currently deactivated.\r\n\r\nIf you proceed to log in, this character will be marked as \"active\" and will then consume an available character slot.\r\n\r\nYou currently have {} out of {} available character slots.\r\n\r\nDo you wish to proceed logging in?", a, b, c)
+            format!("Your character '{0}' is currently deactivated.\r\n\r\nIf you proceed to log in, this character will be marked as \"active\" and will then consume an available character slot.\r\n\r\nYou currently have {1} out of {2} available character slots.\r\n\r\nDo you wish to proceed logging in?", a, b, c)
         }
         (700, 183851093) => {
             String::from("Tower Build Menu")
@@ -6234,7 +6262,7 @@ pub fn format_message(
         (509, 125021838) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Breed: {}\r\nProfession: {}", a, b)
+            format!("Breed: {0}\r\nProfession: {1}", a, b)
         }
         (509, 0) => {
             String::from("Normal House")
@@ -6550,13 +6578,13 @@ pub fn format_message(
         }
         (1000, 267728564) => {
             let a = &arguments[0];
-            format!("You received {} credits as surrender gift.", a)
+            format!("You received {0} credits as surrender gift.", a)
         }
         (1000, 10088188) => {
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("Are you sure you want to send {} credits and {} to {}?", a, b, c)
+            format!("Are you sure you want to send {0} credits and {1} to {2}?", a, b, c)
         }
         (1000, 202886865) => {
             String::from("Social tab can not be activated in PVP areas.")
@@ -6566,7 +6594,7 @@ pub fn format_message(
             let b = &arguments[1];
             let c = &arguments[2];
             let d = &arguments[3];
-            format!("Unable to perform action {} perk is locked, able in {:02}:{:02}:{:02}", a, b, c, d)
+            format!("Unable to perform action {0} perk is locked, able in {1:02}:{2:02}:{3:02}", a, b, c, d)
         }
         (1000, 140399673) => {
             String::from("A massive artillery strike from the alien mothership has resulted in your death.")
@@ -6576,7 +6604,7 @@ pub fn format_message(
             let b = &arguments[1];
             let c = &arguments[2];
             let d = &arguments[3];
-            format!("Unable to perform action, {} skill is locked, able in {:02}:{:02}:{:02}", a, b, c, d)
+            format!("Unable to perform action, {0} skill is locked, able in {1:02}:{2:02}:{3:02}", a, b, c, d)
         }
         (1000, 129558592) => {
             String::from("Congratulations on reaching level 10! You can continue playing for free in a whole new world of adventure, action and exploration by downloading the full version of Anarchy Online Classic. See www.anarchy-online.com for details and download links.")
@@ -6584,7 +6612,7 @@ pub fn format_message(
         (1000, 22211373) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Are you sure you want to send {} credits and {}?", a, b)
+            format!("Are you sure you want to send {0} credits and {1}?", a, b)
         }
         (1000, 157877875) => {
             String::from("Yes")
@@ -6597,7 +6625,7 @@ pub fn format_message(
         }
         (1000, 73139891) => {
             let a = &arguments[0];
-            format!("Are you sure you want to accept the item and pay {} credits to the sender?", a)
+            format!("Are you sure you want to accept the item and pay {0} credits to the sender?", a)
         }
         (1000, 20773493) => {
             String::from("Are you sure you want to use this item?")
@@ -6616,7 +6644,7 @@ pub fn format_message(
             let b = &arguments[1];
             let c = &arguments[2];
             let d = &arguments[3];
-            format!("<font color=CCInfoHeader>Time until suppression field changes to {}%:</font> {:02}:{:02}:{:02}", a, b, c, d)
+            format!("<font color=CCInfoHeader>Time until suppression field changes to {0}%:</font> {1:02}:{2:02}:{3:02}", a, b, c, d)
         }
         (1000, 137366172) => {
             String::from("PVP is not allowed when social tab is active.")
@@ -6625,7 +6653,7 @@ pub fn format_message(
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("Are you sure you want to send {} to {} and request {} credits in return? A commision of 5% will be charged by the mail system.", a, b, c)
+            format!("Are you sure you want to send {0} to {1} and request {2} credits in return? A commision of 5% will be charged by the mail system.", a, b, c)
         }
         (1000, 151981284) => {
             String::from("Hyperspace transport field is increasing in strength. Leave area to avoid potential permanent death.")
@@ -6641,11 +6669,11 @@ pub fn format_message(
         }
         (1000, 257836195) => {
             let a = &arguments[0];
-            format!("{} appears...", a)
+            format!("{0} appears...", a)
         }
         (1000, 77097141) => {
             let a = &arguments[0];
-            format!("{} became visible...", a)
+            format!("{0} became visible...", a)
         }
         (1000, 81728596) => {
             String::from("This controller has already been deactivated.")
@@ -6658,13 +6686,20 @@ pub fn format_message(
         }
         (1000, 743316) => {
             let a = &arguments[0];
-            format!("{} TEMP deducted from your account.", a)
+            let b = {
+                if a.to_string() == "1" {
+                    " credit was"
+                } else {
+                    " credits were"
+                }
+            };
+            format!("{0} {1} deducted from your account.", a, b)
         }
         (1000, 2158542) => {
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("Unable to perform action, able in {:02}:{:02}:{:02}", a, b, c)
+            format!("Unable to perform action, able in {0:02}:{1:02}:{2:02}", a, b, c)
         }
         (1169, 100) => {
             String::from("Fledgling")
@@ -6761,11 +6796,18 @@ pub fn format_message(
         }
         (501, 67156085) => {
             let a = &arguments[0];
-            format!("Do you want to join the organization \"{}\"?", a)
+            format!("Do you want to join the organization \"{0}\"?", a)
         }
         (501, 220373365) => {
             let a = &arguments[0];
-            format!("The organization tax has been changed to {} TEMP  Do you wish to leave your organization?", a)
+            let b = {
+                if a.to_string() == "1" {
+                    " credit. "
+                } else {
+                    " credits. "
+                }
+            };
+            format!("The organization tax has been changed to {0} {1}  Do you wish to leave your organization?", a, b)
         }
         (501, 3626020) => {
             String::from("The organization name could not be changed, because the name has been changed too recently.  Organization names can only be changed once a week.")
@@ -6775,7 +6817,7 @@ pub fn format_message(
         }
         (501, 181448347) => {
             let a = &arguments[0];
-            format!("{} kicked from organization (alignment changed).", a)
+            format!("{0} kicked from organization (alignment changed).", a)
         }
         (501, 182257540) => {
             String::from("You created an organization and became the leader of it.")
@@ -6785,7 +6827,7 @@ pub fn format_message(
         }
         (501, 35204276) => {
             let a = &arguments[0];
-            format!("{} changed alignment - organization disbanded.", a)
+            format!("{0} changed alignment - organization disbanded.", a)
         }
         (501, 174731972) => {
             String::from("You can only create an organization of a full 6 member team.  All members must be of the same side.  No members can be part of any other organization. The leader can not be a free player.")
@@ -6797,7 +6839,7 @@ pub fn format_message(
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("WARNING: City upkeep ({} credits) is due in {} hours but the org bank only contains {} credits. If the bank does not contain enough credits by the due date, your city will be demolished.", a, b, c)
+            format!("WARNING: City upkeep ({0} credits) is due in {1} hours but the org bank only contains {2} credits. If the bank does not contain enough credits by the due date, your city will be demolished.", a, b, c)
         }
         (501, 250057874) => {
             String::from("No controller yet.")
@@ -6807,15 +6849,29 @@ pub fn format_message(
         }
         (501, 155922318) => {
             let a = &arguments[0];
-            format!("Are you sure you want to transfer organization leadership to {}?", a)
+            format!("Are you sure you want to transfer organization leadership to {0}?", a)
         }
         (501, 244098632) => {
             let a = &arguments[0];
-            format!("You owe tax to the amount of {} TEMP.  Do you wish to pay the amount to your organization?\r\n(If not, your debt will have to be paid by the other members.)", a)
+            let b = {
+                if a.to_string() == "1" {
+                    " credit "
+                } else {
+                    " credits"
+                }
+            };
+            format!("You owe tax to the amount of {0} {1}.  Do you wish to pay the amount to your organization?\r\n(If not, your debt will have to be paid by the other members.)", a, b)
         }
         (501, 193456776) => {
             let a = &arguments[0];
-            format!("The organization has a tax of {} TEMP.", a)
+            let b = {
+                if a.to_string() == "1" {
+                    " credit "
+                } else {
+                    " credits"
+                }
+            };
+            format!("The organization has a tax of {0} {1}.", a, b)
         }
         (501, 13952082) => {
             String::from("The organization name contained an invalid character.  The character might not be allowed at all, or not in combination with the surrounding characters.")
@@ -6829,7 +6885,7 @@ pub fn format_message(
         (501, 9700511) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Controlled Land: {} Controller: {}", a, b)
+            format!("Controlled Land: {0} Controller: {1}", a, b)
         }
         (501, 24190273) => {
             String::from("The organization name must contain at least 3 alphabetical characters.")
@@ -6929,7 +6985,7 @@ pub fn format_message(
         }
         (2001, 150) => {
             let a = &arguments[0];
-            format!("The fling shot is a skill used to equip weapons that have the fling shot special attack ability. The higher your skill in fling shot the more effective these special attacks will be.   It is 100{}ependent on Agility.", a)
+            format!("The fling shot is a skill used to equip weapons that have the fling shot special attack ability. The higher your skill in fling shot the more effective these special attacks will be.   It is 100{0}ependent on Agility.", a)
         }
         (2001, 122) => {
             String::from("Sensory improvement is a skill used for learning and casting Nano formulas that use Sensory improvement as a requirement. If a nano formula is offensive and carries a skill check that is based off Sensory improvement then the higher this skill the higher the chance will be of the attack landing on your target.  Dependencies: Intelligence 80%, Strength 20%.")
@@ -6965,7 +7021,7 @@ pub fn format_message(
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("Martial Arts is the main unarmed combat skill.  Increasing this allows you to not only hit more often, but to do extra damage per hit.  It's 50{}ependent on Agility, 20{}n Strength and 30{}n Psychic.", a, b, c)
+            format!("Martial Arts is the main unarmed combat skill.  Increasing this allows you to not only hit more often, but to do extra damage per hit.  It's 50{0}ependent on Agility, 20{1}n Strength and 30{2}n Psychic.", a, b, c)
         }
         (2001, 168) => {
             String::from("Your Nano Formula Resist skill decides how well you resist hostile Nano Programs. Raising this skill will help you to occasionally resist nano based attacks. Dependencies:  Intelligence 20%, Psychic 80%.")
@@ -7458,7 +7514,7 @@ pub fn format_message(
         }
         (502, 243081980) => {
             let a = &arguments[0];
-            format!("The {} skill can not be reset.", a)
+            format!("The {0} skill can not be reset.", a)
         }
         (502, 45549043) => {
             String::from("You are only allowed to reset abilities and skills.")
@@ -7467,17 +7523,31 @@ pub fn format_message(
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("- Removing lock on skill {} ({}), which had a remainder of {} TEMP", a, b, c)
+            let d = {
+                if c.to_string() == "1" {
+                    " second. "
+                } else {
+                    " seconds."
+                }
+            };
+            format!("- Removing lock on skill {0} ({1}), which had a remainder of {2} {3}", a, b, c, d)
         }
         (502, 202459220) => {
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("- The skill {} ({}) is locked for {} TEMP", a, b, c)
+            let d = {
+                if c.to_string() == "1" {
+                    " second. "
+                } else {
+                    " seconds."
+                }
+            };
+            format!("- The skill {0} ({1}) is locked for {2} {3}", a, b, c, d)
         }
         (502, 89070509) => {
             let a = &arguments[0];
-            format!("Do you really want to reset the skill {}?", a)
+            format!("Do you really want to reset the skill {0}?", a)
         }
         (502, 109178077) => {
             String::from("You have the option of a full IP reset, are you sure you want to use it? \r\n\r\nAll abilities and skills will be set to their minimum values. Your IP will restored to the default amount for your level.")
@@ -8087,7 +8157,7 @@ pub fn format_message(
         }
         (10001, 147096568) => {
             let a = &arguments[0];
-            format!("Rename {}", a)
+            format!("Rename {0}", a)
         }
         (10001, 177634599) => {
             String::from("Clone Window")
@@ -8100,7 +8170,7 @@ pub fn format_message(
         }
         (10001, 198175874) => {
             let a = &arguments[0];
-            format!("Ignoring character \"{}\".", a)
+            format!("Ignoring character \"{0}\".", a)
         }
         (10001, 243121396) => {
             String::from("Always Behind")
@@ -8119,7 +8189,7 @@ pub fn format_message(
         }
         (10001, 67213864) => {
             let a = &arguments[0];
-            format!("Unable to find script {} .", a)
+            format!("Unable to find script {0} .", a)
         }
         (10001, 120758547) => {
             String::from("Autosubscribe new channels")
@@ -8134,21 +8204,21 @@ pub fn format_message(
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("The group name is ambiguous. The following groups matched:\r\n{}\r\nYou can \"auto-complete\" the group name by typing <font color=yellow>'{} {}'</font> and then pressing <TAB>.", a, b, c)
+            format!("The group name is ambiguous. The following groups matched:\r\n{0}\r\nYou can \"auto-complete\" the group name by typing <font color=yellow>'{1} {2}'</font> and then pressing <TAB>.", a, b, c)
         }
         (10001, 101825639) => {
             String::from("Show message log")
         }
         (10001, 227544104) => {
             let a = &arguments[0];
-            format!("Befriend {}", a)
+            format!("Befriend {0}", a)
         }
         (10001, 23033694) => {
             String::from("Sending petition.")
         }
         (10001, 146099907) => {
             let a = &arguments[0];
-            format!("Are you sure you want to remove user <font color=yellow>{}</font> from your friend list?", a)
+            format!("Are you sure you want to remove user <font color=yellow>{0}</font> from your friend list?", a)
         }
         (10001, 182632675) => {
             String::from("Borderless")
@@ -8161,7 +8231,7 @@ pub fn format_message(
         }
         (10001, 200490068) => {
             let a = &arguments[0];
-            format!("To [{}]: ", a)
+            format!("To [{0}]: ", a)
         }
         (10001, 255526215) => {
             String::from("Follow")
@@ -8195,7 +8265,7 @@ pub fn format_message(
         }
         (10001, 77817000) => {
             let a = &arguments[0];
-            format!("Clone {}", a)
+            format!("Clone {0}", a)
         }
         (10001, 62446603) => {
             String::from("Mouse Input Disabled. You can now click through this chat window. Use ALT + Mouseclick to override this setting.")
@@ -8211,15 +8281,15 @@ pub fn format_message(
         }
         (10001, 5472280) => {
             let a = &arguments[0];
-            format!("Mail {}", a)
+            format!("Mail {0}", a)
         }
         (10001, 152445938) => {
             let a = &arguments[0];
-            format!("Unignoring character \"{}\".", a)
+            format!("Unignoring character \"{0}\".", a)
         }
         (10001, 53984709) => {
             let a = &arguments[0];
-            format!("Log [{}]", a)
+            format!("Log [{0}]", a)
         }
         (10001, 86674023) => {
             String::from("Show log window")
@@ -8229,7 +8299,7 @@ pub fn format_message(
         }
         (10001, 7942212) => {
             let a = &arguments[0];
-            format!("No chat command or script named \"{}\" available.", a)
+            format!("No chat command or script named \"{0}\" available.", a)
         }
         (10001, 93079237) => {
             String::from("Remove")
@@ -8242,7 +8312,7 @@ pub fn format_message(
         }
         (10001, 20841710) => {
             let a = &arguments[0];
-            format!("AFK is currently on. Current AFK message is '{}'.", a)
+            format!("AFK is currently on. Current AFK message is '{0}'.", a)
         }
         (10001, 196784165) => {
             String::from("Mode")
@@ -8261,7 +8331,7 @@ pub fn format_message(
         }
         (10001, 116436341) => {
             let a = &arguments[0];
-            format!("Failed to send private message to user \"{}\".", a)
+            format!("Failed to send private message to user \"{0}\".", a)
         }
         (10001, 94334131) => {
             String::from(" shouts: ")
@@ -8274,11 +8344,11 @@ pub fn format_message(
         }
         (10001, 204386119) => {
             let a = &arguments[0];
-            format!("Are you sure you want to delete window '{}'?", a)
+            format!("Are you sure you want to delete window '{0}'?", a)
         }
         (10001, 111666535) => {
             let a = &arguments[0];
-            format!("{} will go to this window.", a)
+            format!("{0} will go to this window.", a)
         }
         (10001, 110410901) => {
             String::from("Style")
@@ -8288,7 +8358,21 @@ pub fn format_message(
             let b = &arguments[1];
             let c = &arguments[2];
             let d = &arguments[3];
-            format!("{} is AFK (Away from keyboard) since {} TEMP and {} TEMP ago.\r\n{}\r\n", a, b, c, d)
+            let e = {
+                if c.to_string() == "1" {
+                    "hour "
+                } else {
+                    " hours"
+                }
+            };
+            let f = {
+                if d.to_string() == "1" {
+                    "minute "
+                } else {
+                    " minutes"
+                }
+            };
+            format!("{0} is AFK (Away from keyboard) since {1} {4} and {2} {5} ago.\r\n{3}\r\n", a, b, c, d, e, f)
         }
         (10001, 140283232) => {
             String::from("Inactive")
@@ -8301,14 +8385,14 @@ pub fn format_message(
         }
         (10001, 158338720) => {
             let a = &arguments[0];
-            format!("Disband {}", a)
+            format!("Disband {0}", a)
         }
         (10001, 262314229) => {
             String::from("Autohide inputbar")
         }
         (10001, 266692840) => {
             let a = &arguments[0];
-            format!("Ignore {}", a)
+            format!("Ignore {0}", a)
         }
         (10001, 120626503) => {
             String::from("Script name is WAY too long. 180 chars max")
@@ -8330,7 +8414,7 @@ pub fn format_message(
         }
         (10001, 112348791) => {
             let a = &arguments[0];
-            format!("You were invited to a private chat group by {}.", a)
+            format!("You were invited to a private chat group by {0}.", a)
         }
         (10001, 109983634) => {
             String::from("Ignore")
@@ -8346,7 +8430,7 @@ pub fn format_message(
         }
         (10001, 187644212) => {
             let a = &arguments[0];
-            format!("Chat group invitation from {} was auto declined.", a)
+            format!("Chat group invitation from {0} was auto declined.", a)
         }
         (10001, 120922995) => {
             String::from("Recent Messages")
@@ -8365,18 +8449,18 @@ pub fn format_message(
         }
         (10001, 192570169) => {
             let a = &arguments[0];
-            format!("Group '{}' is read-only.", a)
+            format!("Group '{0}' is read-only.", a)
         }
         (10001, 118983027) => {
             String::from("No Selectable Groups")
         }
         (10001, 6097656) => {
             let a = &arguments[0];
-            format!("Invite {}", a)
+            format!("Invite {0}", a)
         }
         (10001, 14462052) => {
             let a = &arguments[0];
-            format!("{} has been removed from this window.", a)
+            format!("{0} has been removed from this window.", a)
         }
         (10001, 100121299) => {
             String::from("Public Channels")
@@ -8386,11 +8470,11 @@ pub fn format_message(
         }
         (10001, 18300484) => {
             let a = &arguments[0];
-            format!("You were invited to a private chat group by {}\r\nPlease select which chat window(s) you want to assign the private chat to and click [Yes] to join.", a)
+            format!("You were invited to a private chat group by {0}\r\nPlease select which chat window(s) you want to assign the private chat to and click [Yes] to join.", a)
         }
         (10001, 195613152) => {
             let a = &arguments[0];
-            format!("Failed to send message to group '{}'.", a)
+            format!("Failed to send message to group '{0}'.", a)
         }
         (10001, 126740259) => {
             String::from("To many arguments.")
@@ -8424,7 +8508,7 @@ pub fn format_message(
         }
         (10001, 78020182) => {
             let a = &arguments[0];
-            format!("Copy of {}", a)
+            format!("Copy of {0}", a)
         }
         (10001, 227468400) => {
             String::from(" left the group.")
@@ -8440,7 +8524,7 @@ pub fn format_message(
         }
         (10001, 266679528) => {
             let a = &arguments[0];
-            format!("Unignore {}", a)
+            format!("Unignore {0}", a)
         }
         (10001, 93079605) => {
             String::from("Rename")
@@ -8471,12 +8555,12 @@ pub fn format_message(
         }
         (10001, 46072146) => {
             let a = &arguments[0];
-            format!("Unknown user \"{}\".", a)
+            format!("Unknown user \"{0}\".", a)
         }
         (10001, 199184607) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Changed AFK message from '{}' to '{}'", a, b)
+            format!("Changed AFK message from '{0}' to '{1}'", a, b)
         }
         (10001, 118080020) => {
             String::from("You can re-open chat windows by pressing Actions - Chat Config.")
@@ -8486,7 +8570,7 @@ pub fn format_message(
         }
         (10001, 180538088) => {
             let a = &arguments[0];
-            format!("Delete {}", a)
+            format!("Delete {0}", a)
         }
         (10001, 235181075) => {
             String::from("Can only ignore characters.")
@@ -8496,11 +8580,11 @@ pub fn format_message(
         }
         (10001, 214106624) => {
             let a = &arguments[0];
-            format!("Leave {}", a)
+            format!("Leave {0}", a)
         }
         (10001, 77249784) => {
             let a = &arguments[0];
-            format!("Are you sure you want to ignore further messages from user <font color=yellow>{}</font>?", a)
+            format!("Are you sure you want to ignore further messages from user <font color=yellow>{0}</font>?", a)
         }
         (10001, 206155708) => {
             String::from("Send Tell")
@@ -8526,7 +8610,7 @@ pub fn format_message(
         (10000, 265347003) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Are you sure you want to train the {} perk? You can only remove a perk you have chosen once every {} hours.", a, b)
+            format!("Are you sure you want to train the {0} perk? You can only remove a perk you have chosen once every {1} hours.", a, b)
         }
         (10000, 59010663) => {
             String::from("Follow")
@@ -8547,7 +8631,7 @@ pub fn format_message(
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("{}<br>Quality level {}<br>Used in {} different processes", a, b, c)
+            format!("{0}<br>Quality level {1}<br>Used in {2} different processes", a, b, c)
         }
         (10000, 262816943) => {
             String::from("Hide")
@@ -8561,7 +8645,7 @@ pub fn format_message(
         (10000, 77379209) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("The result will be a quality level {} {}", a, b)
+            format!("The result will be a quality level {0} {1}", a, b)
         }
         (10000, 94097293) => {
             String::from("Unlock Item")
@@ -8595,7 +8679,7 @@ pub fn format_message(
         }
         (10000, 117988351) => {
             let a = &arguments[0];
-            format!("Activate this toggle button and click on one of your trained perks to untrain it. Only one perk can be untrained every {} hours.", a)
+            format!("Activate this toggle button and click on one of your trained perks to untrain it. Only one perk can be untrained every {0} hours.", a)
         }
         (10000, 47571949) => {
             String::from("You are no longer in a team.")
@@ -8608,21 +8692,21 @@ pub fn format_message(
         }
         (10000, 172849634) => {
             let a = &arguments[0];
-            format!("Are you sure you want to delete '{}'?", a)
+            format!("Are you sure you want to delete '{0}'?", a)
         }
         (10000, 11536197) => {
             String::from("Atk Range")
         }
         (10000, 47274052) => {
             let a = &arguments[0];
-            format!("Can't use key <font color=aqua>'{}'</font> since it is fixed to other functionality.", a)
+            format!("Can't use key <font color=aqua>'{0}'</font> since it is fixed to other functionality.", a)
         }
         (10000, 172734357) => {
             String::from("You have already built a tax office in this city.")
         }
         (10000, 198833245) => {
             let a = &arguments[0];
-            format!("{} left your team.", a)
+            format!("{0} left your team.", a)
         }
         (10000, 230869204) => {
             String::from("Zoom out")
@@ -8681,7 +8765,7 @@ pub fn format_message(
         (10000, 191385459) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("{}/{} slots available", a, b)
+            format!("{0}/{1} slots available", a, b)
         }
         (10000, 107711047) => {
             String::from("Autofade Window")
@@ -8715,7 +8799,7 @@ pub fn format_message(
         }
         (10000, 82230653) => {
             let a = &arguments[0];
-            format!("{} joined your team.", a)
+            format!("{0} joined your team.", a)
         }
         (10000, 3332485) => {
             String::from("You have already built a satellite uplink in this city.")
@@ -8740,7 +8824,7 @@ pub fn format_message(
         }
         (10000, 226032482) => {
             let a = &arguments[0];
-            format!("Make {} leader", a)
+            format!("Make {0} leader", a)
         }
         (10000, 220762773) => {
             String::from("You have already built a grid house in this city.")
@@ -8764,7 +8848,7 @@ pub fn format_message(
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("Prev profession: {}, {}, lvl {}", a, b, c)
+            format!("Prev profession: {0}, {1}, lvl {2}", a, b, c)
         }
         (10000, 143176083) => {
             String::from("Quit To Windows")
@@ -8777,14 +8861,14 @@ pub fn format_message(
         }
         (10000, 167961112) => {
             let a = &arguments[0];
-            format!("Team side is {}.", a)
+            format!("Team side is {0}.", a)
         }
         (10000, 41241860) => {
             String::from("Reset To Default")
         }
         (10000, 170054814) => {
             let a = &arguments[0];
-            format!("Press the key you want assigned to <font color=aqua>'{}'</font>", a)
+            format!("Press the key you want assigned to <font color=aqua>'{0}'</font>", a)
         }
         (10000, 210221709) => {
             String::from("Item")
@@ -8799,7 +8883,7 @@ pub fn format_message(
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("Key <font color=aqua>'{}'</font> is already assigned to <font color=aqua>'{}'</font>. Do you want to perform the change and reset <font color=aqua>'{}'</font> to <font color=aqua>'NONE'</font>?", a, b, c)
+            format!("Key <font color=aqua>'{0}'</font> is already assigned to <font color=aqua>'{1}'</font>. Do you want to perform the change and reset <font color=aqua>'{2}'</font> to <font color=aqua>'NONE'</font>?", a, b, c)
         }
         (10000, 206303972) => {
             String::from("Bad")
@@ -8861,7 +8945,7 @@ pub fn format_message(
         (10000, 89261993) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("NCU ({}/{})", a, b)
+            format!("NCU ({0}/{1})", a, b)
         }
         (10000, 256032238) => {
             String::from("Head on")
@@ -8920,7 +9004,7 @@ pub fn format_message(
         (10000, 135798905) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Executing Nano Program: {} on item {}.", a, b)
+            format!("Executing Nano Program: {0} on item {1}.", a, b)
         }
         (10000, 204307732) => {
             String::from("Uncharted territory.  Mission not found.")
@@ -8945,7 +9029,7 @@ pub fn format_message(
             let b = &arguments[1];
             let c = &arguments[2];
             let d = &arguments[3];
-            format!("The {} must be at least level {} to combine with the {} level {}.", a, b, c, d)
+            format!("The {0} must be at least level {1} to combine with the {2} level {3}.", a, b, c, d)
         }
         (10000, 139791968) => {
             String::from("Reset Ownership")
@@ -9015,7 +9099,7 @@ pub fn format_message(
         }
         (10000, 153518008) => {
             let a = &arguments[0];
-            format!("<font color=CCInfoText>Do you really want to delete the nano <font color=CCInfoHeadline>{}</font>?</font>", a)
+            format!("<font color=CCInfoText>Do you really want to delete the nano <font color=CCInfoHeadline>{0}</font>?</font>", a)
         }
         (10000, 79744894) => {
             String::from("Open")
@@ -9038,7 +9122,7 @@ pub fn format_message(
         (10000, 99708235) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Are you sure you want to remove the {} perk? It will be {} hours before you can remove another!", a, b)
+            format!("Are you sure you want to remove the {0} perk? It will be {1} hours before you can remove another!", a, b)
         }
         (10000, 158452193) => {
             String::from("<font color=CCInfoHeader>Please select the planet map to use.</font><br><br><font color=CCInfoHeadline>When on Rubi-Ka:</font><br>")
@@ -9046,7 +9130,7 @@ pub fn format_message(
         (10000, 56702133) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Team level: {}  Team side: {}", a, b)
+            format!("Team level: {0}  Team side: {1}", a, b)
         }
         (10000, 5372431) => {
             String::from("Kick ")
@@ -9122,7 +9206,7 @@ pub fn format_message(
         }
         (10000, 170994517) => {
             let a = &arguments[0];
-            format!("{} is too high, and will prevent some of the other members of your team in getting xp, are you sure you want to invite him?", a)
+            format!("{0} is too high, and will prevent some of the other members of your team in getting xp, are you sure you want to invite him?", a)
         }
         (10000, 231672504) => {
             String::from("The name entered does not match the name of your character.")
@@ -9168,7 +9252,7 @@ pub fn format_message(
         }
         (10000, 110085117) => {
             let a = &arguments[0];
-            format!("Want to join {}'s team?", a)
+            format!("Want to join {0}'s team?", a)
         }
         (10000, 114743685) => {
             String::from("Space")
@@ -9196,7 +9280,7 @@ pub fn format_message(
         }
         (10000, 153268952) => {
             let a = &arguments[0];
-            format!("<font color=CCInfoText>Do you really want to delete the item <font color=CCInfoHeadline>{}</font>?</font>", a)
+            format!("<font color=CCInfoText>Do you really want to delete the item <font color=CCInfoHeadline>{0}</font>?</font>", a)
         }
         (10000, 177634807) => {
             String::from("Close Window")
@@ -9236,7 +9320,7 @@ pub fn format_message(
         }
         (10000, 8507780) => {
             let a = &arguments[0];
-            format!("Would you like to team up with {}? To do so you must first say no to the other request and then make the person ask you again.", a)
+            format!("Would you like to team up with {0}? To do so you must first say no to the other request and then make the person ask you again.", a)
         }
         (10000, 79662484) => {
             String::from("Good")
@@ -9252,7 +9336,7 @@ pub fn format_message(
         }
         (10000, 171050437) => {
             let a = &arguments[0];
-            format!("{} is too low to get any xp with your current team, are you sure you want to invite him?", a)
+            format!("{0} is too low to get any xp with your current team, are you sure you want to invite him?", a)
         }
         (10000, 214304457) => {
             String::from("Inventory")
@@ -9289,11 +9373,11 @@ pub fn format_message(
         }
         (10000, 102400536) => {
             let a = &arguments[0];
-            format!("Team level is {}.", a)
+            format!("Team level is {0}.", a)
         }
         (10000, 179298440) => {
             let a = &arguments[0];
-            format!("Would you like to team up with {}? To do so you must first leave your current team and make the person ask you again.", a)
+            format!("Would you like to team up with {0}? To do so you must first leave your current team and make the person ask you again.", a)
         }
         (10000, 199898590) => {
             String::from("Show Hidden Items")
@@ -9303,7 +9387,7 @@ pub fn format_message(
         }
         (10000, 200792437) => {
             let a = &arguments[0];
-            format!("{} declined to join your team.", a)
+            format!("{0} declined to join your team.", a)
         }
         (10000, 104569627) => {
             String::from("Attack")
@@ -9322,14 +9406,14 @@ pub fn format_message(
         }
         (10000, 57184399) => {
             let a = &arguments[0];
-            format!("Congratulations, you have reached level 200 and will no longer gain Experience.\r\n\r\nThe only way to advance further is by gaining Shadow Knowledge and the amount of Shadow Knowledge you get is determined by your faction standing with {}.", a)
+            format!("Congratulations, you have reached level 200 and will no longer gain Experience.\r\n\r\nThe only way to advance further is by gaining Shadow Knowledge and the amount of Shadow Knowledge you get is determined by your faction standing with {0}.", a)
         }
         (10000, 355467) => {
             String::from("Perk")
         }
         (10000, 1635214) => {
             let a = &arguments[0];
-            format!("Current Commission: {}%", a)
+            format!("Current Commission: {0}%", a)
         }
         (10000, 80381347) => {
             String::from("General Perks")
@@ -9345,7 +9429,7 @@ pub fn format_message(
             let b = &arguments[1];
             let c = &arguments[2];
             let d = &arguments[3];
-            format!("You need at least <font color=red>{}</font> skill in {} to combine these two items.<br><br>Your skill in {} is {}", a, b, c, d)
+            format!("You need at least <font color=red>{0}</font> skill in {1} to combine these two items.<br><br>Your skill in {2} is {3}", a, b, c, d)
         }
         (10000, 239043241) => {
             String::from("Copy")
@@ -9367,11 +9451,11 @@ pub fn format_message(
         }
         (10000, 268230760) => {
             let a = &arguments[0];
-            format!("You do not have enough credits for generating missions, you need at least {}.", a)
+            format!("You do not have enough credits for generating missions, you need at least {0}.", a)
         }
         (10000, 86977476) => {
             let a = &arguments[0];
-            format!("Do you want to drop item <font color=yellow>{}</font> to the ground?", a)
+            format!("Do you want to drop item <font color=yellow>{0}</font> to the ground?", a)
         }
         (10000, 200506403) => {
             String::from("Chaos")
@@ -9442,14 +9526,14 @@ pub fn format_message(
         (10002, 220109620) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Welcome to the City Controller!\r\n\r\nThis city district is for sale.\r\nBuying this district will cost you #1:{} credits.\r\nThe upkeep is #2:{} credits per month.\r\n\r\nThe City Controller is the heart of every city district. By using this controller, you are able to purchase land, build houses, and lots more. This controller uses raw Notum for its power supply, and it also has an energy pool attached to it. Certain houses have attached advantages that will benefit all members of your organization. If the energy pool drops below a certain point, the advantages will become inactive.  The controller will need to be recharged with the proper items for those advantages to reactivate.\r\n\r\nIf you choose to buy this city district, you will have 24 hours to build an organizational headquarter. If you have not built an organizational headquarter in the city district within this time frame, you will lose the rights to the land, and you will not be able to claim the city district again until an additional 48 hours have passed.\r\n\r\nWhen you accept the agreement to buy this area, the credits for the purchase will be withdrawn from your character's individual credit balance. Each organization can only own one city district.\r\n\r\nIf the \"Click here to purchase land area\" is greyed out, check the following criteria:\r\n\r\nAre you in an organization?\r\nDo you have enough credits on your character to purchase the area?\r\nDoes your organization own another city district elsewhere?\r\nDoes this instance belong to your organization?", a, b)
+            format!("Welcome to the City Controller!\r\n\r\nThis city district is for sale.\r\nBuying this district will cost you #1:{0} credits.\r\nThe upkeep is #2:{1} credits per month.\r\n\r\nThe City Controller is the heart of every city district. By using this controller, you are able to purchase land, build houses, and lots more. This controller uses raw Notum for its power supply, and it also has an energy pool attached to it. Certain houses have attached advantages that will benefit all members of your organization. If the energy pool drops below a certain point, the advantages will become inactive.  The controller will need to be recharged with the proper items for those advantages to reactivate.\r\n\r\nIf you choose to buy this city district, you will have 24 hours to build an organizational headquarter. If you have not built an organizational headquarter in the city district within this time frame, you will lose the rights to the land, and you will not be able to claim the city district again until an additional 48 hours have passed.\r\n\r\nWhen you accept the agreement to buy this area, the credits for the purchase will be withdrawn from your character's individual credit balance. Each organization can only own one city district.\r\n\r\nIf the \"Click here to purchase land area\" is greyed out, check the following criteria:\r\n\r\nAre you in an organization?\r\nDo you have enough credits on your character to purchase the area?\r\nDoes your organization own another city district elsewhere?\r\nDoes this instance belong to your organization?", a, b)
         }
         (10002, 223708388) => {
             String::from("This page contains information about upkeep payment.\r\n\r\nTo the right there are three sections you need to know about.\r\n\r\n\"Your next upkeep payment is\"\r\nThis gives you the date the server will attempt to withdraw money from your organization bank. If you have not got any money in your account at this time your city will be demolished. The area will then be set up for sale again, and anyone can purchase it.\r\n\r\n\"Your current monthly upkeep is\"\r\nThis tells you how much upkeep you are to pay for the area each month at the date mentioned in \"Your next upkeep payment is\".\r\n")
         }
         (10002, 234912297) => {
             let a = &arguments[0];
-            format!("This house can only be built by {}'s.", a)
+            format!("This house can only be built by {0}'s.", a)
         }
         (10002, 203061820) => {
             String::from("Cancel")
@@ -9459,14 +9543,14 @@ pub fn format_message(
         }
         (200, 256914611) => {
             let a = &arguments[0];
-            format!("Timed logout started. This will take {} seconds.", a)
+            format!("Timed logout started. This will take {0} seconds.", a)
         }
         (200, 179936499) => {
             String::from("Success.")
         }
         (200, 10607989) => {
             let a = &arguments[0];
-            format!("Reconnecting you to '{}'.", a)
+            format!("Reconnecting you to '{0}'.", a)
         }
         (200, 75723156) => {
             String::from("Pressing alt+f4 once more within 3 seconds will lead to fast quit of game. Your character will remain in game world for some minutes.")
@@ -9477,7 +9561,7 @@ pub fn format_message(
         (200, 26967759) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Client build version: {} Server: {}", a, b)
+            format!("Client build version: {0} Server: {1}", a, b)
         }
         (200, 43325156) => {
             String::from("Failure: it is crowded.")
@@ -9485,7 +9569,7 @@ pub fn format_message(
         (200, 92750798) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Trying to log you in to '{}'. {}", a, b)
+            format!("Trying to log you in to '{0}'. {1}", a, b)
         }
         (200, 183695501) => {
             String::from("ERROR: Client and server versions mismatched!")
@@ -9541,7 +9625,7 @@ pub fn format_message(
         (600, 125021838) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Breed: {}\r\nProfession: {}", a, b)
+            format!("Breed: {0}\r\nProfession: {1}", a, b)
         }
         (600, 105053140) => {
             String::from("by clicking on any of the fourteen profession buttons. Each profession has its advantages and disadvantages. A detailed description can be found when clicking the profession buttons. When you have made your choice click Next.")
@@ -9911,7 +9995,7 @@ pub fn format_message(
         }
         (110, 160127261) => {
             let a = &arguments[0];
-            format!("You must not have unique item: {}", a)
+            format!("You must not have unique item: {0}", a)
         }
         (110, 182784660) => {
             String::from("Use of the market is limited to paying customers.")
@@ -9922,7 +10006,7 @@ pub fn format_message(
         (110, 199909321) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("{} attacked by {}!", a, b)
+            format!("{0} attacked by {1}!", a, b)
         }
         (110, 245161956) => {
             String::from("Target item is not owned by the char and does not have the stationary flags set!")
@@ -9960,7 +10044,7 @@ pub fn format_message(
         (110, 94564995) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Your pet {} was damaged by a toxic substance for {} points of damage.", a, b)
+            format!("Your pet {0} was damaged by a toxic substance for {1} points of damage.", a, b)
         }
         (110, 159651462) => {
             String::from("Item must be applied on self.")
@@ -9970,19 +10054,19 @@ pub fn format_message(
         }
         (110, 59575492) => {
             let a = &arguments[0];
-            format!("Nanoprogram {} terminated...", a)
+            format!("Nanoprogram {0} terminated...", a)
         }
         (110, 172710793) => {
             String::from("You can assemble these two items, with excellent quality!")
         }
         (110, 7144452) => {
             let a = &arguments[0];
-            format!("This XP was added to the pool of unsaved experience points that you get back through gaining new experience points. Your current pool of unsaved experience is {}.", a)
+            format!("This XP was added to the pool of unsaved experience points that you get back through gaining new experience points. Your current pool of unsaved experience is {0}.", a)
         }
         (110, 85787460) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("You were drained for {} points of nano energy by {}.", a, b)
+            format!("You were drained for {0} points of nano energy by {1}.", a, b)
         }
         (110, 184106293) => {
             String::from("You are not allowed to teleport players to this playfield.")
@@ -9991,7 +10075,7 @@ pub fn format_message(
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("Player {} hit you for {} points of {} damage.", a, b, c)
+            format!("Player {0} hit you for {1} points of {2} damage.", a, b, c)
         }
         (110, 258871949) => {
             String::from("You have already got this unique item")
@@ -10018,7 +10102,7 @@ pub fn format_message(
             let d = &arguments[3];
             let e = &arguments[4];
             let f = &arguments[5];
-            format!("{} owns the shop \"{}\" in the market at ({}, {}) in \"{}\" ({}).", a, b, c, d, e, f)
+            format!("{0} owns the shop \"{1}\" in the market at ({2}, {3}) in \"{4}\" ({5}).", a, b, c, d, e, f)
         }
         (110, 134065072) => {
             String::from("You already own a shop; you can't own more than one shop at a time!")
@@ -10031,50 +10115,50 @@ pub fn format_message(
         }
         (110, 20453397) => {
             let a = &arguments[0];
-            format!("{} is open. Please close it first.", a)
+            format!("{0} is open. Please close it first.", a)
         }
         (110, 240058395) => {
             String::from("You have gained a new Perk!")
         }
         (110, 98652424) => {
             let a = &arguments[0];
-            format!("Leadership was given to you by {}.", a)
+            format!("Leadership was given to you by {0}.", a)
         }
         (110, 264925177) => {
             String::from("Wrong mission key: the mission key contains no authorization to open this entrance!\r\n")
         }
         (110, 205739797) => {
             let a = &arguments[0];
-            format!("Your trade partner already has this unique item: {}", a)
+            format!("Your trade partner already has this unique item: {0}", a)
         }
         (110, 88185376) => {
             let a = &arguments[0];
-            format!("{} of your XP were allocated to global research.\r\n", a)
+            format!("{0} of your XP were allocated to global research.\r\n", a)
         }
         (110, 126200468) => {
             let a = &arguments[0];
-            format!("Right now you have spent {} IP in Map Navigation. You will not get these back.", a)
+            format!("Right now you have spent {0} IP in Map Navigation. You will not get these back.", a)
         }
         (110, 210536934) => {
             let a = &arguments[0];
-            format!("Entering '{}'", a)
+            format!("Entering '{0}'", a)
         }
         (110, 160969117) => {
             let a = &arguments[0];
-            format!("You must have unique item: {}", a)
+            format!("You must have unique item: {0}", a)
         }
         (110, 204982716) => {
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
             let d = &arguments[3];
-            format!("{} hit {} for {} points of {} damage.", a, b, c, d)
+            format!("{0} hit {1} for {2} points of {3} damage.", a, b, c, d)
         }
         (110, 122930573) => {
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("\"{}\" at level {} with price {}.", a, b, c)
+            format!("\"{0}\" at level {1} with price {2}.", a, b, c)
         }
         (110, 243874121) => {
             String::from("The item was not accepted as a key for this door.")
@@ -10094,11 +10178,11 @@ pub fn format_message(
             let f = &arguments[5];
             let g = &arguments[6];
             let h = &arguments[7];
-            format!("{}: Health: {}%  Nano: {}%  NCU: {}/{}    Timeleft: {} s    Position: {},{}\r\n", a, b, c, d, e, f, g, h)
+            format!("{0}: Health: {1}%  Nano: {2}%  NCU: {3}/{4}    Timeleft: {5} s    Position: {6},{7}\r\n", a, b, c, d, e, f, g, h)
         }
         (110, 12594478) => {
             let a = &arguments[0];
-            format!("Your team has received a new mission. The keeper of the mission is {}.", a)
+            format!("Your team has received a new mission. The keeper of the mission is {0}.", a)
         }
         (110, 38272366) => {
             String::from("You need to have a 1 hand edged weapon equipped in your right hand.")
@@ -10106,11 +10190,11 @@ pub fn format_message(
         (110, 83397292) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Invalid use of control codes at position {} in '{}'", a, b)
+            format!("Invalid use of control codes at position {0} in '{1}'", a, b)
         }
         (110, 226935915) => {
             let a = &arguments[0];
-            format!("Must have perk: {}", a)
+            format!("Must have perk: {0}", a)
         }
         (110, 54640832) => {
             String::from("This is a player shop!")
@@ -10121,7 +10205,7 @@ pub fn format_message(
         (110, 253484164) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("\"{}\" is of a too low quality level. It must be at least at quality {}.", a, b)
+            format!("\"{0}\" is of a too low quality level. It must be at least at quality {1}.", a, b)
         }
         (110, 117739867) => {
             String::from("Poison roll sucessful..")
@@ -10131,7 +10215,14 @@ pub fn format_message(
         }
         (110, 743316) => {
             let a = &arguments[0];
-            format!("{} TEMP deducted from your account.", a)
+            let b = {
+                if a.to_string() == "1" {
+                    " credit was "
+                } else {
+                    " credits were"
+                }
+            };
+            format!("{0} {1} deducted from your account.", a, b)
         }
         (110, 167634562) => {
             String::from("This action can only be done by the leader of the organization owning this shop!")
@@ -10139,25 +10230,25 @@ pub fn format_message(
         (110, 67192350) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Unknown error at position {} in '{}'", a, b)
+            format!("Unknown error at position {0} in '{1}'", a, b)
         }
         (110, 629344) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("You recouped {} of your previously lost experience - remaining to be recouped: {}.", a, b)
+            format!("You recouped {0} of your previously lost experience - remaining to be recouped: {1}.", a, b)
         }
         (110, 221009476) => {
             String::from("Monster-spawn to inventory is ILLEGAL.")
         }
         (110, 154478725) => {
             let a = &arguments[0];
-            format!("Target breed must be {}!", a)
+            format!("Target breed must be {0}!", a)
         }
         (110, 111805842) => {
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("Something hit {} for {} points of {} damage.", a, b, c)
+            format!("Something hit {0} for {1} points of {2} damage.", a, b, c)
         }
         (110, 38318091) => {
             String::from("Unique item returned to bank.")
@@ -10172,30 +10263,30 @@ pub fn format_message(
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("{} hit you for {} points of {} damage.", a, b, c)
+            format!("{0} hit you for {1} points of {2} damage.", a, b, c)
         }
         (110, 38761861) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("invalid use of uppercase/lowercase at position {} in '{}'", a, b)
+            format!("invalid use of uppercase/lowercase at position {0} in '{1}'", a, b)
         }
         (110, 70076351) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("{} cannot run the nano: {}!", a, b)
+            format!("{0} cannot run the nano: {1}!", a, b)
         }
         (110, 109059972) => {
             String::from("No entrance door identity found.")
         }
         (110, 120893516) => {
             let a = &arguments[0];
-            format!("{} rejected your challenge.", a)
+            format!("{0} rejected your challenge.", a)
         }
         (110, 182595589) => {
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("Time until decay: {}:{}:{} (owner inactivity)", a, b, c)
+            format!("Time until decay: {0}:{1}:{2} (owner inactivity)", a, b, c)
         }
         (110, 50403583) => {
             let a = &arguments[0];
@@ -10203,7 +10294,7 @@ pub fn format_message(
             let c = &arguments[2];
             let d = &arguments[3];
             let e = &arguments[4];
-            format!("Player {} profession {} has {} in full AMS for {} with multiplier {}.", a, b, c, d, e)
+            format!("Player {0} profession {1} has {2} in full AMS for {3} with multiplier {4}.", a, b, c, d, e)
         }
         (110, 150897955) => {
             String::from("You must be in the Shadowlands!")
@@ -10213,7 +10304,7 @@ pub fn format_message(
         }
         (110, 57671460) => {
             let a = &arguments[0];
-            format!("{} credits were deducted from your account.", a)
+            format!("{0} credits were deducted from your account.", a)
         }
         (110, 101800949) => {
             String::from("You won a new PvP title!")
@@ -10226,23 +10317,30 @@ pub fn format_message(
         }
         (110, 238534821) => {
             let a = &arguments[0];
-            format!("{} skill available.", a)
+            format!("{0} skill available.", a)
         }
         (110, 121819877) => {
             let a = &arguments[0];
-            format!("You can't afford to save. At your level you need {} credits to save.", a)
+            format!("You can't afford to save. At your level you need {0} credits to save.", a)
         }
         (110, 193866428) => {
             String::from("You can only heal yourself or your pet in a duel.")
         }
         (110, 179934581) => {
             let a = &arguments[0];
-            format!("You need at least {} free inventory slots! Please remove an item and try again.", a)
+            format!("You need at least {0} free inventory slots! Please remove an item and try again.", a)
         }
         (110, 100703038) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("{} team TEMP unable to receive the team mission, because a member of the team has too high a level to be able to share experience! ( {} )\r\n", a, b)
+            let c = {
+                if a.to_string() == "1" {
+                    " member was "
+                } else {
+                    " members were"
+                }
+            };
+            format!("{0} team {2} unable to receive the team mission, because a member of the team has too high a level to be able to share experience! ( {1} )\r\n", a, b, c)
         }
         (110, 179318652) => {
             String::from("PvP not allowed since you are neutral. Can only attack if attacked first.")
@@ -10287,7 +10385,7 @@ pub fn format_message(
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("{} casts nanoprogram '{}' on {}.", a, b, c)
+            format!("{0} casts nanoprogram '{1}' on {2}.", a, b, c)
         }
         (110, 229062263) => {
             String::from("You have a prize waiting for you. This prize is for one of your characters only, you should log in with the character you want to acquire the prize for. Make sure you have an empty slot in your inventory then type `/command claim` in the chat window.")
@@ -10295,19 +10393,19 @@ pub fn format_message(
         (110, 195424253) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("You can not afford this item. {} extra {} is needed.", a, b)
+            format!("You can not afford this item. {0} extra {1} is needed.", a, b)
         }
         (110, 6774439) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("{} must recently have {} running!", a, b)
+            format!("{0} must recently have {1} running!", a, b)
         }
         (110, 96965431) => {
             String::from("You can't execute nanoprograms while swimming!")
         }
         (110, 191983332) => {
             let a = &arguments[0];
-            format!("(GM feedback) This savebooth has an invalid e_ResurrectDest ({})!", a)
+            format!("(GM feedback) This savebooth has an invalid e_ResurrectDest ({0})!", a)
         }
         (110, 6355396) => {
             String::from("You failed the requirements to train this perk!")
@@ -10315,18 +10413,18 @@ pub fn format_message(
         (110, 162426029) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Price set on {} to {}!", a, b)
+            format!("Price set on {0} to {1}!", a, b)
         }
         (110, 217059156) => {
             String::from("You cannot unlearn a Perk that is a requirement for another Perk.")
         }
         (110, 32855904) => {
             let a = &arguments[0];
-            format!("This is your shop (max {} items)!", a)
+            format!("This is your shop (max {0} items)!", a)
         }
         (110, 116194815) => {
             let a = &arguments[0];
-            format!("Shop commission set to {}%!", a)
+            format!("Shop commission set to {0}%!", a)
         }
         (110, 95906044) => {
             String::from("Your opponent accepted your challenge.")
@@ -10336,13 +10434,13 @@ pub fn format_message(
         }
         (110, 197782805) => {
             let a = &arguments[0];
-            format!("{} available.", a)
+            format!("{0} available.", a)
         }
         (110, 89766772) => {
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("{}'s execution of {} got interrupted by {}..", a, b, c)
+            format!("{0}'s execution of {1} got interrupted by {2}..", a, b, c)
         }
         (110, 147956516) => {
             String::from("The maximum amount of items in your apartment has been reached! This item will be lost if left here.")
@@ -10350,7 +10448,7 @@ pub fn format_message(
         (110, 232281461) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("You absorbed {} points of {} damage.", a, b)
+            format!("You absorbed {0} points of {1} damage.", a, b)
         }
         (110, 205332636) => {
             String::from("Other player's inventory is full, can't complete trade!")
@@ -10362,12 +10460,12 @@ pub fn format_message(
             let d = &arguments[3];
             let e = &arguments[4];
             let f = &arguments[5];
-            format!("{} can now loot <a href=\"itemref://{}/{}/{}\">{}</a> from {}.", a, b, c, d, e, f)
+            format!("{0} can now loot <a href=\"itemref://{1}/{2}/{3}\">{4}</a> from {5}.", a, b, c, d, e, f)
         }
         (110, 79653355) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Target {} your {}!", a, b)
+            format!("Target {0} your {1}!", a, b)
         }
         (110, 191797221) => {
             String::from("You have made a challenge to a pet fight.")
@@ -10383,14 +10481,14 @@ pub fn format_message(
         }
         (110, 183520067) => {
             let a = &arguments[0];
-            format!("The shop contains {} items.", a)
+            format!("The shop contains {0} items.", a)
         }
         (110, 48456878) => {
             String::from("You need to have a bow weapon equipped.")
         }
         (110, 236786603) => {
             let a = &arguments[0];
-            format!("Your attack shield blocked the attack! ({}) left.", a)
+            format!("Your attack shield blocked the attack! ({0}) left.", a)
         }
         (110, 153860147) => {
             String::from("You can not send nodrop items to the market.")
@@ -10421,7 +10519,7 @@ pub fn format_message(
         }
         (110, 208896900) => {
             let a = &arguments[0];
-            format!("{} tried to hide but failed.", a)
+            format!("{0} tried to hide but failed.", a)
         }
         (110, 198764389) => {
             String::from("Can't use all ammo at once.")
@@ -10437,7 +10535,7 @@ pub fn format_message(
         }
         (110, 1622884) => {
             let a = &arguments[0];
-            format!("This shop is owned by: {}", a)
+            format!("This shop is owned by: {0}", a)
         }
         (110, 75171540) => {
             String::from("Target has surrendered.")
@@ -10451,7 +10549,7 @@ pub fn format_message(
             let f = &arguments[5];
             let g = &arguments[6];
             let h = &arguments[7];
-            format!("{}: Health: {}%  Nano: {}%  NCU: {}/{}    Position: {},{}    Fighting: {}\r\n", a, b, c, d, e, f, g, h)
+            format!("{0}: Health: {1}%  Nano: {2}%  NCU: {3}/{4}    Position: {5},{6}    Fighting: {7}\r\n", a, b, c, d, e, f, g, h)
         }
         (110, 132904324) => {
             String::from("No PvP grace period since you already are in a fight.")
@@ -10470,29 +10568,29 @@ pub fn format_message(
         }
         (110, 107353316) => {
             let a = &arguments[0];
-            format!("{} cannot be summoned because it is in a fight.", a)
+            format!("{0} cannot be summoned because it is in a fight.", a)
         }
         (110, 2091948) => {
             String::from("You gained a new Shadowlevel!")
         }
         (110, 106185396) => {
             let a = &arguments[0];
-            format!("You tried to hit {}, but missed!", a)
+            format!("You tried to hit {0}, but missed!", a)
         }
         (110, 218510731) => {
             let a = &arguments[0];
-            format!("Your Full IP Reset has finished.\r\n\r\nYou now have {} IP.", a)
+            format!("Your Full IP Reset has finished.\r\n\r\nYou now have {0} IP.", a)
         }
         (110, 225252741) => {
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("{} absorbed {} points of {} damage.", a, b, c)
+            format!("{0} absorbed {1} points of {2} damage.", a, b, c)
         }
         (110, 109640532) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("You cannot process the \"{}\" as it needs to have exactly {} charges.", a, b)
+            format!("You cannot process the \"{0}\" as it needs to have exactly {1} charges.", a, b)
         }
         (110, 75682676) => {
             String::from("NoDrop item can't be traded or sold.")
@@ -10503,7 +10601,7 @@ pub fn format_message(
         (110, 629451) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("You recouped {} of your previously lost Shadowknowledge - remaining to be recouped: {}.", a, b)
+            format!("You recouped {0} of your previously lost Shadowknowledge - remaining to be recouped: {1}.", a, b)
         }
         (110, 197583108) => {
             String::from("Authorization accepted, please wait!")
@@ -10537,7 +10635,7 @@ pub fn format_message(
         }
         (110, 707) => {
             let a = &arguments[0];
-            format!("{}", a)
+            format!("{0}", a)
         }
         (110, 249863897) => {
             String::from("Both items must be in your inventory window.")
@@ -10550,12 +10648,12 @@ pub fn format_message(
         }
         (110, 154991563) => {
             let a = &arguments[0];
-            format!("Your special attack shield blocked the attack! ({}) left.", a)
+            format!("Your special attack shield blocked the attack! ({0}) left.", a)
         }
         (110, 133836485) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("You hit {} for {} points of damage.", a, b)
+            format!("You hit {0} for {1} points of damage.", a, b)
         }
         (110, 197584373) => {
             String::from("This voucher is not valid for this city district. Please consult the item description.")
@@ -10563,12 +10661,19 @@ pub fn format_message(
         (110, 154786440) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Received reward: {} SK, {} TEMP.", a, b)
+            let c = {
+                if b.to_string() == "1" {
+                    "credit "
+                } else {
+                    " credits"
+                }
+            };
+            format!("Received reward: {0} SK, {1} {2}.", a, b, c)
         }
         (110, 83111204) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Invalid use of digits at position {} in '{}'", a, b)
+            format!("Invalid use of digits at position {0} in '{1}'", a, b)
         }
         (110, 171196092) => {
             let a = &arguments[0];
@@ -10576,7 +10681,7 @@ pub fn format_message(
             let c = &arguments[2];
             let d = &arguments[3];
             let e = &arguments[4];
-            format!("\"{}\" is of a too low quality level. With \"{}\" at quality of {} , the \"{}\" must be at least at quality {}.", a, b, c, d, e)
+            format!("\"{0}\" is of a too low quality level. With \"{1}\" at quality of {2} , the \"{3}\" must be at least at quality {4}.", a, b, c, d, e)
         }
         (110, 139545492) => {
             String::from("PvP not allowed in this district.")
@@ -10586,7 +10691,7 @@ pub fn format_message(
         }
         (110, 75889919) => {
             let a = &arguments[0];
-            format!("You need at least {} remaining nano energy to execute this program.", a)
+            format!("You need at least {0} remaining nano energy to execute this program.", a)
         }
         (110, 245219682) => {
             String::from("Team loot order must be set to 'leader' to perform this action.")
@@ -10611,7 +10716,7 @@ pub fn format_message(
         }
         (110, 55195541) => {
             let a = &arguments[0];
-            format!("Target side must be {}!", a)
+            format!("Target side must be {0}!", a)
         }
         (110, 102376403) => {
             String::from("Searching for hidden objects.")
@@ -10620,7 +10725,7 @@ pub fn format_message(
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("{} {} is required to be at least {}!", a, b, c)
+            format!("{0} {1} is required to be at least {2}!", a, b, c)
         }
         (110, 167845155) => {
             String::from("You can not send container items through the mail system.")
@@ -10635,7 +10740,7 @@ pub fn format_message(
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("{}'s damage shield hit {} for {} points of damage.", a, b, c)
+            format!("{0}'s damage shield hit {1} for {2} points of damage.", a, b, c)
         }
         (110, 37045237) => {
             String::from("You can't save here!")
@@ -10651,7 +10756,7 @@ pub fn format_message(
         }
         (110, 7311748) => {
             let a = &arguments[0];
-            format!("Your nano execution got interrupted by {}..", a)
+            format!("Your nano execution got interrupted by {0}..", a)
         }
         (110, 103392196) => {
             String::from("Fight!")
@@ -10663,7 +10768,7 @@ pub fn format_message(
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("{} bought {} for {} credits.", a, b, c)
+            format!("{0} bought {1} for {2} credits.", a, b, c)
         }
         (110, 31082299) => {
             String::from("Mission items (including mission items in bags) can not be placed in the bank.")
@@ -10697,12 +10802,12 @@ pub fn format_message(
         }
         (110, 76616117) => {
             let a = &arguments[0];
-            format!("The shop balance is {} credits.", a)
+            format!("The shop balance is {0} credits.", a)
         }
         (110, 96085107) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Your summon target was bound at position {},{}. You need to move closer to that position before you are allowed to summon him.", a, b)
+            format!("Your summon target was bound at position {0},{1}. You need to move closer to that position before you are allowed to summon him.", a, b)
         }
         (110, 137471989) => {
             String::from("Wrong ammotype.")
@@ -10721,21 +10826,35 @@ pub fn format_message(
         }
         (110, 118314187) => {
             let a = &arguments[0];
-            format!("You will be open to attack in {} TEMP", a)
+            let b = {
+                if a.to_string() == "1" {
+                    " second. "
+                } else {
+                    " seconds."
+                }
+            };
+            format!("You will be open to attack in {0} {1}", a, b)
         }
         (110, 34043559) => {
             String::from("You can't execute nanoprograms while falling!")
         }
         (110, 107290227) => {
             let a = &arguments[0];
-            format!("You hit with {} TEMP", a)
+            let b = {
+                if a.to_string() == "1" {
+                    " bullet... "
+                } else {
+                    " bullets..."
+                }
+            };
+            format!("You hit with {0} {1}", a, b)
         }
         (110, 156906702) => {
             String::from("You need to have a energy weapon equipped in your right hand.")
         }
         (110, 56838396) => {
             let a = &arguments[0];
-            format!("{} is not a valid opponent for pet duel.", a)
+            format!("{0} is not a valid opponent for pet duel.", a)
         }
         (110, 68481987) => {
             String::from("You do not have enough credits to complete this transaction.")
@@ -10761,7 +10880,7 @@ pub fn format_message(
         (110, 114868695) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Playshifting failed: The server was unable to start the building. ( {}, {} )", a, b)
+            format!("Playshifting failed: The server was unable to start the building. ( {0}, {1} )", a, b)
         }
         (110, 171187118) => {
             String::from("You are already running this action!")
@@ -10772,7 +10891,7 @@ pub fn format_message(
         (110, 254181591) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("{} must not have a {} running!", a, b)
+            format!("{0} must not have a {1} running!", a, b)
         }
         (110, 257117687) => {
             String::from("You can't perform social animations while swimming!")
@@ -10788,7 +10907,7 @@ pub fn format_message(
             let b = &arguments[1];
             let c = &arguments[2];
             let d = &arguments[3];
-            format!("Left hand weapon {} : {} : {} : {}", a, b, c, d)
+            format!("Left hand weapon {0} : {1} : {2} : {3}", a, b, c, d)
         }
         (110, 100495847) => {
             String::from("You can't do this while fighting!")
@@ -10800,11 +10919,11 @@ pub fn format_message(
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("{} was attacked with nanobots for {} points of {} damage.", a, b, c)
+            format!("{0} was attacked with nanobots for {1} points of {2} damage.", a, b, c)
         }
         (110, 180930712) => {
             let a = &arguments[0];
-            format!("Entering '{}'.", a)
+            format!("Entering '{0}'.", a)
         }
         (110, 247632055) => {
             String::from("You failed to hide as you are currently fighting.")
@@ -10818,7 +10937,7 @@ pub fn format_message(
         (110, 56542450) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("{} was unaffected by your {}.", a, b)
+            format!("{0} was unaffected by your {1}.", a, b)
         }
         (110, 97227364) => {
             String::from("Items must be unequipped before they can be deleted!")
@@ -10838,14 +10957,21 @@ pub fn format_message(
         (110, 227119501) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("You countered {}'s attempt to run {} within your NCU.", a, b)
+            format!("You countered {0}'s attempt to run {1} within your NCU.", a, b)
         }
         (110, 202439743) => {
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
             let d = &arguments[3];
-            format!("{} ({}:{}) has {} skill TEMP", a, b, c, d)
+            let e = {
+                if d.to_string() == "1" {
+                    " lock. "
+                } else {
+                    " locks."
+                }
+            };
+            format!("{0} ({1}:{2}) has {3} skill {4}", a, b, c, d, e)
         }
         (110, 100643845) => {
             String::from("Suppression field at 75%. Wildlife may attack you.")
@@ -10857,18 +10983,25 @@ pub fn format_message(
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("You hit {} for {} points of {} damage.", a, b, c)
+            format!("You hit {0} for {1} points of {2} damage.", a, b, c)
         }
         (110, 8554146) => {
             String::from("You have accepted your targets offer of surrender, and are thus not allowed to attack it again.")
         }
         (110, 6793475) => {
             let a = &arguments[0];
-            format!("You received {} TEMP from the corpse.", a)
+            let b = {
+                if a.to_string() == "1" {
+                    "credit "
+                } else {
+                    " credits"
+                }
+            };
+            format!("You received {0} {1} from the corpse.", a, b)
         }
         (110, 43985445) => {
             let a = &arguments[0];
-            format!("You have already got this unique item: {}", a)
+            format!("You have already got this unique item: {0}", a)
         }
         (110, 76013323) => {
             String::from("This action requires that you are wielding Izgimmer-modified Cyberdeck!")
@@ -10878,7 +11011,7 @@ pub fn format_message(
         }
         (110, 8161459) => {
             let a = &arguments[0];
-            format!("You were damaged by a toxic substance for {} points of damage.", a)
+            format!("You were damaged by a toxic substance for {0} points of damage.", a)
         }
         (110, 56163172) => {
             String::from("/team loot")
@@ -10888,7 +11021,7 @@ pub fn format_message(
         }
         (110, 261570713) => {
             let a = &arguments[0];
-            format!("Maximum increase in ability is {} per level!", a)
+            format!("Maximum increase in ability is {0} per level!", a)
         }
         (110, 96829143) => {
             String::from("Can't add fixture to building.")
@@ -10913,7 +11046,7 @@ pub fn format_message(
         }
         (110, 16191029) => {
             let a = &arguments[0];
-            format!("{} contain items. Remove the items first.", a)
+            format!("{0} contain items. Remove the items first.", a)
         }
         (110, 55017541) => {
             String::from("Stuck-resolve command not allowed for players that cannot move.")
@@ -10926,14 +11059,14 @@ pub fn format_message(
         }
         (110, 147670715) => {
             let a = &arguments[0];
-            format!("You parried the attack from {}!", a)
+            format!("You parried the attack from {0}!", a)
         }
         (110, 266056324) => {
             String::from("No room in your inventory. Item dropped on ground.")
         }
         (110, 22751484) => {
             let a = &arguments[0];
-            format!("You increased your nanopool with {} points.", a)
+            format!("You increased your nanopool with {0} points.", a)
         }
         (110, 114804363) => {
             String::from("Items can't be used directly from the bank!")
@@ -10949,12 +11082,12 @@ pub fn format_message(
         }
         (110, 23698185) => {
             let a = &arguments[0];
-            format!("Attacked by {}!", a)
+            format!("Attacked by {0}!", a)
         }
         (110, 215187916) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Need additional skill for combine: {} {}", a, b)
+            format!("Need additional skill for combine: {0} {1}", a, b)
         }
         (110, 93068324) => {
             String::from("Glancing hit.")
@@ -10994,7 +11127,7 @@ pub fn format_message(
         }
         (110, 155854693) => {
             let a = &arguments[0];
-            format!("A player hit you for {} points of damage.", a)
+            format!("A player hit you for {0} points of damage.", a)
         }
         (110, 192984696) => {
             String::from("You have reached your max for this title.")
@@ -11008,7 +11141,7 @@ pub fn format_message(
         (110, 226232628) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("{} IP have been returned to you for the reset of {}!", a, b)
+            format!("{0} IP have been returned to you for the reset of {1}!", a, b)
         }
         (110, 180281076) => {
             String::from("The duel challenge was retracted.")
@@ -11024,7 +11157,7 @@ pub fn format_message(
         }
         (110, 150782277) => {
             let a = &arguments[0];
-            format!("Target sex must be {}!", a)
+            format!("Target sex must be {0}!", a)
         }
         (110, 96374740) => {
             String::from("The minimum amount of credits allowed is 4000.")
@@ -11046,7 +11179,7 @@ pub fn format_message(
         }
         (110, 139675988) => {
             let a = &arguments[0];
-            format!("Player {} went link dead.", a)
+            format!("Player {0} went link dead.", a)
         }
         (110, 58096372) => {
             String::from("Vehicles are prohibited in this area.\r\n")
@@ -11071,7 +11204,7 @@ pub fn format_message(
         }
         (110, 63630372) => {
             let a = &arguments[0];
-            format!("You have been detected by {}!", a)
+            format!("You have been detected by {0}!", a)
         }
         (110, 71761708) => {
             String::from("Your opponent rejected your challenge.")
@@ -11083,7 +11216,7 @@ pub fn format_message(
             let d = &arguments[3];
             let e = &arguments[4];
             let f = &arguments[5];
-            format!("{} looted <a href=\"itemref://{}/{}/{}\">{}</a> from {}.", a, b, c, d, e, f)
+            format!("{0} looted <a href=\"itemref://{1}/{2}/{3}\">{4}</a> from {5}.", a, b, c, d, e, f)
         }
         (110, 103442423) => {
             String::from("You can only bluff while walking!")
@@ -11098,19 +11231,19 @@ pub fn format_message(
             let d = &arguments[3];
             let e = &arguments[4];
             let f = &arguments[5];
-            format!("The server has randomly assigned loot rights of <a href=\"itemref://{}/{}/{}\">{}</a> from {} to {}", a, b, c, d, e, f)
+            format!("The server has randomly assigned loot rights of <a href=\"itemref://{0}/{1}/{2}\">{3}</a> from {4} to {5}", a, b, c, d, e, f)
         }
         (110, 238610964) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("You were hit for {} points of damage by {}'s reflect shield.", a, b)
+            format!("You were hit for {0} points of damage by {1}'s reflect shield.", a, b)
         }
         (110, 98781741) => {
             String::from("This is a NoDrop item - it can't be dropped.")
         }
         (110, 120316341) => {
             let a = &arguments[0];
-            format!("{} has challenged you to a duel.", a)
+            format!("{0} has challenged you to a duel.", a)
         }
         (110, 231194948) => {
             String::from("You have completed the first specialization!")
@@ -11138,7 +11271,7 @@ pub fn format_message(
         }
         (110, 40687125) => {
             let a = &arguments[0];
-            format!("You need at least {} in Multiple Melee to wield these two weapons.", a)
+            format!("You need at least {0} in Multiple Melee to wield these two weapons.", a)
         }
         (110, 191940452) => {
             String::from("You're not allowed to loot these remains!")
@@ -11149,7 +11282,7 @@ pub fn format_message(
             let c = &arguments[2];
             let d = &arguments[3];
             let e = &arguments[4];
-            format!("{} has played {} days {} hours {} minutes {} seconds", a, b, c, d, e)
+            format!("{0} has played {1} days {2} hours {3} minutes {4} seconds", a, b, c, d, e)
         }
         (110, 205676242) => {
             String::from("You need to be a team leader to perform this action!")
@@ -11176,14 +11309,14 @@ pub fn format_message(
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("You were attacked with nanobots from {} for {} points of {} damage.", a, b, c)
+            format!("You were attacked with nanobots from {0} for {1} points of {2} damage.", a, b, c)
         }
         (110, 250504978) => {
             String::from("You must carry the container in order to operate on the items inside it!")
         }
         (110, 30581968) => {
             let a = &arguments[0];
-            format!("You gained {} new Alien Experience Points.", a)
+            format!("You gained {0} new Alien Experience Points.", a)
         }
         (110, 213562708) => {
             String::from("Your character was saved (GM message only).")
@@ -11196,7 +11329,14 @@ pub fn format_message(
         }
         (110, 69853428) => {
             let a = &arguments[0];
-            format!("Suppression gas will take effect in {} TEMP", a)
+            let b = {
+                if a.to_string() == "1" {
+                    " second. "
+                } else {
+                    " seconds."
+                }
+            };
+            format!("Suppression gas will take effect in {0} {1}", a, b)
         }
         (110, 83559874) => {
             String::from("This action requires that you are wearing Grid Armor!")
@@ -11206,7 +11346,7 @@ pub fn format_message(
         }
         (110, 160782964) => {
             let a = &arguments[0];
-            format!("\"/org leave\" command not completed. You remain a member of the organization \"{}\".", a)
+            format!("\"/org leave\" command not completed. You remain a member of the organization \"{0}\".", a)
         }
         (110, 164980407) => {
             String::from("CHAIN DEATH SYSTEM MESSAGE: Anarchy Online has a special \"chain death\" avoidance system.  If your character dies very quickly more than twice, the system assumes that you have been chain killed.  You will now be placed in a safe location.")
@@ -11225,7 +11365,7 @@ pub fn format_message(
         }
         (110, 101527576) => {
             let a = &arguments[0];
-            format!("If this item is combined with a: {}", a)
+            format!("If this item is combined with a: {0}", a)
         }
         (110, 226192526) => {
             String::from("You need to have a 2 hand blunt weapon equipped in your right hand.")
@@ -11241,11 +11381,11 @@ pub fn format_message(
         }
         (110, 5179231) => {
             let a = &arguments[0];
-            format!("If you deduct these two from the total normal IP mentioned above, you will receive {} additional IP points.", a)
+            format!("If you deduct these two from the total normal IP mentioned above, you will receive {0} additional IP points.", a)
         }
         (110, 8802756) => {
             let a = &arguments[0];
-            format!("{} vanished.", a)
+            format!("{0} vanished.", a)
         }
         (110, 61896768) => {
             String::from("You succeded disarming the trap!.")
@@ -11267,7 +11407,7 @@ pub fn format_message(
         }
         (110, 109086469) => {
             let a = &arguments[0];
-            format!("You were hit for {} points of damage.", a)
+            format!("You were hit for {0} points of damage.", a)
         }
         (110, 261532677) => {
             String::from("You can't attack while in this state.")
@@ -11283,7 +11423,7 @@ pub fn format_message(
         }
         (110, 247124532) => {
             let a = &arguments[0];
-            format!("You successfully bound {} teammember(s) to this location.", a)
+            format!("You successfully bound {0} teammember(s) to this location.", a)
         }
         (110, 263200964) => {
             String::from("You are not allowed to attack this target.")
@@ -11297,7 +11437,7 @@ pub fn format_message(
         (110, 19661557) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Someone absorbed {} points of {} damage.", a, b)
+            format!("Someone absorbed {0} points of {1} damage.", a, b)
         }
         (110, 134742360) => {
             String::from("Dimach!")
@@ -11313,23 +11453,23 @@ pub fn format_message(
         }
         (110, 229499317) => {
             let a = &arguments[0];
-            format!("You were challenged by {} to a pet fight.\r\nWrite \"/petduel accept\" to accept the challenge.\r\nOr write \"/petduel reject\" to reject.", a)
+            format!("You were challenged by {0} to a pet fight.\r\nWrite \"/petduel accept\" to accept the challenge.\r\nOr write \"/petduel reject\" to reject.", a)
         }
         (110, 190747645) => {
             let a = &arguments[0];
-            format!("Unable to create mission: {} was not in the team when the mission was created.", a)
+            format!("Unable to create mission: {0} was not in the team when the mission was created.", a)
         }
         (110, 212805180) => {
             String::from("You just wasted an item.")
         }
         (110, 70098404) => {
             let a = &arguments[0];
-            format!("Character stored. {} Shadowknowledge saved.", a)
+            format!("Character stored. {0} Shadowknowledge saved.", a)
         }
         (110, 134429625) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("You need following skill to reverse engineer: {} {}", a, b)
+            format!("You need following skill to reverse engineer: {0} {1}", a, b)
         }
         (110, 46155422) => {
             String::from("Executing programs here is forbidden.")
@@ -11346,17 +11486,31 @@ pub fn format_message(
         (110, 102894949) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("You were attacked with nanobots for {} points of {} damage.", a, b)
+            format!("You were attacked with nanobots for {0} points of {1} damage.", a, b)
         }
         (110, 262030676) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("(Found {} TEMP and {} TEMP in the shop.)", a, b)
+            let c = {
+                if a.to_string() == "1" {
+                    " item "
+                } else {
+                    " items"
+                }
+            };
+            let d = {
+                if a.to_string() == "1" {
+                    " credit "
+                } else {
+                    " credits"
+                }
+            };
+            format!("(Found {0} {2} and {1} {3} in the shop.)", a, b, c, d)
         }
         (110, 97926018) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Your reflect shield hit {} for {} points of damage.", a, b)
+            format!("Your reflect shield hit {0} for {1} points of damage.", a, b)
         }
         (110, 186942868) => {
             String::from("You can't fight at the moment!")
@@ -11369,13 +11523,13 @@ pub fn format_message(
         }
         (110, 253883112) => {
             let a = &arguments[0];
-            format!("Received mission reward: Cash {}", a)
+            format!("Received mission reward: Cash {0}", a)
         }
         (110, 86550761) => {
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("Item: {} level: {} price: {}", a, b, c)
+            format!("Item: {0} level: {1} price: {2}", a, b, c)
         }
         (110, 41932069) => {
             String::from("Target is outside range.")
@@ -11385,7 +11539,14 @@ pub fn format_message(
         }
         (110, 245559163) => {
             let a = &arguments[0];
-            format!("You have received {} TEMP from your organization bank.", a)
+            let b = {
+                if a.to_string() == "1" {
+                    " credit "
+                } else {
+                    " credits"
+                }
+            };
+            format!("You have received {0} {1} from your organization bank.", a, b)
         }
         (110, 222748692) => {
             String::from("Your summon target has not been bound on this playfield.")
@@ -11396,12 +11557,12 @@ pub fn format_message(
         (110, 128345015) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("{} must have a {} running!", a, b)
+            format!("{0} must have a {1} running!", a, b)
         }
         (110, 113877645) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Item at: {} {}.", a, b)
+            format!("Item at: {0} {1}.", a, b)
         }
         (110, 62593236) => {
             String::from("Warning! Trap detected.")
@@ -11457,14 +11618,14 @@ pub fn format_message(
         (110, 116350327) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("{} must not have {} running!", a, b)
+            format!("{0} must not have {1} running!", a, b)
         }
         (110, 241356222) => {
             String::from("You need to have a pistol weapon equipped.")
         }
         (110, 113321884) => {
             let a = &arguments[0];
-            format!("{} accepted your challenge.", a)
+            format!("{0} accepted your challenge.", a)
         }
         (110, 46864357) => {
             String::from("Already in use by someone else. Please wait your turn.")
@@ -11475,7 +11636,7 @@ pub fn format_message(
         (110, 143452319) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("{} can run the nano: {}!", a, b)
+            format!("{0} can run the nano: {1}!", a, b)
         }
         (110, 22016194) => {
             String::from("This action requires that you are not wearing Grid Armor!")
@@ -11488,7 +11649,7 @@ pub fn format_message(
             let e = &arguments[4];
             let f = &arguments[5];
             let g = &arguments[6];
-            format!("{}: Health: {}%  Nano: {}%  NCU: {}/{}    Position: {},{}\r\n", a, b, c, d, e, f, g)
+            format!("{0}: Health: {1}%  Nano: {2}%  NCU: {3}/{4}    Position: {5},{6}\r\n", a, b, c, d, e, f, g)
         }
         (110, 17845059) => {
             String::from("You need the Shadowlands expansion pack to access Perks.")
@@ -11519,23 +11680,23 @@ pub fn format_message(
         }
         (110, 113966673) => {
             let a = &arguments[0];
-            format!("You were healed for {} points of nano delta.", a)
+            format!("You were healed for {0} points of nano delta.", a)
         }
         (110, 50179253) => {
             String::from("Target is outside range for trade. If you want to trade with the target, move closer!")
         }
         (110, 66434430) => {
             let a = &arguments[0];
-            format!("Team-mission chance of token reward upped to {}% due to the team's heroic effort.", a)
+            format!("Team-mission chance of token reward upped to {0}% due to the team's heroic effort.", a)
         }
         (110, 7658105) => {
             let a = &arguments[0];
-            format!("This effect can only be utilitized by {}.", a)
+            format!("This effect can only be utilitized by {0}.", a)
         }
         (110, 28954583) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Your nano program {} has stopped running on {}...", a, b)
+            format!("Your nano program {0} has stopped running on {1}...", a, b)
         }
         (110, 254707413) => {
             String::from("No skill on this combination!")
@@ -11551,20 +11712,20 @@ pub fn format_message(
         }
         (110, 36900067) => {
             let a = &arguments[0];
-            format!("You were healed for {} points.", a)
+            format!("You were healed for {0} points.", a)
         }
         (110, 205979571) => {
             String::from("Available team commands:")
         }
         (110, 216734035) => {
             let a = &arguments[0];
-            format!("Item deleted at pos {}.", a)
+            format!("Item deleted at pos {0}.", a)
         }
         (110, 127970254) => {
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("{} {} is not less than {}!", a, b, c)
+            format!("{0} {1} is not less than {2}!", a, b, c)
         }
         (110, 105140873) => {
             String::from("No room in your inventory.")
@@ -11598,7 +11759,7 @@ pub fn format_message(
         }
         (110, 76809564) => {
             let a = &arguments[0];
-            format!("New Level: {}!", a)
+            format!("New Level: {0}!", a)
         }
         (110, 228084612) => {
             String::from("Can't carry that.")
@@ -11610,7 +11771,7 @@ pub fn format_message(
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("{} {} base value is required to be at least {}!", a, b, c)
+            format!("{0} {1} base value is required to be at least {2}!", a, b, c)
         }
         (110, 220022439) => {
             String::from("You can not do this while flying.")
@@ -11620,7 +11781,7 @@ pub fn format_message(
         }
         (110, 97364923) => {
             let a = &arguments[0];
-            format!("{} parried your attack!", a)
+            format!("{0} parried your attack!", a)
         }
         (110, 54881700) => {
             String::from("Your deck must be empty before it can be unequipped!")
@@ -11631,11 +11792,11 @@ pub fn format_message(
         (110, 1675284) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("ShopNet: Too many entries found ({}). {} entries displayed:", a, b)
+            format!("ShopNet: Too many entries found ({0}). {1} entries displayed:", a, b)
         }
         (110, 28885080) => {
             let a = &arguments[0];
-            format!("(GM feedback) This savebooth has an invalid cash ({})!", a)
+            format!("(GM feedback) This savebooth has an invalid cash ({0})!", a)
         }
         (110, 90052988) => {
             String::from("Your inventory is full!")
@@ -11645,17 +11806,17 @@ pub fn format_message(
         }
         (110, 101485589) => {
             let a = &arguments[0];
-            format!("You have completed your research on \"{}\".", a)
+            format!("You have completed your research on \"{0}\".", a)
         }
         (110, 176657492) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("You healed {} for {} points of health.", a, b)
+            format!("You healed {0} for {1} points of health.", a, b)
         }
         (110, 138115844) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Something hit {} for {} points of damage by reflect shield.", a, b)
+            format!("Something hit {0} for {1} points of damage by reflect shield.", a, b)
         }
         (110, 150668261) => {
             String::from("Wearing items is forbidden here.")
@@ -11666,14 +11827,14 @@ pub fn format_message(
         (110, 208051539) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("You have gained {} new Reset Points. Your total Reset Point count is: {}", a, b)
+            format!("You have gained {0} new Reset Points. Your total Reset Point count is: {1}", a, b)
         }
         (110, 41643150) => {
             String::from("You need to have a 1 hand blunt weapon equipped in your right hand.")
         }
         (110, 176711820) => {
             let a = &arguments[0];
-            format!("You have challenged {} to a pet fight.", a)
+            format!("You have challenged {0} to a pet fight.", a)
         }
         (110, 29631970) => {
             String::from("Item-spawn to inventory failed cause we did not find receiver.")
@@ -11704,7 +11865,7 @@ pub fn format_message(
         }
         (110, 247700080) => {
             let a = &arguments[0];
-            format!("You received {} xp.", a)
+            format!("You received {0} xp.", a)
         }
         (110, 185395998) => {
             String::from("You need to have a SMG weapon equipped in your right hand.")
@@ -11739,7 +11900,7 @@ pub fn format_message(
             let c = &arguments[2];
             let d = &arguments[3];
             let e = &arguments[4];
-            format!("{} was attacked with {} from {} for {} points of {} damage.", a, b, c, d, e)
+            format!("{0} was attacked with {1} from {2} for {3} points of {4} damage.", a, b, c, d, e)
         }
         (110, 125843573) => {
             String::from("This item requires a hostile target to be applied on.")
@@ -11764,7 +11925,7 @@ pub fn format_message(
         }
         (110, 7184644) => {
             let a = &arguments[0];
-            format!("This Shadowknowledge was added to the pool of unsaved experience points that you get back through gaining new experience points. Your current pool of unsaved experience is {}.", a)
+            format!("This Shadowknowledge was added to the pool of unsaved experience points that you get back through gaining new experience points. Your current pool of unsaved experience is {0}.", a)
         }
         (110, 154098633) => {
             String::from("You can not send temporary items through the mail system.")
@@ -11792,14 +11953,14 @@ pub fn format_message(
         }
         (110, 172693509) => {
             let a = &arguments[0];
-            format!("You have gained a new Alien Title: {}!", a)
+            format!("You have gained a new Alien Title: {0}!", a)
         }
         (110, 146762345) => {
             String::from("You can assemble these two items with ok quality results.")
         }
         (110, 53932440) => {
             let a = &arguments[0];
-            format!("Spawns performed: {}", a)
+            format!("Spawns performed: {0}", a)
         }
         (110, 7708509) => {
             String::from("You're not a member of the looting team!")
@@ -11809,7 +11970,7 @@ pub fn format_message(
         }
         (110, 234603812) => {
             let a = &arguments[0];
-            format!("This terminal can only be rented by members of {}!", a)
+            format!("This terminal can only be rented by members of {0}!", a)
         }
         (110, 31032772) => {
             String::from("The target is not accepting duel challenges.")
@@ -11829,7 +11990,7 @@ pub fn format_message(
         (110, 108584146) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("You got healed by {} for {} points of health.", a, b)
+            format!("You got healed by {0} for {1} points of health.", a, b)
         }
         (110, 212592180) => {
             String::from("All items have been reclaimed!")
@@ -11851,7 +12012,7 @@ pub fn format_message(
         }
         (110, 138036463) => {
             let a = &arguments[0];
-            format!("You drained {} points of nano from the target.", a)
+            format!("You drained {0} points of nano from the target.", a)
         }
         (110, 95202091) => {
             String::from("Items being sent to the market must be in your main inventory.")
@@ -11864,7 +12025,7 @@ pub fn format_message(
         }
         (110, 183230340) => {
             let a = &arguments[0];
-            format!("Nickname is accepted as '{}'", a)
+            format!("Nickname is accepted as '{0}'", a)
         }
         (110, 39591797) => {
             String::from("You can not heal this target because the level difference is too large.")
@@ -11896,14 +12057,14 @@ pub fn format_message(
         (110, 157974308) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Received mission reward: XP {} Cash {}", a, b)
+            format!("Received mission reward: XP {0} Cash {1}", a, b)
         }
         (110, 26345748) => {
             String::from("Do you wish to permanently commit to your side? (You can no longer change side after reaching level 201!)")
         }
         (110, 163173060) => {
             let a = &arguments[0];
-            format!("{} is inspecting your equipment.", a)
+            format!("{0} is inspecting your equipment.", a)
         }
         (110, 220207812) => {
             String::from("Fling Shot!")
@@ -11938,12 +12099,12 @@ pub fn format_message(
         (110, 87026963) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("{} can loot these remains. (Loot order: {})", a, b)
+            format!("{0} can loot these remains. (Loot order: {1})", a, b)
         }
         (110, 239029653) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("{} must have enough free nano controlling units (NCU) to have {} running!", a, b)
+            format!("{0} must have enough free nano controlling units (NCU) to have {1} running!", a, b)
         }
         (110, 200449475) => {
             String::from("Please note that there might be some very minor rounding errors, but they should not amount to more than 5-10 IP total. Please also note that some people have more IP than their normal total IP, because of special items yielding additional IP.")
@@ -11951,14 +12112,21 @@ pub fn format_message(
         (110, 160619144) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Received reward: {} XP, {} TEMP.", a, b)
+            let c = {
+                if b.to_string() == "1" {
+                    "credit "
+                } else {
+                    " credits"
+                }
+            };
+            format!("Received reward: {0} XP, {1} {2}.", a, b, c)
         }
         (110, 94618563) => {
             String::from("To delete a bag, you must remove all contents.")
         }
         (110, 92583404) => {
             let a = &arguments[0];
-            format!("{} is full.", a)
+            format!("{0} is full.", a)
         }
         (110, 162097758) => {
             String::from("You need to have a heavy weapon equipped in your right hand.")
@@ -11966,23 +12134,23 @@ pub fn format_message(
         (110, 81344862) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Playshifting failed: The server was unable to start the mission building. ( {}, {} )", a, b)
+            format!("Playshifting failed: The server was unable to start the mission building. ( {0}, {1} )", a, b)
         }
         (110, 120692516) => {
             let a = &arguments[0];
-            format!("For you to receive the full reward from this quest, you can not be grouped with players above level {} while solving the quest or when handing in the quest result.", a)
+            format!("For you to receive the full reward from this quest, you can not be grouped with players above level {0} while solving the quest or when handing in the quest result.", a)
         }
         (110, 204307477) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("You have to kill {} more {} to fulfill one of your missions!", a, b)
+            format!("You have to kill {0} more {1} to fulfill one of your missions!", a, b)
         }
         (110, 47585139) => {
             String::from("You are unable to gain a new level with tradeskills. You need to get the last experience points in some other way.")
         }
         (110, 175101176) => {
             let a = &arguments[0];
-            format!("You cannot use letters ( {} ) in this command.", a)
+            format!("You cannot use letters ( {0} ) in this command.", a)
         }
         (110, 83514020) => {
             String::from("Stuck-resolve command not allowed while one or more pet is in combat.")
@@ -11992,16 +12160,16 @@ pub fn format_message(
         }
         (110, 59137061) => {
             let a = &arguments[0];
-            format!("Target side must not be {}!", a)
+            format!("Target side must not be {0}!", a)
         }
         (110, 113786558) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("{} was born on {}", a, b)
+            format!("{0} was born on {1}", a, b)
         }
         (110, 222924355) => {
             let a = &arguments[0];
-            format!("{} contain items. Remove the items first.", a)
+            format!("{0} contain items. Remove the items first.", a)
         }
         (110, 126160643) => {
             String::from("You must not be in the Shadowlands in order to use this!")
@@ -12020,7 +12188,7 @@ pub fn format_message(
             let b = &arguments[1];
             let c = &arguments[2];
             let d = &arguments[3];
-            format!("Weapon {} : {} : {} : {}", a, b, c, d)
+            format!("Weapon {0} : {1} : {2} : {3}", a, b, c, d)
         }
         (110, 260013981) => {
             String::from("You locked the item.")
@@ -12033,7 +12201,7 @@ pub fn format_message(
         }
         (110, 106497456) => {
             let a = &arguments[0];
-            format!("All in all, you now have {} IP points.", a)
+            format!("All in all, you now have {0} IP points.", a)
         }
         (110, 145329275) => {
             String::from("The quality of the new item is ok.")
@@ -12068,11 +12236,11 @@ pub fn format_message(
         (110, 38275621) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("{} took {} points of fall damage.", a, b)
+            format!("{0} took {1} points of fall damage.", a, b)
         }
         (110, 98398109) => {
             let a = &arguments[0];
-            format!("Executing Nano Program: {}.", a)
+            format!("Executing Nano Program: {0}.", a)
         }
         (110, 111501557) => {
             String::from("Only one vote at a time!")
@@ -12094,14 +12262,14 @@ pub fn format_message(
             let b = &arguments[1];
             let c = &arguments[2];
             let d = &arguments[3];
-            format!("{} was attacked with {} for {} points of {} damage.", a, b, c, d)
+            format!("{0} was attacked with {1} for {2} points of {3} damage.", a, b, c, d)
         }
         (110, 154451060) => {
             String::from("GM notice: You were unaffected by areaformula!")
         }
         (110, 133271472) => {
             let a = &arguments[0];
-            format!("This is your private shop (max {} items)!", a)
+            format!("This is your private shop (max {0} items)!", a)
         }
         (110, 264430233) => {
             String::from("Resurrection shock fills your body. Stats temporarily reduced.")
@@ -12111,12 +12279,12 @@ pub fn format_message(
             let b = &arguments[1];
             let c = &arguments[2];
             let d = &arguments[3];
-            format!("Player {} profession {} has {} in full AMS for {} with no multiplier.", a, b, c, d)
+            format!("Player {0} profession {1} has {2} in full AMS for {3} with no multiplier.", a, b, c, d)
         }
         (110, 130511913) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("You were unaffected by {} from {}.", a, b)
+            format!("You were unaffected by {0} from {1}.", a, b)
         }
         (110, 236671044) => {
             String::from("This Perk doesn't exist!")
@@ -12129,7 +12297,7 @@ pub fn format_message(
         }
         (110, 227193107) => {
             let a = &arguments[0];
-            format!("You gained {} points of Shadowknowledge as a side bonus.", a)
+            format!("You gained {0} points of Shadowknowledge as a side bonus.", a)
         }
         (110, 147974487) => {
             String::from("You start sneaking.")
@@ -12141,7 +12309,7 @@ pub fn format_message(
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("{} {} base value is not less than {}!", a, b, c)
+            format!("{0} {1} base value is not less than {2}!", a, b, c)
         }
         (110, 262436567) => {
             String::from("You are too high level to forage in this area!")
@@ -12152,7 +12320,7 @@ pub fn format_message(
         (110, 131173557) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("You gained {} {}.", a, b)
+            format!("You gained {0} {1}.", a, b)
         }
         (110, 174062405) => {
             String::from("Suppression field at 5%. PvP with everyone outside your organization...")
@@ -12165,12 +12333,12 @@ pub fn format_message(
         }
         (110, 154793861) => {
             let a = &arguments[0];
-            format!("Someone's reflect shield hit you for {} points of damage.", a)
+            format!("Someone's reflect shield hit you for {0} points of damage.", a)
         }
         (110, 13197412) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("You were hit for {} points of damage by {}'s damage shield.", a, b)
+            format!("You were hit for {0} points of damage by {1}'s damage shield.", a, b)
         }
         (110, 42166683) => {
             String::from("You can't pick this lock!")
@@ -12204,7 +12372,7 @@ pub fn format_message(
             let b = &arguments[1];
             let c = &arguments[2];
             let d = &arguments[3];
-            format!("{} was attacked with nanobots from {} for {} points of {} damage.", a, b, c, d)
+            format!("{0} was attacked with nanobots from {1} for {2} points of {3} damage.", a, b, c, d)
         }
         (110, 56144451) => {
             String::from("Not allowed to attack team-members.")
@@ -12217,7 +12385,7 @@ pub fn format_message(
             let b = &arguments[1];
             let c = &arguments[2];
             let d = &arguments[3];
-            format!("It is theoretically possible to combine \"{}\" with \"{}\". But you need at least {} in {}.", a, b, c, d)
+            format!("It is theoretically possible to combine \"{0}\" with \"{1}\". But you need at least {2} in {3}.", a, b, c, d)
         }
         (110, 30588315) => {
             String::from("The quality of the reverse engineered items are ok.")
@@ -12231,11 +12399,11 @@ pub fn format_message(
         (110, 268034741) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("The shop \"{}\" owned by {} contains the following items:", a, b)
+            format!("The shop \"{0}\" owned by {1} contains the following items:", a, b)
         }
         (110, 191090750) => {
             let a = &arguments[0];
-            format!("Duel starts in {} seconds.", a)
+            format!("Duel starts in {0} seconds.", a)
         }
         (110, 67890820) => {
             String::from("You have no pet.")
@@ -12243,7 +12411,7 @@ pub fn format_message(
         (110, 116643813) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("{} must not have enough free nano controlling units (NCU) to have {} running!", a, b)
+            format!("{0} must not have enough free nano controlling units (NCU) to have {1} running!", a, b)
         }
         (110, 99047202) => {
             String::from("Social armor cannot be worn with other clothes.")
@@ -12256,29 +12424,29 @@ pub fn format_message(
             let b = &arguments[1];
             let c = &arguments[2];
             let d = &arguments[3];
-            format!("Right hand weapon {} : {} : {} : {}", a, b, c, d)
+            format!("Right hand weapon {0} : {1} : {2} : {3}", a, b, c, d)
         }
         (110, 237612305) => {
             String::from("To return the mail, it must either be cash on delivery, or you must already have the unique item. In addition, the mail must not have been returned before.")
         }
         (110, 72541812) => {
             let a = &arguments[0];
-            format!("ShopNet: {} entries found:", a)
+            format!("ShopNet: {0} entries found:", a)
         }
         (110, 238324800) => {
             let a = &arguments[0];
-            format!("{} doesn't own a shop!", a)
+            format!("{0} doesn't own a shop!", a)
         }
         (110, 154478020) => {
             String::from("You can't use this item now!")
         }
         (110, 213281328) => {
             let a = &arguments[0];
-            format!("As a result of your death, you just lost some of your Alien Experience ({}).", a)
+            format!("As a result of your death, you just lost some of your Alien Experience ({0}).", a)
         }
         (110, 252906644) => {
             let a = &arguments[0];
-            format!("{} saw through your bluff!", a)
+            format!("{0} saw through your bluff!", a)
         }
         (110, 100862949) => {
             String::from("You died of shield damage!")
@@ -12288,7 +12456,7 @@ pub fn format_message(
         }
         (110, 194843333) => {
             let a = &arguments[0];
-            format!("DumpDamage for {} done.", a)
+            format!("DumpDamage for {0} done.", a)
         }
         (110, 211856692) => {
             String::from("resisted")
@@ -12311,7 +12479,7 @@ pub fn format_message(
         (110, 137573278) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("{} forces your NCU to run {}...", a, b)
+            format!("{0} forces your NCU to run {1}...", a, b)
         }
         (110, 108119101) => {
             String::from("You can't use this nano program at the moment.")
@@ -12325,7 +12493,7 @@ pub fn format_message(
         (110, 55082631) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Teleport: {} : {}", a, b)
+            format!("Teleport: {0} : {1}", a, b)
         }
         (110, 74020435) => {
             String::from("No items in reclaim booth. Try later.")
@@ -12334,14 +12502,14 @@ pub fn format_message(
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("You were attacked with {} for {} points of {} damage.", a, b, c)
+            format!("You were attacked with {0} for {1} points of {2} damage.", a, b, c)
         }
         (110, 1491292) => {
             String::from("PvP not allowed since your team is neutral. Can only attack if attacked first.")
         }
         (110, 57225976) => {
             let a = &arguments[0];
-            format!("Following {} ...", a)
+            format!("Following {0} ...", a)
         }
         (110, 158910633) => {
             String::from("You received a mission key.")
@@ -12353,7 +12521,7 @@ pub fn format_message(
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("{}'s reflect shield hit {} for {} points of damage.", a, b, c)
+            format!("{0}'s reflect shield hit {1} for {2} points of damage.", a, b, c)
         }
         (110, 237636556) => {
             String::from("You do not have enough credits to pay for the item in this message.")
@@ -12363,21 +12531,21 @@ pub fn format_message(
         }
         (110, 248416728) => {
             let a = &arguments[0];
-            format!("Entering city controlled by: {}", a)
+            format!("Entering city controlled by: {0}", a)
         }
         (110, 102719811) => {
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
             let d = &arguments[3];
-            format!("You combined \"{}\" with \"{}\" and the result is a quality level {} \"{}\".", a, b, c, d)
+            format!("You combined \"{0}\" with \"{1}\" and the result is a quality level {2} \"{3}\".", a, b, c, d)
         }
         (110, 183539902) => {
             String::from("You need to have a piercing weapon equipped.")
         }
         (110, 263625671) => {
             let a = &arguments[0];
-            format!("Team looting set to: {}", a)
+            format!("Team looting set to: {0}", a)
         }
         (110, 168362354) => {
             String::from("Player is already an organization member.")
@@ -12393,7 +12561,7 @@ pub fn format_message(
         }
         (110, 230434588) => {
             let a = &arguments[0];
-            format!("{} is already engaged in a pet duel.", a)
+            format!("{0} is already engaged in a pet duel.", a)
         }
         (110, 231829077) => {
             String::from("There are no forageable items in this area!")
@@ -12412,7 +12580,7 @@ pub fn format_message(
         }
         (110, 159227364) => {
             let a = &arguments[0];
-            format!("Character stored. {} XP saved.", a)
+            format!("Character stored. {0} XP saved.", a)
         }
         (110, 18049691) => {
             String::from("You're unable to attack.")
@@ -12421,21 +12589,21 @@ pub fn format_message(
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("Teleport: {} : {} : {}", a, b, c)
+            format!("Teleport: {0} : {1} : {2}", a, b, c)
         }
         (110, 87719948) => {
             String::from("Someone in your team is of too high level for you to request a team mission. You can not share experience with that person...\r\n")
         }
         (110, 193606820) => {
             let a = &arguments[0];
-            format!("Team member {} went link dead.", a)
+            format!("Team member {0} went link dead.", a)
         }
         (110, 41593765) => {
             String::from("The item is not owned by you. Move it into inventory first!")
         }
         (110, 152477303) => {
             let a = &arguments[0];
-            format!("Attacking {}...", a)
+            format!("Attacking {0}...", a)
         }
         (110, 163792286) => {
             String::from("Surface not found, no spawn to surface.")
@@ -12458,14 +12626,14 @@ pub fn format_message(
         (110, 178697301) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("{} executes {} within your NCU...", a, b)
+            format!("{0} executes {1} within your NCU...", a, b)
         }
         (110, 73097448) => {
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
             let d = &arguments[3];
-            format!("You hit {} with {} for {} points of {} damage.", a, b, c, d)
+            format!("You hit {0} with {1} for {2} points of {3} damage.", a, b, c, d)
         }
         (110, 226958237) => {
             String::from("Your target countered the nano program.")
@@ -12489,7 +12657,7 @@ pub fn format_message(
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("You hit {} with nanobots for {} points of {} damage.", a, b, c)
+            format!("You hit {0} with nanobots for {1} points of {2} damage.", a, b, c)
         }
         (110, 143845444) => {
             String::from("Your inventory overflowed! Get the items before leaving the area or they will be deleted.")
@@ -12502,12 +12670,12 @@ pub fn format_message(
         }
         (110, 84220094) => {
             let a = &arguments[0];
-            format!("You do not have enough cash to pay for the organizational upkeep (which is currently {} credits). You have 30 minutes to acquire the cash, after which you will be suspended if you still cannot pay.", a)
+            format!("You do not have enough cash to pay for the organizational upkeep (which is currently {0} credits). You have 30 minutes to acquire the cash, after which you will be suspended if you still cannot pay.", a)
         }
         (110, 120958178) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Your damage shield hit {} for {} points of damage.", a, b)
+            format!("Your damage shield hit {0} for {1} points of damage.", a, b)
         }
         (110, 131809364) => {
             String::from("Warning - Complimentary insurance buffer has been reduced. From now on, you will experience resurrection shock following lifeforce transfer to your new body.")
@@ -12532,7 +12700,7 @@ pub fn format_message(
         }
         (110, 5087712) => {
             let a = &arguments[0];
-            format!("{} of your XP were allocated to your personal research.\r\n", a)
+            format!("{0} of your XP were allocated to your personal research.\r\n", a)
         }
         (110, 191748729) => {
             String::from("Stationary target item too far away!")
@@ -12545,7 +12713,7 @@ pub fn format_message(
         }
         (110, 196159176) => {
             let a = &arguments[0];
-            format!("Must not be in raid with {}", a)
+            format!("Must not be in raid with {0}", a)
         }
         (110, 266398756) => {
             String::from("Mission accomplished.")
@@ -12561,7 +12729,7 @@ pub fn format_message(
         }
         (110, 145432389) => {
             let a = &arguments[0];
-            format!("{} cannot be summoned because it is immobile.", a)
+            format!("{0} cannot be summoned because it is immobile.", a)
         }
         (110, 68812244) => {
             String::from("Hash did not resolve to any childs.")
@@ -12607,11 +12775,11 @@ pub fn format_message(
         }
         (110, 91089881) => {
             let a = &arguments[0];
-            format!("This shop is rented by: {}", a)
+            format!("This shop is rented by: {0}", a)
         }
         (110, 161390523) => {
             let a = &arguments[0];
-            format!("You lost {} points of Shadowknowledge.", a)
+            format!("You lost {0} points of Shadowknowledge.", a)
         }
         (110, 80707678) => {
             String::from("Wait for current nano program execution to finish.")
@@ -12632,7 +12800,7 @@ pub fn format_message(
             let g = &arguments[6];
             let h = &arguments[7];
             let i = &arguments[8];
-            format!("{}: Health: {}%  Nano: {}%  NCU: {}/{}    Timeleft: {} s    Position: {},{}    Fighting: {}\r\n", a, b, c, d, e, f, g, h, i)
+            format!("{0}: Health: {1}%  Nano: {2}%  NCU: {3}/{4}    Timeleft: {5} s    Position: {6},{7}    Fighting: {8}\r\n", a, b, c, d, e, f, g, h, i)
         }
         (110, 19093644) => {
             String::from("Illegal spawn level!")
@@ -12642,11 +12810,11 @@ pub fn format_message(
         }
         (110, 252883556) => {
             let a = &arguments[0];
-            format!("{} tried to hit you, but missed!", a)
+            format!("{0} tried to hit you, but missed!", a)
         }
         (110, 259112197) => {
             let a = &arguments[0];
-            format!("{} has requested to be your mentor. If you accept, a web browser will be opened to the account management page where you can confirm the request.", a)
+            format!("{0} has requested to be your mentor. If you accept, a web browser will be opened to the account management page where you can confirm the request.", a)
         }
         (110, 5701128) => {
             String::from("No corpse in reclaim booth.")
@@ -12654,19 +12822,19 @@ pub fn format_message(
         (110, 245994094) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("It is theoretically possible to combine \"{}\" with \"{}\". But you are the wrong profession", a, b)
+            format!("It is theoretically possible to combine \"{0}\" with \"{1}\". But you are the wrong profession", a, b)
         }
         (110, 142566068) => {
             String::from("You need a Reset Point in order to reset a skill!")
         }
         (110, 211132293) => {
             let a = &arguments[0];
-            format!("You are not allowed to put the item <font color=\"yellow\">{}</font> there, it is not a fixture.<BR>\r\nDo you want to <font color=\"red\">delete</font> the item instead?", a)
+            format!("You are not allowed to put the item <font color=\"yellow\">{0}</font> there, it is not a fixture.<BR>\r\nDo you want to <font color=\"red\">delete</font> the item instead?", a)
         }
         (110, 176388169) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("{}: damage {}\r\n", a, b)
+            format!("{0}: damage {1}\r\n", a, b)
         }
         (110, 118928084) => {
             String::from("Looter is not present.")
@@ -12701,14 +12869,14 @@ pub fn format_message(
         (110, 38761362) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("invalid character at position {} in '{}'", a, b)
+            format!("invalid character at position {0} in '{1}'", a, b)
         }
         (110, 239281287) => {
             String::from("Target playfield is dying.")
         }
         (110, 55819585) => {
             let a = &arguments[0];
-            format!("You have left the duel area. {} seconds until automatic forfeit.", a)
+            format!("You have left the duel area. {0} seconds until automatic forfeit.", a)
         }
         (110, 111398311) => {
             String::from("Nano execution aborted because either you or your target is teleporting.")
@@ -12731,7 +12899,7 @@ pub fn format_message(
         (110, 173694303) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("You increased nano on {} for {} points.", a, b)
+            format!("You increased nano on {0} for {1} points.", a, b)
         }
         (110, 174567932) => {
             String::from("Poison roll failed..")
@@ -12739,7 +12907,7 @@ pub fn format_message(
         (110, 61955389) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("You got nano from {} for {} points.", a, b)
+            format!("You got nano from {0} for {1} points.", a, b)
         }
         (110, 87846176) => {
             String::from("This shop is only open for members of the organization owning the market!")
@@ -12752,21 +12920,21 @@ pub fn format_message(
         }
         (110, 88395896) => {
             let a = &arguments[0];
-            format!("You are now a member of the organization \"{}\".", a)
+            format!("You are now a member of the organization \"{0}\".", a)
         }
         (110, 164102084) => {
             String::from("You must be behind the target!")
         }
         (110, 108633128) => {
             let a = &arguments[0];
-            format!("You were deducted {} credits organization tax.", a)
+            format!("You were deducted {0} credits organization tax.", a)
         }
         (110, 137609118) => {
             String::from("Invalid arguments for quest spawning.")
         }
         (110, 183542539) => {
             let a = &arguments[0];
-            format!("{} blocked your attack, and performs an attack of opportunity!", a)
+            format!("{0} blocked your attack, and performs an attack of opportunity!", a)
         }
         (110, 169515335) => {
             String::from("You end sneaking.")
@@ -12779,20 +12947,20 @@ pub fn format_message(
         }
         (110, 197138709) => {
             let a = &arguments[0];
-            format!("Unable to create new mission: {} has exceeded the limit.", a)
+            format!("Unable to create new mission: {0} has exceeded the limit.", a)
         }
         (110, 76370149) => {
             let a = &arguments[0];
-            format!("The /stuck command will be available in {} seconds.", a)
+            format!("The /stuck command will be available in {0} seconds.", a)
         }
         (110, 199555093) => {
             let a = &arguments[0];
-            format!("Someone's damage shield hit you for {} points of damage.", a)
+            format!("Someone's damage shield hit you for {0} points of damage.", a)
         }
         (110, 155585597) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Your team and your targets team share members from the same organization: {} and {}", a, b)
+            format!("Your team and your targets team share members from the same organization: {0} and {1}", a, b)
         }
         (110, 151543093) => {
             let a = &arguments[0];
@@ -12801,15 +12969,15 @@ pub fn format_message(
             let d = &arguments[3];
             let e = &arguments[4];
             let f = &arguments[5];
-            format!("{} deleted <a href=\"itemref://{}/{}/{}\">{}</a> from {}.", a, b, c, d, e, f)
+            format!("{0} deleted <a href=\"itemref://{1}/{2}/{3}\">{4}</a> from {5}.", a, b, c, d, e, f)
         }
         (110, 12339173) => {
             let a = &arguments[0];
-            format!("You were hit for {} points of damage.", a)
+            format!("You were hit for {0} points of damage.", a)
         }
         (110, 138964008) => {
             let a = &arguments[0];
-            format!("Must not be in organization with {}", a)
+            format!("Must not be in organization with {0}", a)
         }
         (110, 145444926) => {
             String::from("You must have the Lost Eden expansion!")
@@ -12840,13 +13008,13 @@ pub fn format_message(
         }
         (110, 59395603) => {
             let a = &arguments[0];
-            format!("One of your team members ({}) is in the same organization as your target", a)
+            format!("One of your team members ({0}) is in the same organization as your target", a)
         }
         (110, 116246126) => {
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("Locked down by Org leader: time until reset {:02}:{:02}:{:02}", a, b, c)
+            format!("Locked down by Org leader: time until reset {0:02}:{1:02}:{2:02}", a, b, c)
         }
         (110, 96347739) => {
             String::from("You are currently unable to use perk special actions!")
@@ -12863,7 +13031,7 @@ pub fn format_message(
         (110, 16419587) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("{} tries to attack you with {}, but misses!", a, b)
+            format!("{0} tries to attack you with {1}, but misses!", a, b)
         }
         (110, 69616863) => {
             String::from("Full Auto!")
@@ -12873,25 +13041,25 @@ pub fn format_message(
         }
         (110, 171954057) => {
             let a = &arguments[0];
-            format!("This effect can't be utilitized by {}!", a)
+            format!("This effect can't be utilitized by {0}!", a)
         }
         (110, 29209012) => {
             let a = &arguments[0];
-            format!("You have challenged {} to a duel. Waiting for opponent to reply.", a)
+            format!("You have challenged {0} to a duel. Waiting for opponent to reply.", a)
         }
         (110, 57976771) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("{} must be {}", a, b)
+            format!("{0} must be {1}", a, b)
         }
         (110, 61425492) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Something hit {} for {} points of damage by damage shield.", a, b)
+            format!("Something hit {0} for {1} points of damage by damage shield.", a, b)
         }
         (110, 122300136) => {
             let a = &arguments[0];
-            format!("Must not be in team with {}", a)
+            format!("Must not be in team with {0}", a)
         }
         (110, 50086020) => {
             String::from("It is locked.")
@@ -12907,7 +13075,7 @@ pub fn format_message(
         }
         (110, 97089187) => {
             let a = &arguments[0];
-            format!("You received a new mission with {}% added richness (QL) to the treasures.", a)
+            format!("You received a new mission with {0}% added richness (QL) to the treasures.", a)
         }
         (110, 136704116) => {
             String::from("Target is not in a fight.")
@@ -12938,29 +13106,29 @@ pub fn format_message(
         }
         (110, 145504786) => {
             let a = &arguments[0];
-            format!("Current team loot order is: {}", a)
+            format!("Current team loot order is: {0}", a)
         }
         (110, 173450925) => {
             String::from("You cannot attack this target, because you are in a mixed omni/clan team.")
         }
         (110, 108070804) => {
             let a = &arguments[0];
-            format!("You need at least {} in Multiple Ranged to wield these two weapons.", a)
+            format!("You need at least {0} in Multiple Ranged to wield these two weapons.", a)
         }
         (110, 24883171) => {
             String::from("You can increase the necessary skills from the skill view (Button below with SKL on it). Later you can use nanoprograms, implants and other items to enhance your character.")
         }
         (110, 226754835) => {
             let a = &arguments[0];
-            format!("{} xp was gained as a side bonus!", a)
+            format!("{0} xp was gained as a side bonus!", a)
         }
         (110, 236262381) => {
             let a = &arguments[0];
-            format!("Leadership was given to you by GM {}.", a)
+            format!("Leadership was given to you by GM {0}.", a)
         }
         (110, 240791923) => {
             let a = &arguments[0];
-            format!("{} already has an open city terminal. You only have limited access to this city terminal.", a)
+            format!("{0} already has an open city terminal. You only have limited access to this city terminal.", a)
         }
         (110, 56347732) => {
             String::from("Your mail will not be sent due to unacceptable content. Please revise your text and/or subject.")
@@ -12973,23 +13141,23 @@ pub fn format_message(
         }
         (110, 148488884) => {
             let a = &arguments[0];
-            format!("The current commission is: {}%", a)
+            format!("The current commission is: {0}%", a)
         }
         (110, 176204491) => {
             let a = &arguments[0];
-            format!("You need to increase your faction standing with {} to gain Shadow Knowledge.", a)
+            format!("You need to increase your faction standing with {0} to gain Shadow Knowledge.", a)
         }
         (110, 147913734) => {
             String::from("Position given, but playfield is unknown.")
         }
         (110, 265449739) => {
             let a = &arguments[0];
-            format!("You gained {} points of Shadowknowledge.", a)
+            format!("You gained {0} points of Shadowknowledge.", a)
         }
         (110, 207774771) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("You try to attack {} with {}, but you miss!", a, b)
+            format!("You try to attack {0} with {1}, but you miss!", a, b)
         }
         (110, 85240131) => {
             String::from("While crawling, you may only fight with ranged weapons!")
@@ -13011,14 +13179,14 @@ pub fn format_message(
         }
         (110, 79979934) => {
             let a = &arguments[0];
-            format!("Mission chance of token reward upped to {}% due to your heroic effort.", a)
+            format!("Mission chance of token reward upped to {0}% due to your heroic effort.", a)
         }
         (110, 102432958) => {
             String::from("You need to have a shotgun weapon equipped in your right hand.")
         }
         (110, 151203608) => {
             let a = &arguments[0];
-            format!("Must be in team with {}", a)
+            format!("Must be in team with {0}", a)
         }
         (110, 266000116) => {
             String::from("You must be in front of the target!")
@@ -13035,7 +13203,7 @@ pub fn format_message(
         (110, 172796489) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("You need following skill to combine: {} {}", a, b)
+            format!("You need following skill to combine: {0} {1}", a, b)
         }
         (110, 32054429) => {
             String::from("Target out of range for nano program.")
@@ -13051,7 +13219,7 @@ pub fn format_message(
         }
         (110, 133891201) => {
             let a = &arguments[0];
-            format!("You were healed for {} points of heal delta.", a)
+            format!("You were healed for {0} points of heal delta.", a)
         }
         (110, 14895299) => {
             String::from("Unable to find a valid position.")
@@ -13062,7 +13230,7 @@ pub fn format_message(
         (110, 190455252) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Playshifting failed: The server was unable to start the playfield. ( {}, {} )", a, b)
+            format!("Playshifting failed: The server was unable to start the playfield. ( {0}, {1} )", a, b)
         }
         (110, 124550313) => {
             String::from("Nano program executed successfully.")
@@ -13081,7 +13249,7 @@ pub fn format_message(
         }
         (110, 176103600) => {
             let a = &arguments[0];
-            format!("Received mission reward: XP {}", a)
+            format!("Received mission reward: XP {0}", a)
         }
         (110, 247899273) => {
             String::from("Unable to enter mission building: are you using an old mission key?\r\n")
@@ -13096,14 +13264,14 @@ pub fn format_message(
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("{}:{}: damage {}", a, b, c)
+            format!("{0}:{1}: damage {2}", a, b, c)
         }
         (110, 121390268) => {
             String::from("The attached credits added to your total would exceed the maximum amount of credits allowed.")
         }
         (110, 129293400) => {
             let a = &arguments[0];
-            format!("Must be in organization with {}", a)
+            format!("Must be in organization with {0}", a)
         }
         (110, 202437824) => {
             String::from("Skill lock commands:\r\nlist   - list the skill locks on a character\r\nremove - remove a specific skill lock from a character\r\nclear  - remove all skill locks from a character\r\n")
@@ -13131,7 +13299,7 @@ pub fn format_message(
         }
         (110, 169766805) => {
             let a = &arguments[0];
-            format!("{} kicked you from your organization.", a)
+            format!("{0} kicked you from your organization.", a)
         }
         (110, 216503149) => {
             String::from("Target must be in a team in order to perform this action.")
@@ -13144,11 +13312,11 @@ pub fn format_message(
         }
         (110, 3278652) => {
             let a = &arguments[0];
-            format!("Maximum increase in skill is {} per level!", a)
+            format!("Maximum increase in skill is {0} per level!", a)
         }
         (110, 54186628) => {
             let a = &arguments[0];
-            format!("{} is already fully loaded.", a)
+            format!("{0} is already fully loaded.", a)
         }
         (110, 129266804) => {
             String::from("You have completed the fourth specialization!")
@@ -13161,7 +13329,7 @@ pub fn format_message(
         }
         (110, 126565325) => {
             let a = &arguments[0];
-            format!("Broken item at: {}.", a)
+            format!("Broken item at: {0}.", a)
         }
         (110, 20213689) => {
             String::from("The new item is of excellent quality!")
@@ -13177,14 +13345,14 @@ pub fn format_message(
         }
         (110, 74985272) => {
             let a = &arguments[0];
-            format!("Must be in raid with {}", a)
+            format!("Must be in raid with {0}", a)
         }
         (110, 27674548) => {
             String::from("Lockpicking failed.")
         }
         (110, 83322987) => {
             let a = &arguments[0];
-            format!("You block the attack from {}, and perform an attack of opportunity!", a)
+            format!("You block the attack from {0}, and perform an attack of opportunity!", a)
         }
         (110, 71102660) => {
             String::from("Your duel challenge was refused.")
@@ -13218,17 +13386,17 @@ pub fn format_message(
         }
         (110, 163393380) => {
             let a = &arguments[0];
-            format!("Your items will be reclaimed in {} seconds, and made available in a reclaim booth near your resurrection site.", a)
+            format!("Your items will be reclaimed in {0} seconds, and made available in a reclaim booth near your resurrection site.", a)
         }
         (110, 230129486) => {
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("Org missing payment lockdown: time until reset {}:{}:{}", a, b, c)
+            format!("Org missing payment lockdown: time until reset {0}:{1}:{2}", a, b, c)
         }
         (110, 161390352) => {
             let a = &arguments[0];
-            format!("You lost {} xp.", a)
+            format!("You lost {0} xp.", a)
         }
         (110, 151666194) => {
             String::from("You're unable to unequip this item.")
@@ -13268,12 +13436,12 @@ pub fn format_message(
         }
         (110, 79090035) => {
             let a = &arguments[0];
-            format!("One of your targets team members ({}) is in the same organization as you", a)
+            format!("One of your targets team members ({0}) is in the same organization as you", a)
         }
         (110, 248706260) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Unique template {} cleared on {}.", a, b)
+            format!("Unique template {0} cleared on {1}.", a, b)
         }
         (110, 143629720) => {
             String::from("You can't reload the weapon with this ammunition type.")
@@ -13307,7 +13475,7 @@ pub fn format_message(
         }
         (110, 102153836) => {
             let a = &arguments[0];
-            format!("Congratulations! You have now reached the level of {}!", a)
+            format!("Congratulations! You have now reached the level of {0}!", a)
         }
         (110, 111941116) => {
             String::from("You are already engaged in a duel.")
@@ -13320,14 +13488,14 @@ pub fn format_message(
         }
         (110, 54882997) => {
             let a = &arguments[0];
-            format!("You have been challenged to a fight from {}. Do you accept?", a)
+            format!("You have been challenged to a fight from {0}. Do you accept?", a)
         }
         (110, 248967972) => {
             String::from("Unable to execute nano program. Target not found.")
         }
         (110, 62734319) => {
             let a = &arguments[0];
-            format!("No ammo was found for {}!", a)
+            format!("No ammo was found for {0}!", a)
         }
         (110, 141178878) => {
             String::from("You're unable to perform this action; please check the requirements of the item.")
@@ -13343,7 +13511,7 @@ pub fn format_message(
             let b = &arguments[1];
             let c = &arguments[2];
             let d = &arguments[3];
-            format!("{} hit {} for {} points of {} damage.", a, b, c, d)
+            format!("{0} hit {1} for {2} points of {3} damage.", a, b, c, d)
         }
         (110, 180544964) => {
             String::from("Mission spawn performed.")
@@ -13356,11 +13524,11 @@ pub fn format_message(
         }
         (110, 9596784) => {
             let a = &arguments[0];
-            format!("{}'s Shop", a)
+            format!("{0}'s Shop", a)
         }
         (110, 168308756) => {
             let a = &arguments[0];
-            format!("You did not have enough cash to pay for the organizational upkeep (which is currently {} credits). This amount is deducted from your account every 2 hours of played time. Your organization membership is now suspended for 30 minutes. At the end of this period, the system will again try to deduct the upkeep amount. If you are able to pay then, your organization membership will be reinstated. If not, another 30 minute suspension is applied.", a)
+            format!("You did not have enough cash to pay for the organizational upkeep (which is currently {0} credits). This amount is deducted from your account every 2 hours of played time. Your organization membership is now suspended for 30 minutes. At the end of this period, the system will again try to deduct the upkeep amount. If you are able to pay then, your organization membership will be reinstated. If not, another 30 minute suspension is applied.", a)
         }
         (110, 236131847) => {
             String::from("Move item to inventory before dropping it on ground.")
@@ -13376,7 +13544,7 @@ pub fn format_message(
         }
         (110, 199506192) => {
             let a = &arguments[0];
-            format!("You have gained enough Alien XP to get to another alien level but your level must be: {} to obtain it.", a)
+            format!("You have gained enough Alien XP to get to another alien level but your level must be: {0} to obtain it.", a)
         }
         (110, 87953780) => {
             String::from("You have reached the trade limit for this shop!")
@@ -13401,7 +13569,7 @@ pub fn format_message(
         }
         (110, 213725380) => {
             let a = &arguments[0];
-            format!("The /stuck command will be resolved in {} seconds.", a)
+            format!("The /stuck command will be resolved in {0} seconds.", a)
         }
         (110, 20542174) => {
             String::from("You have won the duel!")
@@ -13411,7 +13579,7 @@ pub fn format_message(
         }
         (110, 166718360) => {
             let a = &arguments[0];
-            format!("You drained {} points of health from the target.", a)
+            format!("You drained {0} points of health from the target.", a)
         }
         (110, 175022562) => {
             String::from("NCU error: This nano program can't automatically replace other program.")
@@ -13427,11 +13595,11 @@ pub fn format_message(
         }
         (110, 128711717) => {
             let a = &arguments[0];
-            format!("You already have this unique item: {}", a)
+            format!("You already have this unique item: {0}", a)
         }
         (110, 108021749) => {
             let a = &arguments[0];
-            format!("You took {} points of fall damage.", a)
+            format!("You took {0} points of fall damage.", a)
         }
         (110, 42763038) => {
             String::from("You need to have a 1 hand blunt weapon equipped.")
@@ -13439,7 +13607,7 @@ pub fn format_message(
         (110, 87926248) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("(GM feedback) didn't find booth {}:{}!", a, b)
+            format!("(GM feedback) didn't find booth {0}:{1}!", a, b)
         }
         (110, 19815477) => {
             String::from("Action is not available.")
@@ -14917,11 +15085,11 @@ pub fn format_message(
         (20000, 172363154) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Offline message from {} ({})", a, b)
+            format!("Offline message from {0} ({1})", a, b)
         }
         (20000, 54583877) => {
             let a = &arguments[0];
-            format!("Could not send message to offline player: {}", a)
+            format!("Could not send message to offline player: {0}", a)
         }
         (20000, 93798454) => {
             String::from("You can not add/remove yourself.")
@@ -14931,7 +15099,7 @@ pub fn format_message(
             let b = &arguments[1];
             let c = &arguments[2];
             let d = &arguments[3];
-            format!("Player {} (id: {}) is currently offline\r\nLast known level: {}, and playfield: {}", a, b, c, d)
+            format!("Player {0} (id: {1}) is currently offline\r\nLast known level: {2}, and playfield: {3}", a, b, c, d)
         }
         (20000, 51031966) => {
             String::from("You have no active petition with the GM or Advisor you are trying to contact.\r\nTo get in touch with an Advisor, please file a petition using /petition <message>.\r\nBefore you do, please check known issues and fixes at http://community.anarchy-online.com/")
@@ -14941,7 +15109,7 @@ pub fn format_message(
         }
         (20000, 223936404) => {
             let a = &arguments[0];
-            format!("{} has been removed from your buddy-list.", a)
+            format!("{0} has been removed from your buddy-list.", a)
         }
         (20000, 247680077) => {
             String::from("Available /cc commands:\r\n/cc help [command]\r\n/cc gag ...\r\n/cc ungag ...\r\n/cc pinfo <player>\r\n/cc gmdeaf\r\n/cc addbuddy <player>\r\n/cc rembuddy <player>\r\n/cc rembuddy ?\r\n/cc motd ...")
@@ -14951,38 +15119,52 @@ pub fn format_message(
         }
         (20000, 158601204) => {
             let a = &arguments[0];
-            format!("{} is offline, message has been buffered.", a)
+            format!("{0} is offline, message has been buffered.", a)
         }
         (20000, 55531266) => {
             String::from("Available /cc commands:\r\n/cc help [command]\r\n/cc addbuddy <player>\r\n/cc rembuddy <player>\r\n/cc rembuddy ?")
         }
         (20000, 175017231) => {
             let a = &arguments[0];
-            format!("Motd has been set to \"{}\".", a)
+            format!("Motd has been set to \"{0}\".", a)
         }
         (20000, 230313758) => {
             let a = &arguments[0];
-            format!("Current gag will time out in {} TEMP.", a)
+            let b = {
+                if a.to_string() == "1" {
+                    "minute "
+                } else {
+                    " minutes "
+                }
+            };
+            format!("Current gag will time out in {0} {1}.", a, b)
         }
         (20000, 206649861) => {
             let a = &arguments[0];
-            format!("No player with name {} was found.", a)
+            format!("No player with name {0} was found.", a)
         }
         (20000, 18838393) => {
             let a = &arguments[0];
-            format!("Removing {} TEMP.", a)
+            let b = {
+                if a.to_string() == "1" {
+                    "buddy "
+                } else {
+                    " buddies "
+                }
+            };
+            format!("Removing {0} {1}.", a, b)
         }
         (20000, 32005140) => {
             let a = &arguments[0];
-            format!("{} has been added to your buddy-list.", a)
+            format!("{0} has been added to your buddy-list.", a)
         }
         (20000, 100199604) => {
             let a = &arguments[0];
-            format!("Client {} does not exist/is not online at the moment.", a)
+            format!("Client {0} does not exist/is not online at the moment.", a)
         }
         (20000, 197338868) => {
             let a = &arguments[0];
-            format!("You have reached the maximum number of friends ({}) you can have in the buddy list.", a)
+            format!("You have reached the maximum number of friends ({0}) you can have in the buddy list.", a)
         }
         (20000, 61503945) => {
             String::from("Your ability to talk out loud has been revoked temporarily with a GM gag.")
@@ -14995,7 +15177,7 @@ pub fn format_message(
         }
         (20000, 238833796) => {
             let a = &arguments[0];
-            format!("Could not find the player with id {} in the chatserver database.", a)
+            format!("Could not find the player with id {0} in the chatserver database.", a)
         }
         (20000, 226911017) => {
             String::from("This comand is used to add other players to your friendslist.\r\n/cc addbuddy <player> - will add \"player\" to the friendslist.")
@@ -15014,25 +15196,25 @@ pub fn format_message(
         }
         (20000, 74098291) => {
             let a = &arguments[0];
-            format!("Currect motd: \"{}\".", a)
+            format!("Currect motd: \"{0}\".", a)
         }
         (20000, 258810596) => {
             String::from("Motd has been cleared.")
         }
         (20000, 83258804) => {
             let a = &arguments[0];
-            format!("Illegal argument to help: {}", a)
+            format!("Illegal argument to help: {0}", a)
         }
         (20000, 182196292) => {
             String::from("/cc motd is used to set and clear the message players see when they log in.\r\n\"/cc motd\" - will show the current motd message.\r\n\"/cc motd clear\" - will reset the message back to default.\r\n\"/cc motd <text>\" - will set the message to \"text\".\r\n")
         }
         (20000, 56089684) => {
             let a = &arguments[0];
-            format!("{} was not in your buddy-list.", a)
+            format!("{0} was not in your buddy-list.", a)
         }
         (20000, 207061892) => {
             let a = &arguments[0];
-            format!("{} is already in your buddy-list.", a)
+            format!("{0} is already in your buddy-list.", a)
         }
         (20000, 265276023) => {
             String::from("the message is too big to fit in the inbox")
@@ -15045,7 +15227,7 @@ pub fn format_message(
         }
         (10010, 197338868) => {
             let a = &arguments[0];
-            format!("You have reached the maximum number of friends ({}) you can have in the buddy list.", a)
+            format!("You have reached the maximum number of friends ({0}) you can have in the buddy list.", a)
         }
         (10010, 265276023) => {
             String::from("the message is too big to fit in the inbox")
@@ -15055,7 +15237,14 @@ pub fn format_message(
         }
         (10010, 230313758) => {
             let a = &arguments[0];
-            format!("Current gag will time out in {} TEMP.", a)
+            let b = {
+                if a.to_string() == "1" {
+                    "minute "
+                } else {
+                    " minutes "
+                }
+            };
+            format!("Current gag will time out in {0} {1}.", a, b)
         }
         (10010, 2) => {
             String::from("Melee Weapons")
@@ -15065,37 +15254,44 @@ pub fn format_message(
         }
         (10010, 175017231) => {
             let a = &arguments[0];
-            format!("Motd has been set to \"{}\".", a)
+            format!("Motd has been set to \"{0}\".", a)
         }
         (10010, 238833796) => {
             let a = &arguments[0];
-            format!("Could not find the player with id {} in the chatserver database.", a)
+            format!("Could not find the player with id {0} in the chatserver database.", a)
         }
         (10010, 81038248) => {
             String::from("the receivers inbox is full")
         }
         (10010, 100199604) => {
             let a = &arguments[0];
-            format!("Client {} does not exist/is not online at the moment.", a)
+            format!("Client {0} does not exist/is not online at the moment.", a)
         }
         (10010, 172363154) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Offline message from {} ({})", a, b)
+            format!("Offline message from {0} ({1})", a, b)
         }
         (10010, 247680077) => {
             String::from("Available /cc commands:\r\n/cc help [command]\r\n/cc gag ...\r\n/cc ungag ...\r\n/cc pinfo <player>\r\n/cc gmdeaf\r\n/cc addbuddy <player>\r\n/cc rembuddy <player>\r\n/cc rembuddy ?\r\n/cc motd ...")
         }
         (10010, 18838393) => {
             let a = &arguments[0];
-            format!("Removing {} TEMP.", a)
+            let b = {
+                if a.to_string() == "1" {
+                    "buddy "
+                } else {
+                    " buddies "
+                }
+            };
+            format!("Removing {0} {1}.", a, b)
         }
         (10010, 4) => {
             String::from("Ranged Weapons")
         }
         (10010, 83258804) => {
             let a = &arguments[0];
-            format!("Illegal argument to help: {}", a)
+            format!("Illegal argument to help: {0}", a)
         }
         (10010, 134870373) => {
             String::from("Your ability to send private messages has been revoked temporarily with a GM gag.")
@@ -15108,28 +15304,28 @@ pub fn format_message(
         }
         (10010, 223936404) => {
             let a = &arguments[0];
-            format!("{} has been removed from your buddy-list.", a)
+            format!("{0} has been removed from your buddy-list.", a)
         }
         (10010, 51031966) => {
             String::from("You have no active petition with the GM or Advisor you are trying to contact.\r\nTo get in touch with an Advisor, please file a petition using /petition <message>.\r\nBefore you do, please check known issues and fixes at http://community.anarchy-online.com/")
         }
         (10010, 56089684) => {
             let a = &arguments[0];
-            format!("{} was not in your buddy-list.", a)
+            format!("{0} was not in your buddy-list.", a)
         }
         (10010, 258810596) => {
             String::from("Motd has been cleared.")
         }
         (10010, 206649861) => {
             let a = &arguments[0];
-            format!("No player with name {} was found.", a)
+            format!("No player with name {0} was found.", a)
         }
         (10010, 264895893) => {
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
             let d = &arguments[3];
-            format!("Player {} (id: {}) is currently offline\r\nLast known level: {}, and playfield: {}", a, b, c, d)
+            format!("Player {0} (id: {1}) is currently offline\r\nLast known level: {2}, and playfield: {3}", a, b, c, d)
         }
         (10010, 201379664) => {
             String::from("Could not find any help for that command.")
@@ -15145,14 +15341,14 @@ pub fn format_message(
         }
         (10010, 54583877) => {
             let a = &arguments[0];
-            format!("Could not send message to offline player: {}", a)
+            format!("Could not send message to offline player: {0}", a)
         }
         (10010, 1) => {
             String::from("Body & Defense")
         }
         (10010, 32005140) => {
             let a = &arguments[0];
-            format!("{} has been added to your buddy-list.", a)
+            format!("{0} has been added to your buddy-list.", a)
         }
         (10010, 166867336) => {
             String::from("You need to add a player name after \"/cc addbuddy\" and \"/cc rembuddy\".")
@@ -15171,7 +15367,7 @@ pub fn format_message(
         }
         (10010, 158601204) => {
             let a = &arguments[0];
-            format!("{} is offline, message has been buffered.", a)
+            format!("{0} is offline, message has been buffered.", a)
         }
         (10010, 218303104) => {
             String::from("Your ability to talk in public groups has been revoked temporarily with a GM gag.")
@@ -15193,14 +15389,14 @@ pub fn format_message(
         }
         (10010, 74098291) => {
             let a = &arguments[0];
-            format!("Currect motd: \"{}\".", a)
+            format!("Currect motd: \"{0}\".", a)
         }
         (10010, 93798454) => {
             String::from("You can not add/remove yourself.")
         }
         (10010, 207061892) => {
             let a = &arguments[0];
-            format!("{} is already in your buddy-list.", a)
+            format!("{0} is already in your buddy-list.", a)
         }
         (10010, 219570393) => {
             String::from("This comand can be used to remove players from you friendslist.\r\n/cc rembuddy <player> - will remove \"player\" from your list.\r\n/cc rembuddy ? - will remove all unknown friends (those listed under the question-mark in the client)\r\n")
@@ -15252,7 +15448,7 @@ pub fn format_message(
         }
         (100, 567) => {
             let a = &arguments[0];
-            format!("You increased your nanopool with {} points.", a)
+            format!("You increased your nanopool with {0} points.", a)
         }
         (100, 623) => {
             String::from("You must be able to use weapons!")
@@ -15290,19 +15486,19 @@ pub fn format_message(
         (100, 448) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Something hit {} for {} points of damage by reflect shield.", a, b)
+            format!("Something hit {0} for {1} points of damage by reflect shield.", a, b)
         }
         (100, 489) => {
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
             let d = &arguments[3];
-            format!("You combined \"{}\" with \"{}\" and the result is a quality level {} \"{}\".", a, b, c, d)
+            format!("You combined \"{0}\" with \"{1}\" and the result is a quality level {2} \"{3}\".", a, b, c, d)
         }
         (100, 571) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Your team and your targets team share members from the same organization: {} and {}", a, b)
+            format!("Your team and your targets team share members from the same organization: {0} and {1}", a, b)
         }
         (100, 342) => {
             String::from("All team members can loot these remains.")
@@ -15319,7 +15515,7 @@ pub fn format_message(
             let c = &arguments[2];
             let d = &arguments[3];
             let e = &arguments[4];
-            format!("{} has played {} days {} hours {} minutes {} seconds", a, b, c, d, e)
+            format!("{0} has played {1} days {2} hours {3} minutes {4} seconds", a, b, c, d, e)
         }
         (100, 310) => {
             String::from("Fear activated.")
@@ -15333,7 +15529,7 @@ pub fn format_message(
         (100, 469) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Your summon target was bound at position {},{}. You need to move closer to that position before you are allowed to summon him.", a, b)
+            format!("Your summon target was bound at position {0},{1}. You need to move closer to that position before you are allowed to summon him.", a, b)
         }
         (100, 8) => {
             String::from("Target does not have enough nano controlling units (NCU) left.")
@@ -15360,7 +15556,7 @@ pub fn format_message(
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("{} {} is not less than {}!", a, b, c)
+            format!("{0} {1} is not less than {2}!", a, b, c)
         }
         (100, 23) => {
             String::from("No room in your inventory. Item sent to bank.")
@@ -15370,7 +15566,7 @@ pub fn format_message(
         }
         (100, 474) => {
             let a = &arguments[0];
-            format!("Character stored. {} Shadowknowledge saved.", a)
+            format!("Character stored. {0} Shadowknowledge saved.", a)
         }
         (100, 490) => {
             String::from("It is not possible to combine these two items in that order.")
@@ -15382,19 +15578,19 @@ pub fn format_message(
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("Player {} hit you for {} points of {} damage.", a, b, c)
+            format!("Player {0} hit you for {1} points of {2} damage.", a, b, c)
         }
         (100, 595) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Your nano program {} has stopped running on {}...", a, b)
+            format!("Your nano program {0} has stopped running on {1}...", a, b)
         }
         (100, 242) => {
             String::from("Your inventory overflowed! Get the items before leaving the area or they will be deleted.")
         }
         (100, 547) => {
             let a = &arguments[0];
-            format!("This effect can't be utilitized by {}!", a)
+            format!("This effect can't be utilitized by {0}!", a)
         }
         (100, 5) => {
             String::from("No items in reclaim booth. Try later.")
@@ -15404,14 +15600,14 @@ pub fn format_message(
         }
         (100, 520) => {
             let a = &arguments[0];
-            format!("{} xp was gained as a side bonus!", a)
+            format!("{0} xp was gained as a side bonus!", a)
         }
         (100, 460) => {
             String::from("Team member must be present!")
         }
         (100, 573) => {
             let a = &arguments[0];
-            format!("One of your targets team members ({}) is in the same organization as you", a)
+            format!("One of your targets team members ({0}) is in the same organization as you", a)
         }
         (100, 223) => {
             String::from("You can't save here!")
@@ -15446,7 +15642,7 @@ pub fn format_message(
         (100, 504) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("You were unaffected by {} from {}.", a, b)
+            format!("You were unaffected by {0} from {1}.", a, b)
         }
         (100, 95) => {
             String::from("You need to be an organization leader to perform this action!")
@@ -15455,27 +15651,27 @@ pub fn format_message(
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("{} {} base value is not less than {}!", a, b, c)
+            format!("{0} {1} base value is not less than {2}!", a, b, c)
         }
         (100, 560) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("{} must not have {} running!", a, b)
+            format!("{0} must not have {1} running!", a, b)
         }
         (100, 145730516) => {
             let a = &arguments[0];
-            format!("Your Organization cannot initiate a bombing raid at the moment. Please wait at least {} seconds.", a)
+            format!("Your Organization cannot initiate a bombing raid at the moment. Please wait at least {0} seconds.", a)
         }
         (100, 488) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("\"{}\" is of a too low quality level. It must be at least at quality {}.", a, b)
+            format!("\"{0}\" is of a too low quality level. It must be at least at quality {1}.", a, b)
         }
         (100, 549) => {
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("{} {} is required to be at least {}!", a, b, c)
+            format!("{0} {1} is required to be at least {2}!", a, b, c)
         }
         (100, 88) => {
             String::from("You cannot unlearn a Perk you do not know!")
@@ -15488,7 +15684,7 @@ pub fn format_message(
         }
         (100, 599) => {
             let a = &arguments[0];
-            format!("Your nano execution got interrupted by {}..", a)
+            format!("Your nano execution got interrupted by {0}..", a)
         }
         (100, 674) => {
             String::from("This action can only be done by the leader of the organization owning this shop!")
@@ -15498,7 +15694,7 @@ pub fn format_message(
         }
         (100, 398) => {
             let a = &arguments[0];
-            format!("Team member {} went link dead.", a)
+            format!("Team member {0} went link dead.", a)
         }
         (100, 278) => {
             String::from("Maps options/map already uploaded.")
@@ -15506,7 +15702,7 @@ pub fn format_message(
         (100, 506) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("You have gained {} new Reset Points. Your total Reset Point count is: {}", a, b)
+            format!("You have gained {0} new Reset Points. Your total Reset Point count is: {1}", a, b)
         }
         (100, 276) => {
             String::from("This action requires that you are wielding Augmented Cyberdeck!")
@@ -15531,28 +15727,28 @@ pub fn format_message(
         }
         (100, 407) => {
             let a = &arguments[0];
-            format!("{} available.", a)
+            format!("{0} available.", a)
         }
         (100, 168) => {
             String::from("Item can't be dropped at that location!")
         }
         (100, 408) => {
             let a = &arguments[0];
-            format!("The /stuck command will be resolved in {} seconds.", a)
+            format!("The /stuck command will be resolved in {0} seconds.", a)
         }
         (100, 600) => {
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("{}'s execution of {} got interrupted by {}..", a, b, c)
+            format!("{0}'s execution of {1} got interrupted by {2}..", a, b, c)
         }
         (100, 596) => {
             let a = &arguments[0];
-            format!("Nanoprogram {} terminated...", a)
+            format!("Nanoprogram {0} terminated...", a)
         }
         (100, 601) => {
             let a = &arguments[0];
-            format!("Team looting set to: {}", a)
+            format!("Team looting set to: {0}", a)
         }
         (100, 653) => {
             String::from(" /shop private")
@@ -15565,7 +15761,7 @@ pub fn format_message(
         }
         (100, 424) => {
             let a = &arguments[0];
-            format!("You were healed for {} points.", a)
+            format!("You were healed for {0} points.", a)
         }
         (100, 294) => {
             String::from("Your special attack was blocked by a special attack shield!")
@@ -15577,7 +15773,7 @@ pub fn format_message(
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("{} was attacked with nanobots for {} points of {} damage.", a, b, c)
+            format!("{0} was attacked with nanobots for {1} points of {2} damage.", a, b, c)
         }
         (100, 274) => {
             String::from("This action requires that you are wielding Izgimmer-modified Cyberdeck!")
@@ -15590,14 +15786,14 @@ pub fn format_message(
         }
         (100, 56) => {
             let a = &arguments[0];
-            format!("No ammo was found for {}!", a)
+            format!("No ammo was found for {0}!", a)
         }
         (100, 221) => {
             String::from("Must not be in combat mode.")
         }
         (100, 516) => {
             let a = &arguments[0];
-            format!("You need at least {} free inventory slots! Please remove an item and try again.", a)
+            format!("You need at least {0} free inventory slots! Please remove an item and try again.", a)
         }
         (100, 54) => {
             String::from("Lockpicking successful.")
@@ -15628,18 +15824,18 @@ pub fn format_message(
         }
         (100, 440) => {
             let a = &arguments[0];
-            format!("Someone's damage shield hit you for {} points of damage.", a)
+            format!("Someone's damage shield hit you for {0} points of damage.", a)
         }
         (100, 305) => {
             String::from("Mindcontrol activated.")
         }
         (100, 471) => {
             let a = &arguments[0];
-            format!("You can't afford to save. At your level you need {} credits to save.", a)
+            format!("You can't afford to save. At your level you need {0} credits to save.", a)
         }
         (100, 578) => {
             let a = &arguments[0];
-            format!("Team-mission chance of token reward upped to {}% due to the team's heroic effort.", a)
+            format!("Team-mission chance of token reward upped to {0}% due to the team's heroic effort.", a)
         }
         (100, 103) => {
             String::from("Team-mission chance of token reward not upped due to too high level character in team.")
@@ -15652,7 +15848,7 @@ pub fn format_message(
         }
         (100, 453) => {
             let a = &arguments[0];
-            format!("You tried to hit {}, but missed!", a)
+            format!("You tried to hit {0}, but missed!", a)
         }
         (100, 245) => {
             String::from("It is locked.")
@@ -15668,7 +15864,7 @@ pub fn format_message(
         }
         (100, 480) => {
             let a = &arguments[0];
-            format!("Your special attack shield blocked the attack! ({}) left.", a)
+            format!("Your special attack shield blocked the attack! ({0}) left.", a)
         }
         (100, 190) => {
             String::from("Use the Def-Agg slider in the Stats view to change between defensive and aggressive.")
@@ -15679,7 +15875,7 @@ pub fn format_message(
         (100, 439) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("You were hit for {} points of damage by {}'s damage shield.", a, b)
+            format!("You were hit for {0} points of damage by {1}'s damage shield.", a, b)
         }
         (100, 501) => {
             String::from("The reverse engineered items are of excellent quality!")
@@ -15709,7 +15905,7 @@ pub fn format_message(
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("{}'s damage shield hit {} for {} points of damage.", a, b, c)
+            format!("{0}'s damage shield hit {1} for {2} points of damage.", a, b, c)
         }
         (100, 284) => {
             String::from("Area change not initiated on server. You may retreat or try crossing again.")
@@ -15731,7 +15927,14 @@ pub fn format_message(
         }
         (100, 419) => {
             let a = &arguments[0];
-            format!("You received {} TEMP from the corpse.", a)
+            let b = {
+                if a.to_string() == "1" {
+                    "credit "
+                } else {
+                    " credits"
+                }
+            };
+            format!("You received {0} {1} from the corpse.", a, b)
         }
         (100, 531) => {
             String::from("You need to have a bow weapon equipped.")
@@ -15741,16 +15944,16 @@ pub fn format_message(
         }
         (100, 693) => {
             let a = &arguments[0];
-            format!("Broken item at: {}.", a)
+            format!("Broken item at: {0}.", a)
         }
         (100, 427) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("You were attacked with nanobots for {} points of {} damage.", a, b)
+            format!("You were attacked with nanobots for {0} points of {1} damage.", a, b)
         }
         (100, 409) => {
             let a = &arguments[0];
-            format!("The /stuck command will be available in {} seconds.", a)
+            format!("The /stuck command will be available in {0} seconds.", a)
         }
         (100, 133) => {
             String::from("Temporary items can't be placed in containers!")
@@ -15787,11 +15990,11 @@ pub fn format_message(
         }
         (100, 521) => {
             let a = &arguments[0];
-            format!("You gained {} points of Shadowknowledge.", a)
+            format!("You gained {0} points of Shadowknowledge.", a)
         }
         (100, 632) => {
             let a = &arguments[0];
-            format!("ShopNet: {} entries found:", a)
+            format!("ShopNet: {0} entries found:", a)
         }
         (100, 648) => {
             String::from("Add cash to the shop:")
@@ -15810,7 +16013,7 @@ pub fn format_message(
         }
         (100, 502) => {
             let a = &arguments[0];
-            format!("Player {} went link dead.", a)
+            format!("Player {0} went link dead.", a)
         }
         (100, 370) => {
             String::from("Not allowed to execute friendly nanoprogram on anyone on the opposite side of your team in the conflict.")
@@ -15820,7 +16023,7 @@ pub fn format_message(
         }
         (100, 657) => {
             let a = &arguments[0];
-            format!("Executing Nano Program: {}.", a)
+            format!("Executing Nano Program: {0}.", a)
         }
         (100, 208) => {
             String::from("Starting attack failed.")
@@ -15828,7 +16031,7 @@ pub fn format_message(
         (100, 421) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("You hit {} for {} points of damage.", a, b)
+            format!("You hit {0} for {1} points of damage.", a, b)
         }
         (100, 323) => {
             String::from("This mine has already been disarmed.")
@@ -15838,7 +16041,7 @@ pub fn format_message(
         }
         (100, 716) => {
             let a = &arguments[0];
-            format!("{} doesn't own a shop!", a)
+            format!("{0} doesn't own a shop!", a)
         }
         (100, 316) => {
             String::from("Shop contains no entries.")
@@ -15849,7 +16052,7 @@ pub fn format_message(
         (100, 451) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Someone absorbed {} points of {} damage.", a, b)
+            format!("Someone absorbed {0} points of {1} damage.", a, b)
         }
         (100, 638) => {
             String::from("This is a player shop!")
@@ -15877,13 +16080,13 @@ pub fn format_message(
         }
         (100, 393) => {
             let a = &arguments[0];
-            format!("Congratulations! You have now reached the level of {}!", a)
+            format!("Congratulations! You have now reached the level of {0}!", a)
         }
         (100, 423) => {
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("{} hit you for {} points of {} damage.", a, b, c)
+            format!("{0} hit you for {1} points of {2} damage.", a, b, c)
         }
         (100, 656) => {
             String::from("Tradepartner is unable to carry more than 1 billion credits. Trade aborted.")
@@ -15892,7 +16095,7 @@ pub fn format_message(
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("Org missing payment lockdown: time until reset {}:{}:{}", a, b, c)
+            format!("Org missing payment lockdown: time until reset {0}:{1}:{2}", a, b, c)
         }
         (100, 226935915) => {
             String::from("Must have perk: ")
@@ -15905,7 +16108,7 @@ pub fn format_message(
         }
         (100, 639) => {
             let a = &arguments[0];
-            format!("This is your private shop (max {} items)!", a)
+            format!("This is your private shop (max {0} items)!", a)
         }
         (100, 580) => {
             String::from("Burst!")
@@ -15941,7 +16144,7 @@ pub fn format_message(
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("Something hit {} for {} points of {} damage.", a, b, c)
+            format!("Something hit {0} for {1} points of {2} damage.", a, b, c)
         }
         (100, 700) => {
             String::from("Unable to get the target item, at all!")
@@ -15956,16 +16159,16 @@ pub fn format_message(
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("You were attacked with {} for {} points of {} damage.", a, b, c)
+            format!("You were attacked with {0} for {1} points of {2} damage.", a, b, c)
         }
         (100, 404) => {
             let a = &arguments[0];
-            format!("{} vanished.", a)
+            format!("{0} vanished.", a)
         }
         (100, 449) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("You absorbed {} points of {} damage.", a, b)
+            format!("You absorbed {0} points of {1} damage.", a, b)
         }
         (100, 708) => {
             String::from("Deck items must be unequipped before they can be deleted!")
@@ -15976,14 +16179,14 @@ pub fn format_message(
         (100, 444) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("You were hit for {} points of damage by {}'s reflect shield.", a, b)
+            format!("You were hit for {0} points of damage by {1}'s reflect shield.", a, b)
         }
         (100, 52) => {
             String::from("Target can't be performing an item action while receiving this buff!")
         }
         (100, 542) => {
             let a = &arguments[0];
-            format!("This effect can only be utilitized by {}.", a)
+            format!("This effect can only be utilitized by {0}.", a)
         }
         (100, 82) => {
             String::from("You gained a new Shadowlevel!")
@@ -16009,7 +16212,7 @@ pub fn format_message(
         (100, 721) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("The shop \"{}\" owned by {} contains the following items:", a, b)
+            format!("The shop \"{0}\" owned by {1} contains the following items:", a, b)
         }
         (100, 118) => {
             String::from("Social armor cannot be worn with other clothes.")
@@ -16028,7 +16231,7 @@ pub fn format_message(
         }
         (100, 482) => {
             let a = &arguments[0];
-            format!("You drained {} points of health from the target.", a)
+            format!("You drained {0} points of health from the target.", a)
         }
         (100, 20) => {
             String::from("Already in use by someone else. Please wait your turn.")
@@ -16047,30 +16250,30 @@ pub fn format_message(
         }
         (100, 484) => {
             let a = &arguments[0];
-            format!("{} contain items. Remove the items first.", a)
+            format!("{0} contain items. Remove the items first.", a)
         }
         (100, 598) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("{} executes {} within your NCU...", a, b)
+            format!("{0} executes {1} within your NCU...", a, b)
         }
         (100, 577) => {
             let a = &arguments[0];
-            format!("Mission chance of token reward upped to {}% due to your heroic effort.", a)
+            format!("Mission chance of token reward upped to {0}% due to your heroic effort.", a)
         }
         (100, 585) => {
             String::from("Dimach!")
         }
         (100, 614) => {
             let a = &arguments[0];
-            format!("For you to receive the full reward from this quest, you can not be grouped with players above level {} while solving the quest or when handing in the quest result.", a)
+            format!("For you to receive the full reward from this quest, you can not be grouped with players above level {0} while solving the quest or when handing in the quest result.", a)
         }
         (100, 678) => {
             String::from("Shop for Rent")
         }
         (100, 475) => {
             let a = &arguments[0];
-            format!("{} cannot be summoned because it is in a fight.", a)
+            format!("{0} cannot be summoned because it is in a fight.", a)
         }
         (100, 89) => {
             String::from("This Perk doesn't exist!")
@@ -16086,7 +16289,7 @@ pub fn format_message(
         }
         (100, 713) => {
             let a = &arguments[0];
-            format!("If this item is combined with a: {}", a)
+            format!("If this item is combined with a: {0}", a)
         }
         (100, 717) => {
             let a = &arguments[0];
@@ -16095,7 +16298,7 @@ pub fn format_message(
             let d = &arguments[3];
             let e = &arguments[4];
             let f = &arguments[5];
-            format!("{} owns the shop \"{}\" in the market at ({}, {}) in \"{}\" ({}).", a, b, c, d, e, f)
+            format!("{0} owns the shop \"{1}\" in the market at ({2}, {3}) in \"{4}\" ({5}).", a, b, c, d, e, f)
         }
         (100, 55) => {
             String::from("Please wait.")
@@ -16105,7 +16308,7 @@ pub fn format_message(
             let b = &arguments[1];
             let c = &arguments[2];
             let d = &arguments[3];
-            format!("{} hit {} for {} points of {} damage.", a, b, c, d)
+            format!("{0} hit {1} for {2} points of {3} damage.", a, b, c, d)
         }
         (100, 53) => {
             String::from("You can't break hostile nanoprograms on yourself!")
@@ -16136,7 +16339,7 @@ pub fn format_message(
         }
         (100, 437) => {
             let a = &arguments[0];
-            format!("You received {} xp.", a)
+            format!("You received {0} xp.", a)
         }
         (100, 655) => {
             String::from(" /shop query <name> <minlevel> <maxlevel> <placement> <minprice> <maxprice> <category>\r\n")
@@ -16176,7 +16379,7 @@ pub fn format_message(
             let b = &arguments[1];
             let c = &arguments[2];
             let d = &arguments[3];
-            format!("{} hit {} for {} points of {} damage.", a, b, c, d)
+            format!("{0} hit {1} for {2} points of {3} damage.", a, b, c, d)
         }
         (100, 644) => {
             String::from("Get the status of your shop:")
@@ -16189,29 +16392,29 @@ pub fn format_message(
         }
         (100, 691) => {
             let a = &arguments[0];
-            format!("As a result of your death, you just lost some of your Alien Experience ({}).", a)
+            format!("As a result of your death, you just lost some of your Alien Experience ({0}).", a)
         }
         (100, 428) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("{} took {} points of fall damage.", a, b)
+            format!("{0} took {1} points of fall damage.", a, b)
         }
         (100, 682) => {
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("Time until decay: {}:{}:{} (owner inactivity)", a, b, c)
+            format!("Time until decay: {0}:{1}:{2} (owner inactivity)", a, b, c)
         }
         (100, 77) => {
             String::from("Special attack not possible. The target must be fighting someone else.")
         }
         (100, 508) => {
             let a = &arguments[0];
-            format!("A character on your level has earned {} as normal IP.", a)
+            format!("A character on your level has earned {0} as normal IP.", a)
         }
         (100, 679) => {
             let a = &arguments[0];
-            format!("This shop is rented by: {}", a)
+            format!("This shop is rented by: {0}", a)
         }
         (100, 26) => {
             String::from("You can only vote once!")
@@ -16233,11 +16436,11 @@ pub fn format_message(
         }
         (100, 628) => {
             let a = &arguments[0];
-            format!("The shop balance is {} credits.", a)
+            format!("The shop balance is {0} credits.", a)
         }
         (100, 594) => {
             let a = &arguments[0];
-            format!("You need at least {} remaining nano energy to execute this program.", a)
+            format!("You need at least {0} remaining nano energy to execute this program.", a)
         }
         (100, 201) => {
             String::from("This weapon doesn't work against this target.")
@@ -16260,7 +16463,7 @@ pub fn format_message(
         (100, 443) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Something hit {} for {} points of damage by damage shield.", a, b)
+            format!("Something hit {0} for {1} points of damage by damage shield.", a, b)
         }
         (100, 138) => {
             String::from("You found an item!")
@@ -16273,11 +16476,11 @@ pub fn format_message(
         }
         (100, 690) => {
             let a = &arguments[0];
-            format!("You gained {} new Alien Experience Points.", a)
+            format!("You gained {0} new Alien Experience Points.", a)
         }
         (100, 485) => {
             let a = &arguments[0];
-            format!("You cannot process the \"{}\" as some of its charges has been used.", a)
+            format!("You cannot process the \"{0}\" as some of its charges has been used.", a)
         }
         (100, 91170781) => {
             String::from("You need to be in a team to use a team mission booth.")
@@ -16299,7 +16502,7 @@ pub fn format_message(
         }
         (100, 473) => {
             let a = &arguments[0];
-            format!("Character stored. {} XP saved.", a)
+            format!("Character stored. {0} XP saved.", a)
         }
         (100, 535) => {
             String::from("You need to have a 2 hand edged weapon equipped.")
@@ -16317,7 +16520,7 @@ pub fn format_message(
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("You hit {} with nanobots for {} points of {} damage.", a, b, c)
+            format!("You hit {0} with nanobots for {1} points of {2} damage.", a, b, c)
         }
         (100, 665) => {
             String::from("This shop is only open for members of the organization owning the market!")
@@ -16339,7 +16542,7 @@ pub fn format_message(
         }
         (100, 513) => {
             let a = &arguments[0];
-            format!("All in all, you now have {} IP points.", a)
+            format!("All in all, you now have {0} IP points.", a)
         }
         (100, 309) => {
             String::from("Fear has no impact on players.")
@@ -16355,7 +16558,7 @@ pub fn format_message(
         }
         (100, 680) => {
             let a = &arguments[0];
-            format!("The current commission is: {}%", a)
+            format!("The current commission is: {0}%", a)
         }
         (100, 84) => {
             String::from("No Shadowknowledge is learned! You are not in the Shadowlands!")
@@ -16372,18 +16575,18 @@ pub fn format_message(
         (100, 458) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("You recouped {} of your previously lost experience - remaining to be recouped: {}.", a, b)
+            format!("You recouped {0} of your previously lost experience - remaining to be recouped: {1}.", a, b)
         }
         (100, 394) => {
             let a = &arguments[0];
-            format!("{} is full.", a)
+            format!("{0} is full.", a)
         }
         (100, 41) => {
             String::from("You're not allowed to loot these remains!")
         }
         (100, 604) => {
             let a = &arguments[0];
-            format!("Received mission reward: XP {}", a)
+            format!("Received mission reward: XP {0}", a)
         }
         (100, 76) => {
             String::from("You are unable to gain a new level with tradeskills. You need to get the last experience points in some other way.")
@@ -16417,7 +16620,7 @@ pub fn format_message(
         }
         (100, 574) => {
             let a = &arguments[0];
-            format!("You need at least {} in Multiple Melee to wield these two weapons.", a)
+            format!("You need at least {0} in Multiple Melee to wield these two weapons.", a)
         }
         (100, 608) => {
             String::from("You have completed the second specialization!")
@@ -16465,12 +16668,12 @@ pub fn format_message(
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("{} absorbed {} points of {} damage.", a, b, c)
+            format!("{0} absorbed {1} points of {2} damage.", a, b, c)
         }
         (100, 597) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("{} forces your NCU to run {}...", a, b)
+            format!("{0} forces your NCU to run {1}...", a, b)
         }
         (100, 131) => {
             String::from("You failed the requirements to train this perk!")
@@ -16481,12 +16684,12 @@ pub fn format_message(
         (100, 518) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Your pet {} was damaged by a toxic substance for {} points of damage.", a, b)
+            format!("Your pet {0} was damaged by a toxic substance for {1} points of damage.", a, b)
         }
         (100, 418) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("{} can loot these remains. (Loot order: {})", a, b)
+            format!("{0} can loot these remains. (Loot order: {1})", a, b)
         }
         (100, 157) => {
             String::from("No room in your inventory.")
@@ -16550,11 +16753,11 @@ pub fn format_message(
         }
         (100, 402) => {
             let a = &arguments[0];
-            format!("You have been detected by {}!", a)
+            format!("You have been detected by {0}!", a)
         }
         (100, 425) => {
             let a = &arguments[0];
-            format!("You took {} points of fall damage.", a)
+            format!("You took {0} points of fall damage.", a)
         }
         (100, 186) => {
             String::from("No target to assist.")
@@ -16564,21 +16767,21 @@ pub fn format_message(
         }
         (100, 454) => {
             let a = &arguments[0];
-            format!("{} tried to hit you, but missed!", a)
+            format!("{0} tried to hit you, but missed!", a)
         }
         (100, 218) => {
             String::from("Wrong target selected.")
         }
         (100, 509) => {
             let a = &arguments[0];
-            format!("Right now you have spent {} IP in Map Navigation. You will not get these back.", a)
+            format!("Right now you have spent {0} IP in Map Navigation. You will not get these back.", a)
         }
         (100, 546) => {
             String::from("The target must be a controller!")
         }
         (100, 570) => {
             let a = &arguments[0];
-            format!("Attacked by {}!", a)
+            format!("Attacked by {0}!", a)
         }
         (100, 181) => {
             String::from("Accessing implants requires technical supervision.")
@@ -16591,17 +16794,17 @@ pub fn format_message(
         }
         (100, 589) => {
             let a = &arguments[0];
-            format!("Maximum increase in skill is {} per level!", a)
+            format!("Maximum increase in skill is {0} per level!", a)
         }
         (100, 685) => {
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("{} bought {} for {} credits.", a, b, c)
+            format!("{0} bought {1} for {2} credits.", a, b, c)
         }
         (100, 687) => {
             let a = &arguments[0];
-            format!("You have gained a new Alien Title: {}!", a)
+            format!("You have gained a new Alien Title: {0}!", a)
         }
         (100, 203) => {
             String::from("You can't reload the weapon with this ammunition type.")
@@ -16614,24 +16817,24 @@ pub fn format_message(
         }
         (100, 479) => {
             let a = &arguments[0];
-            format!("Your attack shield blocked the attack! ({}) left.", a)
+            format!("Your attack shield blocked the attack! ({0}) left.", a)
         }
         (100, 562) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("{} must not have a {} running!", a, b)
+            format!("{0} must not have a {1} running!", a, b)
         }
         (100, 333) => {
             String::from("Searching for hidden objects.")
         }
         (100, 681) => {
             let a = &arguments[0];
-            format!("This shop is owned by: {}", a)
+            format!("This shop is owned by: {0}", a)
         }
         (100, 625) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Price set on {} to {}!", a, b)
+            format!("Price set on {0} to {1}!", a, b)
         }
         (100, 696) => {
             String::from("Source item is not owned by the char and does not have the stationary flags set.")
@@ -16659,19 +16862,19 @@ pub fn format_message(
         }
         (100, 627) => {
             let a = &arguments[0];
-            format!("The shop contains {} items.", a)
+            format!("The shop contains {0} items.", a)
         }
         (100, 552) => {
             String::from("Your")
         }
         (100, 463) => {
             let a = &arguments[0];
-            format!("This Shadowknowledge was added to the pool of unsaved experience points that you get back through gaining new experience points. Your current pool of unsaved experience is {}.", a)
+            format!("This Shadowknowledge was added to the pool of unsaved experience points that you get back through gaining new experience points. Your current pool of unsaved experience is {0}.", a)
         }
         (100, 559) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("{} must recently have {} running!", a, b)
+            format!("{0} must recently have {1} running!", a, b)
         }
         (100, 581) => {
             String::from("Full Auto!")
@@ -16681,7 +16884,7 @@ pub fn format_message(
         }
         (100, 545) => {
             let a = &arguments[0];
-            format!("Target breed must be {}!", a)
+            format!("Target breed must be {0}!", a)
         }
         (100, 64) => {
             String::from("You must empty your reclaim before you can save! Type \"/reclaim\" to access your items.")
@@ -16691,14 +16894,14 @@ pub fn format_message(
             let b = &arguments[1];
             let c = &arguments[2];
             let d = &arguments[3];
-            format!("{} was attacked with nanobots from {} for {} points of {} damage.", a, b, c, d)
+            format!("{0} was attacked with nanobots from {1} for {2} points of {3} damage.", a, b, c, d)
         }
         (100, 24) => {
             String::from("Your inventory is full. Can't complete trade!")
         }
         (100, 662) => {
             let a = &arguments[0];
-            format!("Shop commission set to {}%!", a)
+            format!("Shop commission set to {0}%!", a)
         }
         (100, 387) => {
             String::from("You cannot attack this target, because you are in a mixed omni/clan team.")
@@ -16730,7 +16933,7 @@ pub fn format_message(
             let c = &arguments[2];
             let d = &arguments[3];
             let e = &arguments[4];
-            format!("\"{}\" is of a too low quality level. With \"{}\" at quality of {} , the \"{}\" must be at least at quality {}.", a, b, c, d, e)
+            format!("\"{0}\" is of a too low quality level. With \"{1}\" at quality of {2} , the \"{3}\" must be at least at quality {4}.", a, b, c, d, e)
         }
         (100, 540) => {
             String::from("You need to have a rifle weapon equipped.")
@@ -16765,7 +16968,7 @@ pub fn format_message(
         (100, 606) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("You recouped {} of your previously lost Shadowknowledge - remaining to be recouped: {}.", a, b)
+            format!("You recouped {0} of your previously lost Shadowknowledge - remaining to be recouped: {1}.", a, b)
         }
         (100, 48) => {
             String::from("You already have this unique item.")
@@ -16806,7 +17009,7 @@ pub fn format_message(
         (100, 636) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("ShopNet: Too many entries found ({}). {} entries displayed:", a, b)
+            format!("ShopNet: Too many entries found ({0}). {1} entries displayed:", a, b)
         }
         (100, 331) => {
             String::from("You can't move.")
@@ -16814,7 +17017,7 @@ pub fn format_message(
         (100, 561) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("{} must have a {} running!", a, b)
+            format!("{0} must have a {1} running!", a, b)
         }
         (100, 512) => {
             String::from("Please note that there might be some very minor rounding errors, but they should not amount to more than 5-10 IP total. Please also note that some people have more IP than their normal total IP, because of special items yielding additional IP.")
@@ -16823,7 +17026,7 @@ pub fn format_message(
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("{}'s reflect shield hit {} for {} points of damage.", a, b, c)
+            format!("{0}'s reflect shield hit {1} for {2} points of damage.", a, b, c)
         }
         (100, 176) => {
             String::from("Items can't be used directly from the corpse!")
@@ -16855,7 +17058,7 @@ pub fn format_message(
             let c = &arguments[2];
             let d = &arguments[3];
             let e = &arguments[4];
-            format!("{} was attacked with {} from {} for {} points of {} damage.", a, b, c, d, e)
+            format!("{0} was attacked with {1} from {2} for {3} points of {4} damage.", a, b, c, d, e)
         }
         (100, 411) => {
             String::from("You died of reflect shield damage!")
@@ -16892,11 +17095,11 @@ pub fn format_message(
         }
         (100, 457) => {
             let a = &arguments[0];
-            format!("This XP was added to the pool of unsaved experience points that you get back through gaining new experience points. Your current pool of unsaved experience is {}.", a)
+            format!("This XP was added to the pool of unsaved experience points that you get back through gaining new experience points. Your current pool of unsaved experience is {0}.", a)
         }
         (100, 522) => {
             let a = &arguments[0];
-            format!("You lost {} points of Shadowknowledge.", a)
+            format!("You lost {0} points of Shadowknowledge.", a)
         }
         (100, 165) => {
             String::from("Inventory full. Please make room in your inventory first!")
@@ -16912,7 +17115,7 @@ pub fn format_message(
             let b = &arguments[1];
             let c = &arguments[2];
             let d = &arguments[3];
-            format!("You hit {} with {} for {} points of {} damage.", a, b, c, d)
+            format!("You hit {0} with {1} for {2} points of {3} damage.", a, b, c, d)
         }
         (100, 537) => {
             String::from("You need to have a piercing weapon equipped.")
@@ -16925,14 +17128,14 @@ pub fn format_message(
         }
         (100, 602) => {
             let a = &arguments[0];
-            format!("Current team loot order is: {}", a)
+            format!("Current team loot order is: {0}", a)
         }
         (100, 517) => {
             String::from("You need at least one free inventory slot! Please remove an item and try again.")
         }
         (100, 392) => {
             let a = &arguments[0];
-            format!("New Level: {}!", a)
+            format!("New Level: {0}!", a)
         }
         (100, 470) => {
             String::from("You gain Shadowknowledge from killing monsters and performing tasks aligned with the two Unredeemed / Redeemed factions. If you kill an Unredeemed monster, you need Redeemed faction and vice versa. The higher the faction, the greater the Shadowknowledge.\" ")
@@ -16943,7 +17146,21 @@ pub fn format_message(
         (100, 722) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("(Found {} TEMP and {} TEMP in the shop.)", a, b)
+            let c = {
+                if a.to_string() == "1" {
+                    " item "
+                } else {
+                    " items"
+                }
+            };
+            let d = {
+                if a.to_string() == "1" {
+                    " credit "
+                } else {
+                    " credits"
+                }
+            };
+            format!("(Found {0} {2} and {1} {3} in the shop.)", a, b, c, d)
         }
         (100, 135) => {
             String::from("You are too low level to forage in this area!")
@@ -16954,11 +17171,11 @@ pub fn format_message(
         (100, 401) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("{} was born on {}", a, b)
+            format!("{0} was born on {1}", a, b)
         }
         (100, 472) => {
             let a = &arguments[0];
-            format!("{} credits were deducted from your account.", a)
+            format!("{0} credits were deducted from your account.", a)
         }
         (100, 533) => {
             String::from("You need to have a 1 hand edged weapon equipped.")
@@ -16990,20 +17207,20 @@ pub fn format_message(
         (100, 565) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("You increased nano on {} for {} points.", a, b)
+            format!("You increased nano on {0} for {1} points.", a, b)
         }
         (100, 718) => {
             String::from("You must have the Alien Invasion expansion!")
         }
         (100, 406) => {
             let a = &arguments[0];
-            format!("{} skill available.", a)
+            format!("{0} skill available.", a)
         }
         (100, 554) => {
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("{} {} base value is required to be at least {}!", a, b, c)
+            format!("{0} {1} base value is required to be at least {2}!", a, b, c)
         }
         (100, 635) => {
             String::from("Unable to execute nano program. You can't execute this nano on the target.")
@@ -17011,20 +17228,20 @@ pub fn format_message(
         (100, 566) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("You got nano from {} for {} points.", a, b)
+            format!("You got nano from {0} for {1} points.", a, b)
         }
         (100, 235) => {
             String::from("Temporary items can't be moved into the bank!")
         }
         (100, 666) => {
             let a = &arguments[0];
-            format!("You have been challenged to a fight from {}. Do you accept?", a)
+            format!("You have been challenged to a fight from {0}. Do you accept?", a)
         }
         (100, 683) => {
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("Locked down by Org leader: time until reset {:02}:{:02}:{:02}", a, b, c)
+            format!("Locked down by Org leader: time until reset {0:02}:{1:02}:{2:02}", a, b, c)
         }
         (100, 127) => {
             String::from("You stop bluffing")
@@ -17032,17 +17249,17 @@ pub fn format_message(
         (100, 446) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Your reflect shield hit {} for {} points of damage.", a, b)
+            format!("Your reflect shield hit {0} for {1} points of damage.", a, b)
         }
         (100, 572) => {
             let a = &arguments[0];
-            format!("One of your team members ({}) is in the same organization as your target", a)
+            format!("One of your team members ({0}) is in the same organization as your target", a)
         }
         (100, 634) => {
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("Item: {} level: {} price: {}", a, b, c)
+            format!("Item: {0} level: {1} price: {2}", a, b, c)
         }
         (100, 582) => {
             String::from("Aimed Shot!")
@@ -17061,11 +17278,11 @@ pub fn format_message(
         }
         (100, 436) => {
             let a = &arguments[0];
-            format!("You lost {} xp.", a)
+            format!("You lost {0} xp.", a)
         }
         (100, 576) => {
             let a = &arguments[0];
-            format!("You were hit for {} points of damage.", a)
+            format!("You were hit for {0} points of damage.", a)
         }
         (100, 410) => {
             String::from("You died of self termination!")
@@ -17083,22 +17300,22 @@ pub fn format_message(
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("You hit {} for {} points of {} damage.", a, b, c)
+            format!("You hit {0} for {1} points of {2} damage.", a, b, c)
         }
         (100, 714) => {
             String::from("The shop was altered by the owner. Trade aborted.\r\n")
         }
         (100, 544) => {
             let a = &arguments[0];
-            format!("Target sex must be {}!", a)
+            format!("Target sex must be {0}!", a)
         }
         (100, 405) => {
             let a = &arguments[0];
-            format!("{} tried to hide but failed.", a)
+            format!("{0} tried to hide but failed.", a)
         }
         (100, 548) => {
             let a = &arguments[0];
-            format!("Target side must not be {}!", a)
+            format!("Target side must not be {0}!", a)
         }
         (100, 175) => {
             String::from("Move item to inventory before using it.")
@@ -17109,7 +17326,7 @@ pub fn format_message(
         (100, 503) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("{} was unaffected by your {}.", a, b)
+            format!("{0} was unaffected by your {1}.", a, b)
         }
         (100, 152) => {
             String::from("Chest contains a NoDrop item, and can't be traded or sold.")
@@ -17129,7 +17346,7 @@ pub fn format_message(
         (100, 441) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Your damage shield hit {} for {} points of damage.", a, b)
+            format!("Your damage shield hit {0} for {1} points of damage.", a, b)
         }
         (100, 710) => {
             String::from("You need the Alien Invasion expansion pack to access this perk.\r\n")
@@ -17178,11 +17395,11 @@ pub fn format_message(
         }
         (100, 575) => {
             let a = &arguments[0];
-            format!("You need at least {} in Multiple Ranged to wield these two weapons.", a)
+            format!("You need at least {0} in Multiple Ranged to wield these two weapons.", a)
         }
         (100, 640) => {
             let a = &arguments[0];
-            format!("This is your shop (max {} items)!", a)
+            format!("This is your shop (max {0} items)!", a)
         }
         (100, 374) => {
             String::from("Nanoprogram did not activate. Not enough nanoenergy.")
@@ -17193,12 +17410,12 @@ pub fn format_message(
         (100, 568) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("You were drained for {} points of nano energy by {}.", a, b)
+            format!("You were drained for {0} points of nano energy by {1}.", a, b)
         }
         (100, 603) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Received mission reward: XP {} Cash {}", a, b)
+            format!("Received mission reward: XP {0} Cash {1}", a, b)
         }
         (100, 19) => {
             String::from("Not enough nano energy to execute nanoprogram.")
@@ -17209,7 +17426,7 @@ pub fn format_message(
         (100, 692) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Item at: {} {}.", a, b)
+            format!("Item at: {0} {1}.", a, b)
         }
         (100, 128) => {
             String::from("You can only bluff while walking!")
@@ -17225,7 +17442,7 @@ pub fn format_message(
         }
         (100, 403) => {
             let a = &arguments[0];
-            format!("{} saw through your bluff!", a)
+            format!("{0} saw through your bluff!", a)
         }
         (100, 397) => {
             String::from("You cannot attack the tower -- the defense shield is enabled.  Disable it by using a defense shield disabler item near the tower.  (You don't have to do this if your organization has a controller tower.)")
@@ -17238,7 +17455,7 @@ pub fn format_message(
         }
         (100, 677) => {
             let a = &arguments[0];
-            format!("{}'s Shop", a)
+            format!("{0}'s Shop", a)
         }
         (100, 587) => {
             String::from("Sneak Attack!")
@@ -17269,13 +17486,13 @@ pub fn format_message(
         }
         (100, 481) => {
             let a = &arguments[0];
-            format!("You drained {} points of nano from the target.", a)
+            format!("You drained {0} points of nano from the target.", a)
         }
         (100, 523) => {
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("You were attacked with nanobots from {} for {} points of {} damage.", a, b, c)
+            format!("You were attacked with nanobots from {0} for {1} points of {2} damage.", a, b, c)
         }
         (100, 339) => {
             String::from("PvP disgrace period has ended.")
@@ -17294,7 +17511,7 @@ pub fn format_message(
         }
         (100, 688) => {
             let a = &arguments[0];
-            format!("You have gained enough Alien XP to get to another alien level but your level must be: {} to obtain it.", a)
+            format!("You have gained enough Alien XP to get to another alien level but your level must be: {0} to obtain it.", a)
         }
         (100, 345) => {
             String::from("The door is now locked.")
@@ -17304,7 +17521,7 @@ pub fn format_message(
         }
         (100, 592) => {
             let a = &arguments[0];
-            format!("Maximum increase in ability is {} per level!", a)
+            format!("Maximum increase in ability is {0} per level!", a)
         }
         (100, 290) => {
             String::from("Your inventory and bank is full. An item is put where you are standing.")
@@ -17314,7 +17531,7 @@ pub fn format_message(
         }
         (100, 569) => {
             let a = &arguments[0];
-            format!("Attacking {}...", a)
+            format!("Attacking {0}...", a)
         }
         (100, 145) => {
             String::from("This item requires a fighting-target to be applied on.")
@@ -17324,7 +17541,7 @@ pub fn format_message(
         }
         (100, 476) => {
             let a = &arguments[0];
-            format!("{} cannot be summoned because it is immobile.", a)
+            format!("{0} cannot be summoned because it is immobile.", a)
         }
         (100, 163) => {
             String::from("You can't log out while in a fight.")
@@ -17358,18 +17575,18 @@ pub fn format_message(
         }
         (100, 478) => {
             let a = &arguments[0];
-            format!("You block the attack from {}, and perform an attack of opportunity!", a)
+            format!("You block the attack from {0}, and perform an attack of opportunity!", a)
         }
         (100, 487) => {
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
             let d = &arguments[3];
-            format!("It is theoretically possible to combine \"{}\" with \"{}\". But you need at least {} in {}.", a, b, c, d)
+            format!("It is theoretically possible to combine \"{0}\" with \"{1}\". But you need at least {2} in {3}.", a, b, c, d)
         }
         (100, 519) => {
             let a = &arguments[0];
-            format!("You gained {} points of Shadowknowledge as a side bonus.", a)
+            format!("You gained {0} points of Shadowknowledge as a side bonus.", a)
         }
         (100, 341) => {
             String::from("Looter is not present.")
@@ -17377,7 +17594,7 @@ pub fn format_message(
         (100, 563) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("You healed {} for {} points of health.", a, b)
+            format!("You healed {0} for {1} points of health.", a, b)
         }
         (100, 113) => {
             String::from("Stuck-resolve command not allowed while affected by hostile nano programs.")
@@ -17387,7 +17604,7 @@ pub fn format_message(
         }
         (100, 483) => {
             let a = &arguments[0];
-            format!("{} is open. Please close it first.", a)
+            format!("{0} is open. Please close it first.", a)
         }
         (100, 231) => {
             String::from("Your deck must be empty before it can be unequipped!")
@@ -17400,19 +17617,26 @@ pub fn format_message(
         }
         (100, 743316) => {
             let a = &arguments[0];
-            format!("{} TEMP deducted from your account.", a)
+            let b = {
+                if a.to_string() == "1" {
+                    " credit was "
+                } else {
+                    " credits were"
+                }
+            };
+            format!("{0} {1} deducted from your account.", a, b)
         }
         (100, 553) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("You have to kill {} more {} to fulfill one of your missions!", a, b)
+            format!("You have to kill {0} more {1} to fulfill one of your missions!", a, b)
         }
         (100, 399) => {
             String::from("Team member went link dead.")
         }
         (100, 434) => {
             let a = &arguments[0];
-            format!("A player hit you for {} points of damage.", a)
+            format!("A player hit you for {0} points of damage.", a)
         }
         (100, 140) => {
             String::from("Shades can't use implants!")
@@ -17427,22 +17651,22 @@ pub fn format_message(
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("\"{}\" at level {} with price {}.", a, b, c)
+            format!("\"{0}\" at level {1} with price {2}.", a, b, c)
         }
         (100, 60) => {
             String::from("You can't reset Map Navigation!")
         }
         (100, 605) => {
             let a = &arguments[0];
-            format!("Received mission reward: Cash {}", a)
+            format!("Received mission reward: Cash {0}", a)
         }
         (100, 204) => {
             let a = &arguments[0];
-            format!("{} is already fully loaded.", a)
+            format!("{0} is already fully loaded.", a)
         }
         (100, 417) => {
             let a = &arguments[0];
-            format!("Your items will be reclaimed in {} seconds, and made available in a reclaim booth near your resurrection site.", a)
+            format!("Your items will be reclaimed in {0} seconds, and made available in a reclaim booth near your resurrection site.", a)
         }
         (100, 269) => {
             String::from("This action requires that you have the fourth specialization completed!")
@@ -17452,20 +17676,20 @@ pub fn format_message(
         }
         (100, 659) => {
             let a = &arguments[0];
-            format!("This terminal can only be rented by members of {}!", a)
+            format!("This terminal can only be rented by members of {0}!", a)
         }
         (100, 477) => {
             let a = &arguments[0];
-            format!("{} blocked your attack, and performs an attack of opportunity!", a)
+            format!("{0} blocked your attack, and performs an attack of opportunity!", a)
         }
         (100, 445) => {
             let a = &arguments[0];
-            format!("Someone's reflect shield hit you for {} points of damage.", a)
+            format!("Someone's reflect shield hit you for {0} points of damage.", a)
         }
         (100, 564) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("You got healed by {} for {} points of health.", a, b)
+            format!("You got healed by {0} for {1} points of health.", a, b)
         }
         (100, 136) => {
             String::from("There are no forageable items in this area!")
@@ -17511,7 +17735,7 @@ pub fn format_message(
         }
         (100, 240339044) => {
             let a = &arguments[0];
-            format!("Your Organization cannot initiate a laser strike at the moment. Please wait at least {} seconds.", a)
+            format!("Your Organization cannot initiate a laser strike at the moment. Please wait at least {0} seconds.", a)
         }
         (100, 27) => {
             String::from("Your vote has been registered!")
@@ -17536,14 +17760,14 @@ pub fn format_message(
         }
         (100, 452) => {
             let a = &arguments[0];
-            format!("You were damaged by a toxic substance for {} points of damage.", a)
+            format!("You were damaged by a toxic substance for {0} points of damage.", a)
         }
         (100, 172) => {
             String::from("Both items must be in your inventory window.")
         }
         (100, 456) => {
             let a = &arguments[0];
-            format!("{} contain items. Remove the items first.", a)
+            format!("{0} contain items. Remove the items first.", a)
         }
         (100, 468) => {
             String::from("Your summon target has not been bound on this playfield.")
@@ -17568,7 +17792,7 @@ pub fn format_message(
             let b = &arguments[1];
             let c = &arguments[2];
             let d = &arguments[3];
-            format!("{} was attacked with {} for {} points of {} damage.", a, b, c, d)
+            format!("{0} was attacked with {1} for {2} points of {3} damage.", a, b, c, d)
         }
         (100, 91) => {
             String::from("You have gained a new Perk!")
@@ -17593,7 +17817,7 @@ pub fn format_message(
         }
         (100, 395) => {
             let a = &arguments[0];
-            format!("You parried the attack from {}!", a)
+            format!("You parried the attack from {0}!", a)
         }
         (100, 514) => {
             String::from("Have fun :-)")
@@ -17609,7 +17833,7 @@ pub fn format_message(
         }
         (100, 465) => {
             let a = &arguments[0];
-            format!("You successfully bound {} teammember(s) to this location.", a)
+            format!("You successfully bound {0} teammember(s) to this location.", a)
         }
         (100, 675) => {
             String::from("This shop has been locked. To transfer credits you must first remove all items that are currently for sale.")
@@ -17617,21 +17841,21 @@ pub fn format_message(
         (100, 579) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("{} attacked by {}!", a, b)
+            format!("{0} attacked by {1}!", a, b)
         }
         (100, 11) => {
             String::from("You can't promote someone to your own level in organization or higher!")
         }
         (100, 707) => {
             let a = &arguments[0];
-            format!("Item deleted at pos {}.", a)
+            format!("Item deleted at pos {0}.", a)
         }
         (100, 496) => {
             String::from("The quality of the new item is ok.")
         }
         (100, 432) => {
             let a = &arguments[0];
-            format!("You were hit for {} points of damage.", a)
+            format!("You were hit for {0} points of damage.", a)
         }
         (100, 557) => {
             String::from("The target must be in your team!")
@@ -17643,7 +17867,7 @@ pub fn format_message(
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("{} casts nanoprogram '{}' on {}.", a, b, c)
+            format!("{0} casts nanoprogram '{1}' on {2}.", a, b, c)
         }
         (100, 528) => {
             String::from("You need to have an unarmed combat weapon equipped.")
@@ -17692,7 +17916,7 @@ pub fn format_message(
         }
         (100, 396) => {
             let a = &arguments[0];
-            format!("{} parried your attack!", a)
+            format!("{0} parried your attack!", a)
         }
         (100, 107) => {
             String::from("You have no pet.")
@@ -17738,7 +17962,7 @@ pub fn format_message(
         }
         (100, 543) => {
             let a = &arguments[0];
-            format!("Target side must be {}!", a)
+            format!("Target side must be {0}!", a)
         }
         (120, 16) => {
             String::from("<type7> pet")
@@ -17764,7 +17988,7 @@ pub fn format_message(
         (120, 189936355) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Can't have more than {} {}.", a, b)
+            format!("Can't have more than {0} {1}.", a, b)
         }
         (120, 11) => {
             String::from("healing pet")
@@ -17772,7 +17996,7 @@ pub fn format_message(
         (120, 210158307) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Must have at least {} {}.", a, b)
+            format!("Must have at least {0} {1}.", a, b)
         }
         (500, 167191294) => {
             String::from("Target is busy talking to somebody else, please wait.")
@@ -17932,7 +18156,7 @@ pub fn format_message(
         }
         (2011, 225400244) => {
             let a = &arguments[0];
-            format!("Bar Select {:02}", a)
+            format!("Bar Select {0:02}", a)
         }
         (2011, 191457204) => {
             String::from("Raid")
@@ -17954,7 +18178,7 @@ pub fn format_message(
         }
         (2011, 210759381) => {
             let a = &arguments[0];
-            format!("Active Bar {:02}", a)
+            format!("Active Bar {0:02}", a)
         }
         (2011, 100299476) => {
             String::from("Select Team Member 4")
@@ -17968,7 +18192,7 @@ pub fn format_message(
         (2011, 132243097) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Bar {:02}_{:02}", a, b)
+            format!("Bar {0:02}_{1:02}", a, b)
         }
         (2011, 100299477) => {
             String::from("Select Team Member 5")
@@ -18011,7 +18235,7 @@ pub fn format_message(
         }
         (2011, 132241463) => {
             let a = &arguments[0];
-            format!("Active Bar Row {:02}", a)
+            format!("Active Bar Row {0:02}", a)
         }
         (2011, 100299474) => {
             String::from("Select Team Member 2")
@@ -18154,7 +18378,7 @@ pub fn format_message(
         (1005, 19624722) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Enables Special: {} ({})", a, b)
+            format!("Enables Special: {0} ({1})", a, b)
         }
         (1005, 38097604) => {
             String::from("Must be your own pet")
@@ -18170,7 +18394,7 @@ pub fn format_message(
         }
         (1005, 235574452) => {
             let a = &arguments[0];
-            format!("Must be a Unsupported NPCFamily {}", a)
+            format!("Must be a Unsupported NPCFamily {0}", a)
         }
         (1005, 209) => {
             String::from("LeftArm")
@@ -18180,7 +18404,7 @@ pub fn format_message(
         }
         (1005, 219463474) => {
             let a = &arguments[0];
-            format!("Must not have enough free NCU for: {}", a)
+            format!("Must not have enough free NCU for: {0}", a)
         }
         (1005, 35823108) => {
             String::from("Target not ")
@@ -18211,7 +18435,7 @@ pub fn format_message(
         }
         (1005, 226077982) => {
             let a = &arguments[0];
-            format!("Must not have equipped weapon of type: {}", a)
+            format!("Must not have equipped weapon of type: {0}", a)
         }
         (1005, 211769543) => {
             String::from("Must be flying.")
@@ -18230,7 +18454,7 @@ pub fn format_message(
         }
         (1005, 264795810) => {
             let a = &arguments[0];
-            format!("Must have no other {}.", a)
+            format!("Must have no other {0}.", a)
         }
         (1005, 305) => {
             String::from("Utils3")
@@ -18241,7 +18465,7 @@ pub fn format_message(
         (1005, 77831061) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("{} temp set to {}", a, b)
+            format!("{0} temp set to {1}", a, b)
         }
         (1005, 206171452) => {
             String::from("not")
@@ -18266,7 +18490,7 @@ pub fn format_message(
         }
         (1005, 226089886) => {
             let a = &arguments[0];
-            format!("Must not have equipped right hand weapon of type: {}", a)
+            format!("Must not have equipped right hand weapon of type: {0}", a)
         }
         (1005, 208) => {
             String::from("Hands")
@@ -18294,11 +18518,11 @@ pub fn format_message(
         }
         (1005, 161024999) => {
             let a = &arguments[0];
-            format!("Base {} below ", a)
+            format!("Base {0} below ", a)
         }
         (1005, 11235313) => {
             let a = &arguments[0];
-            format!("Must not have nanoprogram: {}", a)
+            format!("Must not have nanoprogram: {0}", a)
         }
         (1005, 150998212) => {
             String::from(" and ")
@@ -18311,7 +18535,7 @@ pub fn format_message(
         }
         (1005, 146655790) => {
             let a = &arguments[0];
-            format!("Must have expansionset: {}", a)
+            format!("Must have expansionset: {0}", a)
         }
         (1005, 203) => {
             String::from("Back")
@@ -18327,7 +18551,7 @@ pub fn format_message(
         }
         (1005, 5871653) => {
             let a = &arguments[0];
-            format!("Scale {}%", a)
+            format!("Scale {0}%", a)
         }
         (1005, 202) => {
             String::from("Head")
@@ -18336,7 +18560,7 @@ pub fn format_message(
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
-            format!("Scale at lvl {} {}% ({} at lvl 200)", a, b, c)
+            format!("Scale at lvl {0} {1}% ({2} at lvl 200)", a, b, c)
         }
         (1005, 601) => {
             String::from("Solitus")
@@ -18346,14 +18570,14 @@ pub fn format_message(
         }
         (1005, 261696229) => {
             let a = &arguments[0];
-            format!("Must not have unique item: {}", a)
+            format!("Must not have unique item: {0}", a)
         }
         (1005, 51238704) => {
             let a = &arguments[0];
             let b = &arguments[1];
             let c = &arguments[2];
             let d = &arguments[3];
-            format!("{} at level {} {} ({} at lvl 200)", a, b, c, d)
+            format!("{0} at level {1} {2} ({3} at lvl 200)", a, b, c, d)
         }
         (1005, 505) => {
             String::from("Wielding Jobe-chipped Cyberdeck.")
@@ -18405,7 +18629,7 @@ pub fn format_message(
         }
         (1005, 237116148) => {
             let a = &arguments[0];
-            format!("Must have {} equipped", a)
+            format!("Must have {0} equipped", a)
         }
         (1005, 214893565) => {
             String::from("Must be in a team.")
@@ -18413,11 +18637,11 @@ pub fn format_message(
         (1005, 47277320) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Organization credits {}{}", a, b)
+            format!("Organization credits {0}{1}", a, b)
         }
         (1005, 211711630) => {
             let a = &arguments[0];
-            format!("Must have equipped right hand weapon of type: {}", a)
+            format!("Must have equipped right hand weapon of type: {0}", a)
         }
         (1005, 249068204) => {
             String::from("Must have:\r\n")
@@ -18425,7 +18649,7 @@ pub fn format_message(
         (1005, 185372755) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Must have no more than {} of pet type: {}.", a, b)
+            format!("Must have no more than {0} of pet type: {1}.", a, b)
         }
         (1005, 151001572) => {
             String::from("not")
@@ -18441,7 +18665,7 @@ pub fn format_message(
         }
         (1005, 93771044) => {
             let a = &arguments[0];
-            format!("Must not have {} equipped", a)
+            format!("Must not have {0} equipped", a)
         }
         (1005, 511) => {
             String::from("Wielding Profession Nanodeck.")
@@ -18449,7 +18673,7 @@ pub fn format_message(
         (1005, 184737796) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Increase standing with {} by {}", a, b)
+            format!("Increase standing with {0} by {1}", a, b)
         }
         (1005, 212249301) => {
             String::from("While wielding Melee Weapons.")
@@ -18463,7 +18687,7 @@ pub fn format_message(
         (1005, 9429678) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("{} temp set to {}", a, b)
+            format!("{0} temp set to {1}", a, b)
         }
         (1005, 101) => {
             String::from("Uni")
@@ -18476,7 +18700,7 @@ pub fn format_message(
         }
         (1005, 247645193) => {
             let a = &arguments[0];
-            format!("Not affected by: {}", a)
+            format!("Not affected by: {0}", a)
         }
         (1005, 16669669) => {
             String::from("Damage")
@@ -18531,14 +18755,14 @@ pub fn format_message(
         }
         (1005, 236107580) => {
             let a = &arguments[0];
-            format!("Enables Special: {}", a)
+            format!("Enables Special: {0}", a)
         }
         (1005, 102366414) => {
             String::from("Third Specialization Completed.")
         }
         (1005, 103671093) => {
             let a = &arguments[0];
-            format!("Must have unique item: {}", a)
+            format!("Must have unique item: {0}", a)
         }
         (1005, 314) => {
             String::from("Deck6")
@@ -18549,7 +18773,7 @@ pub fn format_message(
         (1005, 11455727) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Resist Nano: {}% {}", a, b)
+            format!("Resist Nano: {0}% {1}", a, b)
         }
         (1005, 1019) => {
             String::from("On Self:")
@@ -18604,18 +18828,18 @@ pub fn format_message(
         }
         (1005, 261314147) => {
             let a = &arguments[0];
-            format!("Must have {} free inventory slots", a)
+            format!("Must have {0} free inventory slots", a)
         }
         (1005, 200) => {
             String::from("Default")
         }
         (1005, 109081314) => {
             let a = &arguments[0];
-            format!("Must have enough free NCU for: {}", a)
+            format!("Must have enough free NCU for: {0}", a)
         }
         (1005, 162952846) => {
             let a = &arguments[0];
-            format!("Must have equipped weapon of type: {}", a)
+            format!("Must have equipped weapon of type: {0}", a)
         }
         (1005, 114151651) => {
             String::from("Must be in the shadowlands.")
@@ -18649,7 +18873,7 @@ pub fn format_message(
         }
         (1005, 8253517) => {
             let a = &arguments[0];
-            format!("Upload nanoprogram {}", a)
+            format!("Upload nanoprogram {0}", a)
         }
         (1005, 3038100) => {
             String::from("Must have allied characters in combat")
@@ -18704,7 +18928,7 @@ pub fn format_message(
         }
         (1005, 76347700) => {
             let a = &arguments[0];
-            format!("Stop combat ({})", a)
+            format!("Stop combat ({0})", a)
         }
         (1005, 182615652) => {
             String::from("Delete mission")
@@ -18724,14 +18948,14 @@ pub fn format_message(
         (1005, 205893412) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("{} temp set to {}", a, b)
+            format!("{0} temp set to {1}", a, b)
         }
         (1005, 13293284) => {
             String::from("Must not be a Robotic Pet")
         }
         (1005, 86152078) => {
             let a = &arguments[0];
-            format!("Completed mission {}", a)
+            format!("Completed mission {0}", a)
         }
         (1005, 151017572) => {
             String::from("Must be a Combat Pet")
@@ -18745,7 +18969,7 @@ pub fn format_message(
         (1005, 267455413) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Decrease standing with {} by {}", a, b)
+            format!("Decrease standing with {0} by {1}", a, b)
         }
         (1005, 412) => {
             String::from("LeftHand")
@@ -18755,7 +18979,7 @@ pub fn format_message(
         }
         (1005, 187467428) => {
             let a = &arguments[0];
-            format!("Perk {} cannot be locked", a)
+            format!("Perk {0} cannot be locked", a)
         }
         (1005, 308) => {
             String::from("LeftHand")
@@ -18784,14 +19008,14 @@ pub fn format_message(
         (1005, 13926807) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("<font color=CCInfoHeader>Aligned to:</font>\r\n<font color=CCInfoText>Because of your standing with </font><font color=CCInfoHeader> {} </font><font color=CCInfoText>, you are seen as </font><font color=CCInfoHeader> {} </font><font color=CCInfoText>", a, b)
+            format!("<font color=CCInfoHeader>Aligned to:</font>\r\n<font color=CCInfoText>Because of your standing with </font><font color=CCInfoHeader> {0} </font><font color=CCInfoText>, you are seen as </font><font color=CCInfoHeader> {1} </font><font color=CCInfoText>", a, b)
         }
         (1005, 164230325) => {
             String::from("him.")
         }
         (1005, 175924644) => {
             let a = &arguments[0];
-            format!("Perk {} must be locked", a)
+            format!("Perk {0} must be locked", a)
         }
         (1005, 268383124) => {
             String::from("Must be a Psychosis Pet")
@@ -18807,12 +19031,12 @@ pub fn format_message(
         }
         (1005, 196002905) => {
             let a = &arguments[0];
-            format!("Affected by: {}", a)
+            format!("Affected by: {0}", a)
         }
         (1005, 184745572) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Set standing with {} to {}", a, b)
+            format!("Set standing with {0} to {1}", a, b)
         }
         (1005, 141201086) => {
             String::from("Without an organization.")
@@ -18825,7 +19049,7 @@ pub fn format_message(
         }
         (1005, 144301533) => {
             let a = &arguments[0];
-            format!("Base {} from ", a)
+            format!("Base {0} from ", a)
         }
         (1005, 241969284) => {
             String::from("Must be a Healing Pet")
@@ -18836,7 +19060,7 @@ pub fn format_message(
         (1005, 16478419) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Must have at least {} of pet type: {}.", a, b)
+            format!("Must have at least {0} of pet type: {1}.", a, b)
         }
         (1005, 400) => {
             String::from("Default")
@@ -18856,7 +19080,7 @@ pub fn format_message(
         (1005, 98142478) => {
             let a = &arguments[0];
             let b = &arguments[1];
-            format!("Modification to base of {} skill by {}%", a, b)
+            format!("Modification to base of {0} skill by {1}%", a, b)
         }
         (1005, 401) => {
             String::from("Eyes")
@@ -18872,7 +19096,7 @@ pub fn format_message(
         }
         (1005, 230543061) => {
             let a = &arguments[0];
-            format!("Scale {}%", a)
+            format!("Scale {0}%", a)
         }
         (1005, 406) => {
             String::from("LeftArm")
@@ -18900,7 +19124,7 @@ pub fn format_message(
         }
         (1005, 132617329) => {
             let a = &arguments[0];
-            format!("Must have nanoprogram: {}", a)
+            format!("Must have nanoprogram: {0}", a)
         }
         (1005, 247564329) => {
             String::from("Battle station only.")
