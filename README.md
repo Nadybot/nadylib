@@ -10,7 +10,7 @@ Done:
 - Login key generation
 - Helper methods for writing and reading the protocol
 - MMDB parser
-- Good enough implementation of MMDB string formatting
+- 100% coverage and fast implementation of MMDB string formatting
 - All currently available packet types for chat-only sessions
 
 Not yet done:
