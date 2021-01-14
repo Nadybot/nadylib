@@ -8,7 +8,7 @@ use crate::{
 };
 
 use byteorder::{ByteOrder, NetworkEndian};
-use leaky_bucket::LeakyBucket;
+use leaky_bucket_lite::LeakyBucket;
 use tokio::{
     io::{AsyncReadExt, AsyncWriteExt},
     net::{

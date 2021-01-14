@@ -1,4 +1,4 @@
-use leaky_bucket::Error as BucketError;
+use leaky_bucket_lite::Error as BucketError;
 use num_enum::TryFromPrimitiveError;
 use tokio::{
     sync::{mpsc::error::SendError as MpscError, watch::error::SendError as WatchError},
