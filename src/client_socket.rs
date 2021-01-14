@@ -176,8 +176,7 @@ impl AOSocket {
                             .refill_interval(Duration::from_secs(2))
                             .max(5)
                             .tokens(5)
-                            .build()
-                            .unwrap(),
+                            .build(),
                     ),
                 )
             } else {

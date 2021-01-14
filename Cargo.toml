@@ -7,8 +7,7 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [dependencies]
 byteorder = "1.4"
-lazy_static = { version = "1.4", optional = true }
-leaky-bucket = "0.10"
+leaky-bucket = { git = "https://github.com/Gelbpunkt/leaky-bucket.git", branch = "main" }
 log = "0.4"
 num-bigint = { version = "0.3", features = ["rand"] }
 num-traits = "0.2"
@@ -34,9 +33,6 @@ tokio = { version = "1.0", default-features = false, features = [
 ] }
 
 [patch.crates-io]
-# leaky-bucket uses futures-util by default
-# this fork uses unicycle
-leaky-bucket = { git = "https://github.com/Gelbpunkt/leaky-bucket.git", branch = "main" }
 # num-bigint is on rand 0.7, see https://github.com/rust-num/num-bigint/pull/185
 num-bigint = { git = "https://github.com/Gelbpunkt/num-bigint.git", branch = "rand-0.8", features = [
     "rand"
