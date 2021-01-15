@@ -9,10 +9,9 @@ edition = "2018"
 byteorder = "1.4"
 leaky-bucket-lite = "0.1.0"
 log = "0.4"
-num-bigint = { version = "0.3", features = ["rand"] }
+num-bigint = { version = "0.3", default-features = false }
 num-traits = "0.2"
-num_enum = "0.5"
-rand = "0.8"
+getrandom = "0.2"
 tokio = { version = "1.0", default-features = false, features = [
     "net",
     "rt",
@@ -30,12 +29,6 @@ tokio = { version = "1.0", default-features = false, features = [
     "sync",
     "rt-multi-thread",
     "macros"
-] }
-
-[patch.crates-io]
-# num-bigint is on rand 0.7, see https://github.com/rust-num/num-bigint/pull/185
-num-bigint = { git = "https://github.com/Gelbpunkt/num-bigint.git", branch = "rand-0.8", features = [
-    "rand"
 ] }
 
 [features]

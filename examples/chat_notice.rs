@@ -19,6 +19,7 @@ async fn main() -> Result<()> {
                 };
                 sock.send(pack).await?;
             }
+            ReceivedPacket::LoginOk => println!("Logged in successfully"),
             ReceivedPacket::ChatNotice(c) => {
                 println!("Got a chat notice: {:?}", c.notice);
             }

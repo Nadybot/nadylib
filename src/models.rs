@@ -1,4 +1,6 @@
-use num_enum::TryFromPrimitive;
+use crate::error::Error;
+
+use std::convert::TryFrom;
 
 /// Represents a Character in AO.
 #[derive(Debug)]
@@ -10,7 +12,7 @@ pub struct Character {
 }
 
 /// Type of group channel.
-#[derive(Debug, TryFromPrimitive, Clone, Copy)]
+#[derive(Debug, Clone, Copy)]
 #[repr(u8)]
 pub enum ChannelType {
     Org = 3,
@@ -19,6 +21,22 @@ pub enum ChannelType {
     Announcements = 12,
     Shopping = 134,
     Faction = 135,
+}
+
+impl TryFrom<u8> for ChannelType {
+    type Error = Error;
+
+    fn try_from(value: u8) -> Result<Self, Self::Error> {
+        match value {
+            3 => Ok(Self::Org),
+            4 => Ok(Self::FactionLeaders),
+            10 => Ok(Self::OrgMsg),
+            12 => Ok(Self::Announcements),
+            134 => Ok(Self::Shopping),
+            135 => Ok(Self::Faction),
+            _ => Err(Error::UnknownChannelType(value)),
+        }
+    }
 }
 
 /// A group channel in the game.

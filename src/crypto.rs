@@ -1,8 +1,9 @@
 /// Cryptographic helpers for generating login keys.
 use byteorder::{BigEndian, ByteOrder, NativeEndian};
-use num_bigint::{BigUint, RandBigInt, ToBigUint};
+use getrandom::getrandom;
+use num_bigint::{BigUint, ToBigUint};
 use num_traits::Num;
-use rand::prelude::*;
+
 use std::str;
 
 const DIFFIE_HELLMAN_PRIME: &str = "eca2e8c85d863dcdc26a429a71a9815ad052f6139669dd659f98ae159d313d13c6bf2838e10a69b6478b64a24bd054ba8248e8fa778703b418408249440b2c1edd28853e240d8a7e49540b76d120d3b1ad2878b1b99490eb4a2a5e84caa8a91cecbdb1aa7c816e8be343246f80c637abc653b893fd91686cf8d32d6cfe5f2a6f";
@@ -15,7 +16,9 @@ pub fn generate_key(username: &str, password: &str, login_seed: &str) -> String 
     let dh_fc_key = BigUint::from_str_radix(DIFFIE_HELLMAN_FUNCOM_PUBKEY, 16).unwrap();
     let dh_generator = 5.to_biguint().unwrap();
     // Our diffie hellman secret key is really just random
-    let dh_secret_key = thread_rng().gen_biguint(256);
+    let mut num = [0; 32];
+    getrandom(&mut num).unwrap();
+    let dh_secret_key = BigUint::from_bytes_le(&num);
 
     // And we generate our public key for funcom to decode our credentials later
     let dh_pubkey = dh_generator.modpow(&dh_secret_key, &dh_prime);
@@ -26,7 +29,9 @@ pub fn generate_key(username: &str, password: &str, login_seed: &str) -> String 
 
     let login_string = format!("{}|{}|{}", username, login_seed, password);
 
-    let prefix_bytes_int = thread_rng().next_u64();
+    let mut bytes = [0; 8];
+    getrandom(&mut bytes).unwrap();
+    let prefix_bytes_int = NativeEndian::read_u64(&bytes);
     let mut prefix_buf = vec![0; 8];
     BigEndian::write_u64(&mut prefix_buf, prefix_bytes_int);
 

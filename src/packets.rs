@@ -6,7 +6,6 @@ use crate::{
 };
 
 use byteorder::{ByteOrder, NetworkEndian};
-use num_enum::TryFromPrimitive;
 
 use std::{convert::TryFrom, fmt::Display, result::Result as OrigResult};
 
@@ -138,7 +137,7 @@ fn parse_ext_params(msg: &mut &[u8]) -> Option<Vec<Box<dyn Display>>> {
 }
 
 /// Represents a kind of packet in the chat protocol.
-#[derive(Debug, TryFromPrimitive, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 #[repr(u16)]
 pub enum PacketType {
     LoginSeed = 0,
@@ -178,6 +177,53 @@ pub enum PacketType {
     Forward = 110,
     Cc = 120,
     AdmMuxInfo = 1100,
+}
+
+impl TryFrom<u16> for PacketType {
+    type Error = Error;
+
+    fn try_from(value: u16) -> OrigResult<Self, Self::Error> {
+        match value {
+            0 => Ok(Self::LoginSeed),
+            2 => Ok(Self::LoginRequest),
+            3 => Ok(Self::LoginSelect),
+            5 => Ok(Self::LoginOk),
+            6 => Ok(Self::LoginError),
+            7 => Ok(Self::LoginCharlist),
+            10 => Ok(Self::ClientUnknown),
+            20 => Ok(Self::ClientName),
+            21 => Ok(Self::ClientLookup),
+            30 => Ok(Self::MsgPrivate),
+            34 => Ok(Self::MsgVicinity),
+            35 => Ok(Self::MsgVicinitya),
+            36 => Ok(Self::MsgSystem),
+            37 => Ok(Self::ChatNotice),
+            40 => Ok(Self::BuddyAdd),
+            41 => Ok(Self::BuddyRemove),
+            42 => Ok(Self::OnlineSet),
+            50 => Ok(Self::PrivgrpInvite),
+            51 => Ok(Self::PrivgrpKick),
+            52 => Ok(Self::PrivgrpJoin),
+            53 => Ok(Self::PrivgrpPart),
+            54 => Ok(Self::PrivgrpKickall),
+            55 => Ok(Self::PrivgrpClijoin),
+            56 => Ok(Self::PrivgrpClipart),
+            57 => Ok(Self::PrivgrpMessage),
+            58 => Ok(Self::PrivgrpRefuse),
+            60 => Ok(Self::GroupAnnounce),
+            61 => Ok(Self::GroupPart),
+            62 => Ok(Self::GroupDataSet),
+            65 => Ok(Self::GroupMessage),
+            66 => Ok(Self::GroupCmSet),
+            70 => Ok(Self::ClientmodeGet),
+            71 => Ok(Self::ClientmodeSet),
+            100 => Ok(Self::Ping),
+            110 => Ok(Self::Forward),
+            120 => Ok(Self::Cc),
+            1100 => Ok(Self::AdmMuxInfo),
+            _ => Err(Error::UnknownPacket(value)),
+        }
+    }
 }
 
 /// A trait for packets that can be sent to the server.
@@ -313,7 +359,7 @@ impl TryFrom<(PacketType, &[u8])> for ReceivedPacket {
             PacketType::PrivgrpKick => Ok(Self::PrivgrpKick(IncPrivgrpKickPacket::load(value.1)?)),
             PacketType::MsgSystem => Ok(Self::MsgSystem(MsgSystemPacket::load(value.1)?)),
             PacketType::Ping => Ok(Self::Ping(PingPacket::load(value.1)?)),
-            _ => Err(Error::UnknownPacket(Some(value.0))),
+            _ => Err(Error::UnknownPacket(value.0 as u16)),
         }
     }
 }

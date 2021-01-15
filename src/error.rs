@@ -1,5 +1,4 @@
 use leaky_bucket_lite::Error as BucketError;
-use num_enum::TryFromPrimitiveError;
 use tokio::{
     sync::{mpsc::error::SendError as MpscError, watch::error::SendError as WatchError},
     time::Instant,
@@ -7,7 +6,7 @@ use tokio::{
 
 use std::{io::Error as IoError, result::Result as OrigResult, string::FromUtf8Error};
 
-use crate::packets::{PacketType, SerializedPacket};
+use crate::packets::SerializedPacket;
 
 /// An error in the library.
 #[derive(Debug)]
@@ -15,7 +14,7 @@ pub enum Error {
     /// Failed to read from underlying connections.
     IoError(IoError),
     /// Unknown packet encountered.
-    UnknownPacket(Option<PacketType>),
+    UnknownPacket(u16),
     /// Payload malformed or incomplete.
     PayloadError,
     /// Could not queue packet for sending.
@@ -24,17 +23,13 @@ pub enum Error {
     PingError,
     /// The ratelimiter failed to acquire.
     RatelimitError,
+    /// Failed to parse channel type.
+    UnknownChannelType(u8),
 }
 
 impl From<IoError> for Error {
     fn from(e: IoError) -> Self {
         Self::IoError(e)
-    }
-}
-
-impl From<TryFromPrimitiveError<PacketType>> for Error {
-    fn from(_: TryFromPrimitiveError<PacketType>) -> Self {
-        Self::UnknownPacket(None)
     }
 }
 
