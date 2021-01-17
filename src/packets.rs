@@ -622,6 +622,14 @@ impl IncomingPacket for LoginCharlistPacket {
     }
 }
 
+impl IncomingPacket for LoginSelectPacket {
+    fn load(mut data: &[u8]) -> Result<Self> {
+        let character_id = read_u32(&mut data);
+
+        Ok(Self { character_id })
+    }
+}
+
 impl OutgoingPacket for LoginSelectPacket {
     fn serialize(&self) -> SerializedPacket {
         let mut buf = Vec::with_capacity(4);
