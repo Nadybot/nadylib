@@ -12,7 +12,7 @@ pub struct Character {
 }
 
 /// Type of group channel.
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(u8)]
 pub enum ChannelType {
     Org = 3,

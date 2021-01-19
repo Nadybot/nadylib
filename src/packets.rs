@@ -32,6 +32,13 @@ fn read_integer_array(data: &mut &[u8]) -> Vec<u32> {
     buf
 }
 
+fn read_byte_string(data: &mut &[u8]) -> Vec<u8> {
+    let n = NetworkEndian::read_u16(&data) as usize;
+    let raw = &data[2..n + 2];
+    *data = &data[n + 2..];
+    raw.to_vec()
+}
+
 fn read_string(data: &mut &[u8]) -> String {
     let n = NetworkEndian::read_u16(&data) as usize;
     let raw = &data[2..n + 2];
@@ -801,7 +808,7 @@ impl IncomingPacket for ChatNoticePacket {
         let _ = read_u32(&mut data);
         // MMDB instance ID.
         let instance_id = read_u32(&mut data);
-        let arguments = read_string(&mut data).into_bytes();
+        let arguments = read_byte_string(&mut data);
 
         // This is constant for chat notices.
         let category_id = 20000;

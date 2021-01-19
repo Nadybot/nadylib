@@ -1,5 +1,6 @@
 use std::fmt::Display;
 
+#[allow(clippy::many_single_char_names)]
 pub fn format_message(
     category_id: u32,
     instance_id: u32,

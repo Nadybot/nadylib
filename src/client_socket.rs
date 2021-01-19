@@ -51,7 +51,7 @@ impl SocketSendHandle {
     }
 
     pub async fn send_raw(&self, packet_type: PacketType, body: Vec<u8>) -> Result<()> {
-        if packet_type == PacketType::MsgPrivate {
+        if packet_type == PacketType::MsgPrivate || packet_type == PacketType::GroupMessage {
             if let Some(limiter) = &self.ratelimiter {
                 limiter.acquire_one().await?;
             }
