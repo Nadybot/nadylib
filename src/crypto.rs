@@ -29,11 +29,8 @@ pub fn generate_key(username: &str, password: &str, login_seed: &str) -> String 
 
     let login_string = format!("{}|{}|{}", username, login_seed, password);
 
-    let mut bytes = [0; 8];
-    getrandom(&mut bytes).unwrap();
-    let prefix_bytes_int = NativeEndian::read_u64(&bytes);
     let mut prefix_buf = vec![0; 8];
-    BigEndian::write_u64(&mut prefix_buf, prefix_bytes_int);
+    getrandom(&mut prefix_buf).unwrap();
 
     let length = 8 + 4 + login_string.len();
     let mut to_be_encrypted_buf = Vec::with_capacity(length);
