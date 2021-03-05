@@ -9,7 +9,7 @@ edition = "2018"
 byteorder = "1.4"
 leaky-bucket-lite = "0.1"
 log = "0.4"
-num-bigint = { version = "0.3", default-features = false }
+num-bigint = { version = "0.4", default-features = false }
 num-traits = "0.2"
 getrandom = "0.2"
 tokio = { version = "1.2", default-features = false, features = [
