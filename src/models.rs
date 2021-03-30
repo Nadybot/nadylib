@@ -3,7 +3,7 @@ use crate::error::Error;
 use std::convert::TryFrom;
 
 /// Represents a Character in AO.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Character {
     pub name: String,
     pub level: u8,
