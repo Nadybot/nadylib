@@ -73,6 +73,7 @@ impl Bot {
             match packet {
                 ReceivedPacket::BuddyRemove(_)
                 | ReceivedPacket::MsgVicinitya(_)
+                | ReceivedPacket::MsgVicinity(_)
                 | ReceivedPacket::PrivgrpInvite(_)
                 | ReceivedPacket::PrivgrpClijoin(_)
                 | ReceivedPacket::PrivgrpClipart(_)

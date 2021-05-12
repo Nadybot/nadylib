@@ -307,6 +307,7 @@ pub enum ReceivedPacket {
     LoginCharlist(LoginCharlistPacket),
     LoginOk,
     ClientName(ClientNamePacket),
+    MsgVicinity(MsgVicinityPacket),
     MsgVicinitya(MsgVicinityaPacket),
     BuddyStatus(BuddyStatusPacket),
     BuddyRemove(BuddyRemovePacket),
@@ -339,6 +340,7 @@ impl TryFrom<(PacketType, &[u8])> for ReceivedPacket {
             }
             PacketType::LoginOk => Ok(Self::LoginOk),
             PacketType::ClientName => Ok(Self::ClientName(ClientNamePacket::load(value.1)?)),
+            PacketType::MsgVicinity => Ok(Self::MsgVicinity(MsgVicinityPacket::load(value.1)?)),
             PacketType::MsgVicinitya => Ok(Self::MsgVicinitya(MsgVicinityaPacket::load(value.1)?)),
             PacketType::BuddyAdd => Ok(Self::BuddyStatus(BuddyStatusPacket::load(value.1)?)),
             PacketType::BuddyRemove => Ok(Self::BuddyRemove(BuddyRemovePacket::load(value.1)?)),
@@ -420,6 +422,13 @@ pub struct ClientNamePacket {
 /// Anonymous vicinity message packet.
 #[derive(Debug)]
 pub struct MsgVicinityaPacket {
+    /// The message as received.
+    pub message: Message,
+}
+
+/// Anonymous vicinity message packet.
+#[derive(Debug)]
+pub struct MsgVicinityPacket {
     /// The message as received.
     pub message: Message,
 }
@@ -667,6 +676,23 @@ impl IncomingPacket for MsgVicinityaPacket {
 
         let msg = Message {
             sender: None,
+            channel: Channel::Vicinity,
+            text: content,
+            send_tag,
+        };
+
+        Ok(Self { message: msg })
+    }
+}
+
+impl IncomingPacket for MsgVicinityPacket {
+    fn load(mut data: &[u8]) -> Result<Self> {
+        let sender = read_u32(&mut data);
+        let content = read_string(&mut data);
+        let send_tag = read_string(&mut data);
+
+        let msg = Message {
+            sender: Some(sender),
             channel: Channel::Vicinity,
             text: content,
             send_tag,
