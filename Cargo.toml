@@ -21,6 +21,7 @@ tokio = { version = "1.2", default-features = false, features = [
 ] }
 
 [dev-dependencies]
+serde_json = "1.0"
 tokio = { version = "1.2", default-features = false, features = [
     "net",
     "rt",
@@ -35,3 +36,4 @@ tokio = { version = "1.2", default-features = false, features = [
 default = ["mmdb"]
 mmdb-parser = []
 mmdb = []
+test-server = []

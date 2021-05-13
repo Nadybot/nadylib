@@ -16,8 +16,13 @@ pub struct Character {
 #[repr(u8)]
 pub enum ChannelType {
     Org = 3,
+    #[cfg(not(feature = "test-server"))]
     FactionLeaders = 4,
+    #[cfg(feature = "test-server")]
+    Global = 4,
     OrgMsg = 10,
+    #[cfg(feature = "test-server")]
+    Playfield = 11,
     Announcements = 12,
     Shopping = 134,
     Faction = 135,
@@ -29,8 +34,13 @@ impl TryFrom<u8> for ChannelType {
     fn try_from(value: u8) -> Result<Self, Self::Error> {
         match value {
             3 => Ok(Self::Org),
+            #[cfg(not(feature = "test-server"))]
             4 => Ok(Self::FactionLeaders),
+            #[cfg(feature = "test-server")]
+            4 => Ok(Self::Global),
             10 => Ok(Self::OrgMsg),
+            #[cfg(feature = "test-server")]
+            11 => Ok(Self::Playfield),
             12 => Ok(Self::Announcements),
             134 => Ok(Self::Shopping),
             135 => Ok(Self::Faction),
