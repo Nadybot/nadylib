@@ -68,7 +68,7 @@ pub enum Channel {
 }
 
 /// Represents a message in AO.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Message {
     pub sender: Option<u32>,
     pub channel: Channel,
