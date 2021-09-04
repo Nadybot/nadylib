@@ -1,9 +1,13 @@
+#[cfg(feature = "async")]
 use leaky_bucket_lite::Error as BucketError;
+#[cfg(feature = "async")]
 use tokio::{
     sync::{mpsc::error::SendError as MpscError, watch::error::SendError as WatchError},
     time::Instant,
 };
 
+#[cfg(feature = "sync")]
+use std::sync::mpsc::SendError;
 use std::{io::Error as IoError, result::Result as OrigResult, string::FromUtf8Error};
 
 use crate::packets::SerializedPacket;
@@ -39,21 +43,31 @@ impl From<FromUtf8Error> for Error {
     }
 }
 
+#[cfg(feature = "async")]
 impl From<MpscError<SerializedPacket>> for Error {
     fn from(_: MpscError<SerializedPacket>) -> Self {
         Self::QueueError
     }
 }
 
+#[cfg(feature = "async")]
 impl From<WatchError<Instant>> for Error {
     fn from(_: WatchError<Instant>) -> Self {
         Self::PingError
     }
 }
 
+#[cfg(feature = "async")]
 impl From<BucketError> for Error {
     fn from(_: BucketError) -> Self {
         Self::RatelimitError
+    }
+}
+
+#[cfg(feature = "sync")]
+impl From<SendError<SerializedPacket>> for Error {
+    fn from(_: SendError<SerializedPacket>) -> Self {
+        Self::QueueError
     }
 }
 

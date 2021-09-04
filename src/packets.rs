@@ -7,7 +7,9 @@ use crate::{
 
 use byteorder::{ByteOrder, NetworkEndian};
 
-use std::{convert::TryFrom, fmt::Display, result::Result as OrigResult};
+use std::{convert::TryFrom, result::Result as OrigResult};
+#[cfg(feature = "mmdb")]
+use std::fmt::Display;
 
 /// The maximum unsigned 32-bit integer, used to check if character lookup failed.
 const MAXINT: u32 = 4294967295;
@@ -32,6 +34,7 @@ fn read_integer_array(data: &mut &[u8]) -> Vec<u32> {
     buf
 }
 
+#[cfg(feature = "mmdb")]
 fn read_byte_string(data: &mut &[u8]) -> Vec<u8> {
     let n = NetworkEndian::read_u16(&data) as usize;
     let raw = &data[2..n + 2];
@@ -832,15 +835,15 @@ impl IncomingPacket for ChatNoticePacket {
         let sender_id = read_u32(&mut data);
         // Seems to be 0 all the time
         let _ = read_u32(&mut data);
-        // MMDB instance ID.
-        let instance_id = read_u32(&mut data);
-        let arguments = read_byte_string(&mut data);
-
-        // This is constant for chat notices.
-        let category_id = 20000;
 
         #[cfg(feature = "mmdb")]
         let text = {
+            // MMDB instance ID.
+            let instance_id = read_u32(&mut data);
+            let arguments = read_byte_string(&mut data);
+
+            // This is constant for chat notices.
+            let category_id = 20000;
             let params = parse_ext_params(&mut arguments.as_slice()).ok_or(Error::PayloadError)?;
             mmdb::format_message(category_id, instance_id, params)
         };
