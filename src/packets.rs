@@ -27,7 +27,7 @@ fn read_u32(data: &mut &[u8]) -> u32 {
 }
 
 fn read_integer_array(data: &mut &[u8]) -> Vec<u32> {
-    let n = NetworkEndian::read_u16(&data) as usize;
+    let n = NetworkEndian::read_u16(data) as usize;
     let mut buf = vec![0; n];
     NetworkEndian::read_u32_into(&data[2..2 + 4 * n], &mut buf);
     *data = &data[2 + 4 * n..];
@@ -43,18 +43,18 @@ fn read_byte_string(data: &mut &[u8]) -> Vec<u8> {
 }
 
 fn read_string(data: &mut &[u8]) -> String {
-    let n = NetworkEndian::read_u16(&data) as usize;
+    let n = NetworkEndian::read_u16(data) as usize;
     let raw = &data[2..n + 2];
     *data = &data[n + 2..];
     String::from_utf8(raw.to_vec()).unwrap()
 }
 
 fn read_string_array(data: &mut &[u8]) -> Vec<String> {
-    let n = NetworkEndian::read_u16(&data) as usize;
+    let n = NetworkEndian::read_u16(data) as usize;
     *data = &data[2..];
     let mut buf = Vec::with_capacity(n);
     for _ in 0..n {
-        let slen = NetworkEndian::read_u16(&data) as usize;
+        let slen = NetworkEndian::read_u16(data) as usize;
         let decoded = String::from_utf8(data[2..2 + slen].to_vec()).unwrap();
         buf.push(decoded);
         *data = &data[2 + slen..];

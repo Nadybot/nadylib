@@ -8,7 +8,7 @@ use crate::{
 };
 
 use byteorder::{ByteOrder, NetworkEndian};
-use leaky_bucket_lite::sync::LeakyBucket;
+use leaky_bucket_lite::sync_threadsafe::LeakyBucket;
 
 use std::{
     convert::TryFrom,
@@ -23,11 +23,15 @@ use std::{
 #[derive(Debug, Clone)]
 pub struct SocketSendHandle {
     sender: Sender<SerializedPacket>,
+    ratelimiter: Option<LeakyBucket>,
 }
 
 impl SocketSendHandle {
-    pub fn new(sender: Sender<SerializedPacket>) -> Self {
-        Self { sender }
+    pub fn new(sender: Sender<SerializedPacket>, ratelimiter: Option<LeakyBucket>) -> Self {
+        Self {
+            sender,
+            ratelimiter,
+        }
     }
 
     pub fn send<O: OutgoingPacket>(&self, packet: O) -> Result<()> {
@@ -37,6 +41,12 @@ impl SocketSendHandle {
     }
 
     pub fn send_raw(&self, packet_type: PacketType, body: Vec<u8>) -> Result<()> {
+        if packet_type == PacketType::MsgPrivate || packet_type == PacketType::GroupMessage {
+            if let Some(limiter) = &self.ratelimiter {
+                limiter.acquire_one();
+            }
+        }
+
         self.sender.send((packet_type, body))?;
         Ok(())
     }
@@ -50,11 +60,7 @@ pub struct AOSocket {
     tasks: Vec<JoinHandle<Result<()>>>,
 }
 
-fn send_task(
-    mut ratelimiter: Option<LeakyBucket>,
-    packet_queue: Receiver<SerializedPacket>,
-    mut sock: TcpStream,
-) -> Result<()> {
+fn send_task(packet_queue: Receiver<SerializedPacket>, mut sock: TcpStream) -> Result<()> {
     loop {
         let (packet_type, mut packet_body) = packet_queue.recv().unwrap();
         let mut buf = Vec::with_capacity(4 + packet_body.len());
@@ -65,12 +71,6 @@ fn send_task(
         buf.append(&mut pkt_type_buf);
         buf.append(&mut pkt_len_buf);
         buf.append(&mut packet_body);
-
-        if packet_type == PacketType::MsgPrivate || packet_type == PacketType::GroupMessage {
-            if let Some(ref mut limiter) = ratelimiter {
-                limiter.acquire_one();
-            }
-        }
 
         sock.write_all(&buf)?;
     }
@@ -127,28 +127,31 @@ impl AOSocket {
 
         let mut tasks = Vec::new();
 
-        let ratelimiter = if config.limit_tells {
-            Some(
-                LeakyBucket::builder()
-                    .refill_amount(1.0)
-                    .refill_interval(Duration::from_secs(2))
-                    .max(5.0)
-                    .tokens(5.0)
-                    .build(),
-            )
-        } else {
-            None
-        };
-
         if config.keepalive {
             let send = send.clone();
             tasks.push(spawn(move || keepalive(send)));
         }
 
         let sock_clone = sock.try_clone()?;
-        tasks.push(spawn(move || send_task(ratelimiter, recv, sock_clone)));
+        tasks.push(spawn(move || send_task(recv, sock_clone)));
 
-        let sender = SocketSendHandle::new(send);
+        let sender = {
+            if config.limit_tells {
+                SocketSendHandle::new(
+                    send,
+                    Some(
+                        LeakyBucket::builder()
+                            .refill_amount(1.0)
+                            .refill_interval(Duration::from_secs(2))
+                            .max(5.0)
+                            .tokens(5.0)
+                            .build(),
+                    ),
+                )
+            } else {
+                SocketSendHandle::new(send, None)
+            }
+        };
 
         Ok(Self {
             stream: sock,
