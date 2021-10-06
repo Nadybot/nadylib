@@ -7,9 +7,9 @@ use crate::{
 
 use byteorder::{ByteOrder, NetworkEndian};
 
-use std::{convert::TryFrom, result::Result as OrigResult};
 #[cfg(feature = "mmdb")]
 use std::fmt::Display;
+use std::{convert::TryFrom, result::Result as OrigResult};
 
 /// The maximum unsigned 32-bit integer, used to check if character lookup failed.
 const MAXINT: u32 = 4294967295;
@@ -36,7 +36,7 @@ fn read_integer_array(data: &mut &[u8]) -> Vec<u32> {
 
 #[cfg(feature = "mmdb")]
 fn read_byte_string(data: &mut &[u8]) -> Vec<u8> {
-    let n = NetworkEndian::read_u16(&data) as usize;
+    let n = NetworkEndian::read_u16(data) as usize;
     let raw = &data[2..n + 2];
     *data = &data[n + 2..];
     raw.to_vec()
@@ -84,6 +84,32 @@ fn write_string(target: &mut Vec<u8>, string: &str) {
 }
 
 #[cfg(feature = "mmdb")]
+fn b85g(string: &mut &[u8]) -> u32 {
+    let mut n = 0;
+    for i in 0..5 {
+        n = n * 85 + (string[i] as u32) - 33;
+    }
+    *string = &string[5..];
+    n
+}
+
+#[cfg(feature = "mmdb")]
+fn read_ext_msg(msg: String) -> String {
+    let bytes = &mut msg.as_bytes();
+    *bytes = &bytes[2..];
+    let category = b85g(bytes);
+    let instance = b85g(bytes);
+
+    let args = parse_ext_params(bytes);
+
+    if let Some(args) = args {
+        mmdb::format_message(category, instance, args)
+    } else {
+        msg
+    }
+}
+
+#[cfg(feature = "mmdb")]
 fn parse_ext_params(msg: &mut &[u8]) -> Option<Vec<Box<dyn Display>>> {
     let mut args: Vec<Box<dyn Display>> = Vec::new();
     while !msg.is_empty() {
@@ -99,9 +125,9 @@ fn parse_ext_params(msg: &mut &[u8]) -> Option<Vec<Box<dyn Display>>> {
                 args.push(Box::new(string));
             }
             's' => {
-                let len = msg[0] as usize;
-                let string = String::from_utf8(msg[1..1 + len - 2].to_vec()).ok()?;
-                *msg = &msg[1 + len - 2..];
+                let len = msg[0] as usize - 1;
+                let string = String::from_utf8(msg[1..1 + len].to_vec()).ok()?;
+                *msg = &msg[1 + len..];
                 args.push(Box::new(string));
             }
             'I' => {
@@ -109,8 +135,7 @@ fn parse_ext_params(msg: &mut &[u8]) -> Option<Vec<Box<dyn Display>>> {
                 *msg = &msg[4..];
                 args.push(Box::new(num));
             }
-            'i' => {}
-            'u' => {
+            'i' | 'u' => {
                 let mut n = 0;
                 for i in 0..5 {
                     n = n * 85 + (msg[i] as u32) - 33;
@@ -794,6 +819,9 @@ impl IncomingPacket for GroupMessagePacket {
         let channel_type = read_u8(&mut data);
         let channel_id = read_u32(&mut data);
         let sender_id = read_u32(&mut data);
+        #[cfg(feature = "mmdb")]
+        let mut content = read_string(&mut data);
+        #[cfg(not(feature = "mmdb"))]
         let content = read_string(&mut data);
         let send_tag = read_string(&mut data);
         let channel = Channel::Group(Group {
@@ -802,6 +830,11 @@ impl IncomingPacket for GroupMessagePacket {
             r#type: ChannelType::try_from(channel_type).unwrap(),
             status: None,
         });
+
+        #[cfg(feature = "mmdb")]
+        if content.starts_with("~&") {
+            content = read_ext_msg(content);
+        }
 
         let message = Message {
             sender: Some(sender_id),
@@ -1069,4 +1102,32 @@ impl IncomingPacket for PingPacket {
 
         Ok(Self { client })
     }
+}
+
+#[test]
+fn test_group_message_ext() {
+    let tower_body = [
+        10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 146, 126, 38, 33, 33, 33, 38, 114, 33, 53, 98, 47, 82, 82,
+        33, 33, 33, 56, 83, 33, 33, 33, 33, 33, 115, 34, 84, 104, 101, 32, 72, 32, 105, 115, 32,
+        102, 111, 114, 32, 83, 110, 101, 97, 107, 105, 110, 103, 44, 32, 84, 114, 117, 101, 32, 83,
+        116, 111, 114, 121, 115, 11, 68, 111, 117, 98, 108, 101, 102, 108, 105, 112, 82, 33, 33,
+        33, 56, 83, 33, 33, 33, 33, 35, 115, 34, 80, 105, 122, 122, 105, 110, 103, 32, 111, 102,
+        102, 32, 101, 118, 101, 114, 121, 111, 110, 101, 32, 105, 110, 32, 116, 104, 101, 32, 104,
+        111, 117, 115, 101, 115, 16, 83, 116, 114, 101, 116, 32, 87, 101, 115, 116, 32, 66, 97,
+        110, 107, 105, 33, 33, 33, 48, 70, 105, 33, 33, 33, 45, 110, 126, 0, 0,
+    ];
+    let normal_body = [
+        135, 0, 0, 0, 0, 76, 46, 67, 172, 0, 45, 97, 110, 121, 111, 105, 110, 101, 32, 116, 101,
+        108, 108, 32, 109, 101, 32, 104, 111, 119, 32, 115, 110, 105, 112, 101, 32, 119, 111, 114,
+        107, 115, 32, 102, 111, 114, 32, 97, 110, 32, 97, 103, 101, 110, 116, 63, 0, 0,
+    ];
+
+    println!(
+        "{}",
+        GroupMessagePacket::load(&tower_body).unwrap().message.text
+    );
+    println!(
+        "{}",
+        GroupMessagePacket::load(&normal_body).unwrap().message.text
+    );
 }

@@ -114,7 +114,7 @@ impl MmdbParser<'_> {
 
         while previous_instance.is_none() || instance.entry_id > previous_instance.unwrap().entry_id
         {
-            instances.push(instance.clone());
+            instances.push(instance);
             previous_instance = Some(instance);
             instance = self.read_entry();
         }
@@ -131,12 +131,18 @@ impl MmdbParser<'_> {
 
         while previous_category.is_none() || category.entry_id > previous_category.unwrap().entry_id
         {
-            categories.push(category.clone());
+            categories.push(category);
             previous_category = Some(category);
             category = self.read_entry();
         }
 
         categories
+    }
+}
+
+impl Default for MmdbParser<'_> {
+    fn default() -> Self {
+        Self::new()
     }
 }
 
