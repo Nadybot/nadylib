@@ -46,7 +46,7 @@ fn read_string(data: &mut &[u8]) -> String {
     let n = NetworkEndian::read_u16(data) as usize;
     let raw = &data[2..n + 2];
     *data = &data[n + 2..];
-    String::from_utf8(raw.to_vec()).unwrap()
+    String::from_utf8_lossy(raw).to_string()
 }
 
 fn read_string_array(data: &mut &[u8]) -> Vec<String> {
