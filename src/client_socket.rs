@@ -53,7 +53,7 @@ impl SocketSendHandle {
     pub async fn send_raw(&self, packet_type: PacketType, body: Vec<u8>) -> Result<()> {
         if packet_type == PacketType::MsgPrivate || packet_type == PacketType::GroupMessage {
             if let Some(limiter) = &self.ratelimiter {
-                limiter.acquire_one().await?;
+                limiter.acquire_one().await;
             }
         }
 
@@ -172,10 +172,10 @@ impl AOSocket {
                     send,
                     Some(
                         LeakyBucket::builder()
-                            .refill_amount(1.0)
+                            .refill_amount(1)
                             .refill_interval(Duration::from_secs(2))
-                            .max(5.0)
-                            .tokens(5.0)
+                            .max(5)
+                            .tokens(5)
                             .build(),
                     ),
                 )

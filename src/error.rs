@@ -1,6 +1,4 @@
 #[cfg(feature = "async")]
-use leaky_bucket_lite::Error as BucketError;
-#[cfg(feature = "async")]
 use tokio::{
     sync::{mpsc::error::SendError as MpscError, watch::error::SendError as WatchError},
     time::Instant,
@@ -25,8 +23,6 @@ pub enum Error {
     QueueError,
     /// Unable to update last ping time.
     PingError,
-    /// The ratelimiter failed to acquire.
-    RatelimitError,
     /// Failed to parse channel type.
     UnknownChannelType(u8),
 }
@@ -54,13 +50,6 @@ impl From<MpscError<SerializedPacket>> for Error {
 impl From<WatchError<Instant>> for Error {
     fn from(_: WatchError<Instant>) -> Self {
         Self::PingError
-    }
-}
-
-#[cfg(feature = "async")]
-impl From<BucketError> for Error {
-    fn from(_: BucketError) -> Self {
-        Self::RatelimitError
     }
 }
 
