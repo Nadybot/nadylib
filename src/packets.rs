@@ -924,6 +924,14 @@ impl OutgoingPacket for MsgPrivatePacket {
     }
 }
 
+impl IncomingPacket for ClientLookupPacket {
+    fn load(mut data: &[u8]) -> Result<Self> {
+        let character_name = read_string(&mut data);
+
+        Ok(Self { character_name })
+    }
+}
+
 impl OutgoingPacket for ClientLookupPacket {
     fn serialize(&self) -> SerializedPacket {
         let mut buf = Vec::with_capacity(self.character_name.len());
@@ -1130,4 +1138,12 @@ fn test_group_message_ext() {
         "{}",
         GroupMessagePacket::load(&normal_body).unwrap().message.text
     );
+}
+
+#[test]
+#[cfg(feature = "mmdb")]
+fn test_ext_msg() {
+    let string = String::from("~&!!!&r#g^i#s\u{8}F O X Ys\u{14}2022-01-27 04:14:54~");
+    let result = read_ext_msg(string);
+    assert_eq!("<font color=CCInfoHeader>Organization:</font>\r\n<font color=CCInfoText>F O X Y</font>\r\n<font color=CCInfoHeader>Created at UTC:</font>\r\n<font color=CCInfoText>2022-01-27 04:14:54</font>\r\n", result)
 }
