@@ -18,6 +18,7 @@ use tokio::{
     spawn,
     sync::{
         mpsc::{unbounded_channel, UnboundedReceiver, UnboundedSender},
+        oneshot,
         watch::{channel, Receiver, Sender},
     },
     task::JoinHandle,
@@ -67,52 +68,64 @@ impl SocketSendHandle {
 pub struct AOSocket {
     read_half: OwnedReadHalf,
     sender: SocketSendHandle,
-    tasks: Vec<JoinHandle<Result<()>>>,
+    send_task: Option<JoinHandle<UnboundedReceiver<SerializedPacket>>>,
+    keep_alive: Option<JoinHandle<()>>,
+    shutdown: Option<oneshot::Sender<()>>,
 }
 
 async fn send_task(
+    mut shutdown: oneshot::Receiver<()>,
     mut packet_queue: UnboundedReceiver<SerializedPacket>,
     mut sock: OwnedWriteHalf,
     last_packet: Option<Sender<Instant>>,
-) -> Result<()> {
+) -> UnboundedReceiver<SerializedPacket> {
     loop {
-        let (packet_type, mut packet_body) = packet_queue.recv().await.unwrap();
-        let mut buf = Vec::with_capacity(4 + packet_body.len());
-        let mut pkt_type_buf = vec![0; 2];
-        let mut pkt_len_buf = vec![0; 2];
-        NetworkEndian::write_u16(&mut pkt_type_buf, packet_type as u16);
-        NetworkEndian::write_u16(&mut pkt_len_buf, packet_body.len() as u16);
-        buf.append(&mut pkt_type_buf);
-        buf.append(&mut pkt_len_buf);
-        buf.append(&mut packet_body);
+        tokio::select! {
+            Some((packet_type, mut packet_body)) = packet_queue.recv() => {
+                let mut buf = Vec::with_capacity(4 + packet_body.len());
+                let mut pkt_type_buf = vec![0; 2];
+                let mut pkt_len_buf = vec![0; 2];
+                NetworkEndian::write_u16(&mut pkt_type_buf, packet_type as u16);
+                NetworkEndian::write_u16(&mut pkt_len_buf, packet_body.len() as u16);
+                buf.append(&mut pkt_type_buf);
+                buf.append(&mut pkt_len_buf);
+                buf.append(&mut packet_body);
 
-        sock.write_all(&buf).await?;
+                if sock.write_all(&buf).await.is_err() {
+                    break;
+                };
 
-        if let Some(sender) = &last_packet {
-            sender.send(Instant::now())?;
+                if let Some(sender) = &last_packet {
+                    if sender.send(Instant::now()).is_err() {
+                        break;
+                    };
+                }
+            },
+            _ = &mut shutdown => {
+                break;
+            }
+            else => break,
         }
     }
+
+    packet_queue
 }
 
-async fn keepalive(
-    sender: UnboundedSender<SerializedPacket>,
-    mut last_packet: Receiver<Instant>,
-) -> Result<()> {
+async fn keepalive(sender: UnboundedSender<SerializedPacket>, mut last_packet: Receiver<Instant>) {
     let mut last_p = *last_packet.borrow();
     loop {
         let res = timeout_at(last_p + Duration::from_secs(55), last_packet.changed()).await;
 
-        match res {
-            Ok(_) => {
-                last_p = *last_packet.borrow();
-            }
-            Err(_) => {
-                let pack = PingPacket {
-                    client: String::from("nadylib"),
-                };
-                sender.send(pack.serialize())?;
-                last_p = Instant::now();
-            }
+        if res.is_ok() {
+            last_p = *last_packet.borrow();
+        } else {
+            let pack = PingPacket {
+                client: String::from("nadylib"),
+            };
+            if sender.send(pack.serialize()).is_err() {
+                return;
+            };
+            last_p = Instant::now();
         }
     }
 }
@@ -154,17 +167,19 @@ impl AOSocket {
     /// Starts the socket from an existing [`TcpStream`].
     pub fn from_stream(sock: TcpStream, config: SocketConfig) -> Self {
         let (rx, tx) = sock.into_split();
+
         let (send, recv) = unbounded_channel();
+        let (shutdown_tx, shutdown_rx) = oneshot::channel();
 
-        let mut tasks = Vec::with_capacity(2);
-
-        if config.keepalive {
+        let (keep_alive, send_task) = if config.keepalive {
             let (lp_send, lp_recv) = channel(Instant::now());
-            tasks.push(spawn(keepalive(send.clone(), lp_recv)));
-            tasks.push(spawn(send_task(recv, tx, Some(lp_send))));
+            let keep_alive = Some(spawn(keepalive(send.clone(), lp_recv)));
+            let send_task = spawn(send_task(shutdown_rx, recv, tx, Some(lp_send)));
+
+            (keep_alive, send_task)
         } else {
-            tasks.push(spawn(send_task(recv, tx, None)));
-        }
+            (None, spawn(send_task(shutdown_rx, recv, tx, None)))
+        };
 
         let sender = {
             if config.limit_tells {
@@ -186,9 +201,49 @@ impl AOSocket {
 
         Self {
             read_half: rx,
-            tasks,
             sender,
+            keep_alive,
+            send_task: Some(send_task),
+            shutdown: Some(shutdown_tx),
         }
+    }
+
+    pub async fn reconnect(&mut self) -> Result<()> {
+        if let Some(shutdown) = self.shutdown.take() {
+            let _ = shutdown.send(());
+
+            if let Some(send_task_handle) = self.send_task.take() {
+                let had_keepalive = self.keep_alive.is_some();
+
+                if let Some(keep_alive) = self.keep_alive.take() {
+                    keep_alive.abort();
+                }
+
+                let addr = self.read_half.peer_addr().unwrap();
+                let recv = send_task_handle.await.unwrap();
+                let sock = TcpStream::connect(addr).await?;
+                let (rx, tx) = sock.into_split();
+
+                let (shutdown_tx, shutdown_rx) = oneshot::channel();
+
+                let (keep_alive, send_task) = if had_keepalive {
+                    let (lp_send, lp_recv) = channel(Instant::now());
+                    let keep_alive = Some(spawn(keepalive(self.sender.sender.clone(), lp_recv)));
+                    let send_task = spawn(send_task(shutdown_rx, recv, tx, Some(lp_send)));
+
+                    (keep_alive, send_task)
+                } else {
+                    (None, spawn(send_task(shutdown_rx, recv, tx, None)))
+                };
+
+                self.read_half = rx;
+                self.keep_alive = keep_alive;
+                self.send_task = Some(send_task);
+                self.shutdown = Some(shutdown_tx);
+            }
+        }
+
+        Ok(())
     }
 
     /// Wrapper for generating a login key and sending a [`LoginRequestPacket`] to the server.
@@ -253,8 +308,12 @@ impl AOSocket {
 
 impl Drop for AOSocket {
     fn drop(&mut self) {
-        for task in self.tasks.iter() {
-            task.abort();
+        if let Some(send_task) = &self.send_task {
+            send_task.abort();
+        };
+
+        if let Some(keep_alive) = &self.keep_alive {
+            keep_alive.abort();
         }
     }
 }

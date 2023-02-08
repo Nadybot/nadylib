@@ -24,7 +24,7 @@ async fn main() -> Result<()> {
             }
             ReceivedPacket::LoginOk => println!("Logged in successfully"),
             ReceivedPacket::MsgPrivate(m) => {
-                println!("Got a private message: {:?}", m);
+                println!("Got a private message: {m:?}");
             }
             ReceivedPacket::PrivgrpInvite(p) => {
                 println!("Got a private channel invite: {:?}", p.channel);

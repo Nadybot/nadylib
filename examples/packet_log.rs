@@ -22,7 +22,7 @@ fn main() -> Result<()> {
                 };
                 sock.send(pack)?;
             }
-            _ => println!("{:?}", packet),
+            _ => println!("{packet:?}"),
         }
     }
 

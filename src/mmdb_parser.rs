@@ -36,8 +36,7 @@ impl MmdbParser<'_> {
         let cached = self
             .cache
             .get(&category_id)
-            .map(|i| i.get(&instance_id))
-            .flatten();
+            .and_then(|i| i.get(&instance_id));
         if cached.is_some() {
             return cached.cloned();
         }

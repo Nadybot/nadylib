@@ -27,7 +27,7 @@ pub fn generate_key(username: &str, password: &str, login_seed: &str) -> String 
     let mut dh_shared_str = dh_shared.to_str_radix(16);
     dh_shared_str.truncate(32);
 
-    let login_string = format!("{}|{}|{}", username, login_seed, password);
+    let login_string = format!("{username}|{login_seed}|{password}");
 
     let mut prefix_buf = vec![0; 8];
     getrandom(&mut prefix_buf).unwrap();
@@ -45,7 +45,7 @@ pub fn generate_key(username: &str, password: &str, login_seed: &str) -> String 
     to_be_encrypted_buf.append(&mut pad);
 
     let encrypted = encrypt(dh_shared_str, to_be_encrypted_buf);
-    return format!("{}-{}", dh_pubkey.to_str_radix(16), encrypted);
+    format!("{}-{}", dh_pubkey.to_str_radix(16), encrypted)
 }
 
 fn encrypt(key: String, source: Vec<u8>) -> String {
