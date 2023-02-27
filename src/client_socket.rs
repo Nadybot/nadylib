@@ -209,38 +209,39 @@ impl AOSocket {
     }
 
     pub async fn reconnect(&mut self) -> Result<()> {
+        let sock = TcpStream::connect(self.read_half.peer_addr().unwrap()).await?;
+
+        // Cancel the queue -> tcp writing task
         if let Some(shutdown) = self.shutdown.take() {
             let _ = shutdown.send(());
+        }
 
-            if let Some(send_task_handle) = self.send_task.take() {
-                let had_keepalive = self.keep_alive.is_some();
+        if let Some(send_task_handle) = self.send_task.take() {
+            let had_keepalive = self.keep_alive.is_some();
 
-                if let Some(keep_alive) = self.keep_alive.take() {
-                    keep_alive.abort();
-                }
-
-                let addr = self.read_half.peer_addr().unwrap();
-                let recv = send_task_handle.await.unwrap();
-                let sock = TcpStream::connect(addr).await?;
-                let (rx, tx) = sock.into_split();
-
-                let (shutdown_tx, shutdown_rx) = oneshot::channel();
-
-                let (keep_alive, send_task) = if had_keepalive {
-                    let (lp_send, lp_recv) = channel(Instant::now());
-                    let keep_alive = Some(spawn(keepalive(self.sender.sender.clone(), lp_recv)));
-                    let send_task = spawn(send_task(shutdown_rx, recv, tx, Some(lp_send)));
-
-                    (keep_alive, send_task)
-                } else {
-                    (None, spawn(send_task(shutdown_rx, recv, tx, None)))
-                };
-
-                self.read_half = rx;
-                self.keep_alive = keep_alive;
-                self.send_task = Some(send_task);
-                self.shutdown = Some(shutdown_tx);
+            if let Some(keep_alive) = self.keep_alive.take() {
+                keep_alive.abort();
             }
+
+            let recv = send_task_handle.await.unwrap();
+            let (rx, tx) = sock.into_split();
+
+            let (shutdown_tx, shutdown_rx) = oneshot::channel();
+
+            let (keep_alive, send_task) = if had_keepalive {
+                let (lp_send, lp_recv) = channel(Instant::now());
+                let keep_alive = Some(spawn(keepalive(self.sender.sender.clone(), lp_recv)));
+                let send_task = spawn(send_task(shutdown_rx, recv, tx, Some(lp_send)));
+
+                (keep_alive, send_task)
+            } else {
+                (None, spawn(send_task(shutdown_rx, recv, tx, None)))
+            };
+
+            self.read_half = rx;
+            self.keep_alive = keep_alive;
+            self.send_task = Some(send_task);
+            self.shutdown = Some(shutdown_tx);
         }
 
         Ok(())
