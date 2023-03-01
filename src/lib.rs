@@ -7,6 +7,8 @@
     clippy::cast_possible_truncation
 )]
 
+#[cfg(feature = "account-management")]
+pub mod account;
 #[cfg(feature = "async")]
 /// User-friendly bot wrapper class (WIP).
 #[allow(dead_code)]

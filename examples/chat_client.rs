@@ -1,7 +1,11 @@
+use std::time::Duration;
+
 use nadylib::{
+    account::AccountManager,
     packets::{LoginSelectPacket, PrivgrpJoinPacket},
     AOSocket, ReceivedPacket, Result, SocketConfig,
 };
+use tokio::time::sleep;
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -23,6 +27,27 @@ async fn main() -> Result<()> {
                 sock.send(pack).await?;
             }
             ReceivedPacket::LoginOk => println!("Logged in successfully"),
+            ReceivedPacket::LoginError(e) => {
+                eprintln!("Failed to log in due to {}", e.message);
+
+                if e.message.contains("Account system denies login") {
+                    if let Ok(unfreeze_result) = AccountManager::new()
+                        .username(username.clone())
+                        .password(password.clone())
+                        .reactivate()
+                        .await
+                    {
+                        if unfreeze_result.should_continue() {
+                            println!("Unfroze account, waiting 5 seconds before reconnecting");
+                            sleep(Duration::from_secs(5)).await;
+                            sock.reconnect().await?;
+                            continue;
+                        }
+                    }
+                }
+
+                break;
+            }
             ReceivedPacket::MsgPrivate(m) => {
                 println!("Got a private message: {m:?}");
             }

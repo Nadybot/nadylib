@@ -21,6 +21,22 @@ tokio = { version = "1.2", default-features = false, features = [
     "time",
     "sync"
 ], optional = true }
+# Account management
+hyper = { version = "0.14", default-features = false, features = [
+    "client",
+    "http1",
+    "http2",
+    "server",
+    "tcp"
+], optional = true }
+hyper-proxy = { git = "https://github.com/Gelbpunkt/hyper-proxy", default-features = false, features = [
+    "rustls-webpki"
+], optional = true }
+cookie = { version = "0.16", optional = true }
+cookie_store = { version = "0.19", optional = true }
+serde_json = { version = "1", optional = true }
+serde_urlencoded = { version = "0.7", optional = true }
+url = { version = "2.3", optional = true }
 
 [dev-dependencies]
 serde_json = "1.0"
@@ -36,6 +52,15 @@ tokio = { version = "1.2", default-features = false, features = [
 
 [features]
 default = ["async"]
+account-management = [
+    "hyper",
+    "hyper-proxy",
+    "cookie",
+    "cookie_store",
+    "serde_json",
+    "serde_urlencoded",
+    "url"
+]
 mmdb-parser = []
 mmdb = []
 parking_lot = ["leaky-bucket-lite/parking_lot"]
