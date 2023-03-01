@@ -26,8 +26,6 @@ hyper = { version = "0.14", default-features = false, features = [
     "client",
     "http1",
     "http2",
-    "server",
-    "tcp"
 ], optional = true }
 hyper-proxy = { git = "https://github.com/Gelbpunkt/hyper-proxy", default-features = false, features = [
     "rustls-webpki"
