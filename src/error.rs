@@ -1,12 +1,12 @@
+#[cfg(feature = "sync")]
+use std::sync::mpsc::SendError;
+use std::{io::Error as IoError, result::Result as OrigResult, string::FromUtf8Error};
+
 #[cfg(feature = "async")]
 use tokio::{
     sync::{mpsc::error::SendError as MpscError, watch::error::SendError as WatchError},
     time::Instant,
 };
-
-#[cfg(feature = "sync")]
-use std::sync::mpsc::SendError;
-use std::{io::Error as IoError, result::Result as OrigResult, string::FromUtf8Error};
 
 use crate::packets::SerializedPacket;
 

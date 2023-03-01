@@ -1,15 +1,3 @@
-use crate::{
-    crypto::generate_key,
-    error::Result,
-    packets::{
-        LoginRequestPacket, OutgoingPacket, PacketType, PingPacket, ReceivedPacket,
-        SerializedPacket,
-    },
-};
-
-use byteorder::{ByteOrder, NetworkEndian};
-use leaky_bucket_lite::sync_threadsafe::LeakyBucket;
-
 use std::{
     convert::TryFrom,
     io::{Read, Write},
@@ -17,6 +5,18 @@ use std::{
     sync::mpsc::{channel, Receiver, Sender},
     thread::{sleep, spawn, JoinHandle},
     time::Duration,
+};
+
+use byteorder::{ByteOrder, NetworkEndian};
+use leaky_bucket_lite::sync_threadsafe::LeakyBucket;
+
+use crate::{
+    crypto::generate_key,
+    error::Result,
+    packets::{
+        LoginRequestPacket, OutgoingPacket, PacketType, PingPacket, ReceivedPacket,
+        SerializedPacket,
+    },
 };
 
 /// A send handle for sending packets to an [`AOSocket`].
@@ -27,6 +27,7 @@ pub struct SocketSendHandle {
 }
 
 impl SocketSendHandle {
+    #[must_use]
     pub fn new(sender: Sender<SerializedPacket>, ratelimiter: Option<LeakyBucket>) -> Self {
         Self {
             sender,
@@ -103,10 +104,13 @@ impl Default for SocketConfig {
 }
 
 impl SocketConfig {
+    #[must_use]
     pub fn keepalive(mut self, value: bool) -> Self {
         self.keepalive = value;
         self
     }
+
+    #[must_use]
     pub fn limit_tells(mut self, value: bool) -> Self {
         self.limit_tells = value;
         self
@@ -160,7 +164,8 @@ impl AOSocket {
         })
     }
 
-    /// Wrapper for generating a login key and sending a [`LoginRequestPacket`] to the server.
+    /// Wrapper for generating a login key and sending a [`LoginRequestPacket`]
+    /// to the server.
     pub fn login(&self, username: &str, password: &str, login_seed: &str) -> Result<()> {
         let key = generate_key(username, password, login_seed);
         let packet = LoginRequestPacket {
@@ -173,6 +178,7 @@ impl AOSocket {
     }
 
     /// Gets a handle to a send end of the internal receiver.
+    #[must_use]
     pub fn get_sender(&self) -> SocketSendHandle {
         self.sender.clone()
     }
@@ -194,7 +200,8 @@ impl AOSocket {
         let mut header_buf = [0; 4];
         self.stream.read_exact(&mut header_buf)?;
 
-        // The header consists of 4 bytes = 2 unsigned 16 bit integers for packet type and length
+        // The header consists of 4 bytes = 2 unsigned 16 bit integers for packet type
+        // and length
         let packet_type_int = NetworkEndian::read_u16(&header_buf[0..2]);
         let packet_length = NetworkEndian::read_u16(&header_buf[2..4]);
 
@@ -227,11 +234,11 @@ impl Drop for AOSocket {
 
             #[cfg(windows)]
             unsafe {
-                stop_thread::kill_thread_forcibly_exit_code(task, 1)
+                stop_thread::kill_thread_forcibly_exit_code(task, 1);
             }
             #[cfg(unix)]
             unsafe {
-                stop_thread::kill_thread_graceful(task)
+                stop_thread::kill_thread_graceful(task);
             }
         }
     }

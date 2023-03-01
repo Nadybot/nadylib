@@ -1,4 +1,11 @@
-//! Low-level library for the Anarchy Online Chat Protocol and interacting with the chat servers based on tokio.
+//! Low-level library for the Anarchy Online Chat Protocol and interacting with
+//! the chat servers based on tokio.
+#![deny(clippy::pedantic)]
+#![allow(
+    clippy::missing_panics_doc,
+    clippy::missing_errors_doc,
+    clippy::cast_possible_truncation
+)]
 
 #[cfg(feature = "async")]
 /// User-friendly bot wrapper class (WIP).
@@ -12,7 +19,8 @@ pub mod crypto;
 /// Error and Result types for the library.
 pub mod error;
 #[cfg(feature = "mmdb")]
-/// Lightweight version of a parser for the in-game message database in JSON format.
+/// Lightweight version of a parser for the in-game message database in JSON
+/// format.
 pub mod mmdb;
 #[cfg(feature = "mmdb-parser")]
 /// Parser for the in-game message database.

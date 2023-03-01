@@ -1,18 +1,19 @@
 #[cfg(feature = "mmdb")]
+use std::fmt::Display;
+use std::{convert::TryFrom, result::Result as OrigResult};
+
+use byteorder::{ByteOrder, NetworkEndian};
+
+#[cfg(feature = "mmdb")]
 use crate::mmdb;
 use crate::{
     error::{Error, Result},
     models::{Channel, ChannelType, Character, ChatNotice, Group, Message},
 };
 
-use byteorder::{ByteOrder, NetworkEndian};
-
-#[cfg(feature = "mmdb")]
-use std::fmt::Display;
-use std::{convert::TryFrom, result::Result as OrigResult};
-
-/// The maximum unsigned 32-bit integer, used to check if character lookup failed.
-const MAXINT: u32 = 4294967295;
+/// The maximum unsigned 32-bit integer, used to check if character lookup
+/// failed.
+const MAXINT: u32 = 4_294_967_295;
 
 fn read_u8(data: &mut &[u8]) -> u8 {
     let val = data[0];
@@ -87,7 +88,7 @@ fn write_string(target: &mut Vec<u8>, string: &str) {
 fn b85g(string: &mut &[u8]) -> u32 {
     let mut n = 0;
     for i in 0..5 {
-        n = n * 85 + (string[i] as u32) - 33;
+        n = n * 85 + u32::from(string[i]) - 33;
     }
     *string = &string[5..];
     n
@@ -118,7 +119,7 @@ fn parse_ext_params(msg: &mut &[u8]) -> Option<Vec<Box<dyn Display>>> {
 
         match data_type {
             'S' => {
-                let len = ((msg[0] as u32) * 256 + msg[1] as u32) as usize;
+                let len = (u32::from(msg[0]) * 256 + u32::from(msg[1])) as usize;
 
                 let string = String::from_utf8(msg[2..2 + len].to_vec()).ok()?;
                 *msg = &msg[2 + len..];
@@ -126,7 +127,7 @@ fn parse_ext_params(msg: &mut &[u8]) -> Option<Vec<Box<dyn Display>>> {
             }
             's' => {
                 let len = msg[0] as usize - 1;
-                let string = String::from_utf8(msg[1..1 + len].to_vec()).ok()?;
+                let string = String::from_utf8(msg[1..=len].to_vec()).ok()?;
                 *msg = &msg[1 + len..];
                 args.push(Box::new(string));
             }
@@ -138,7 +139,7 @@ fn parse_ext_params(msg: &mut &[u8]) -> Option<Vec<Box<dyn Display>>> {
             'i' | 'u' => {
                 let mut n = 0;
                 for i in 0..5 {
-                    n = n * 85 + (msg[i] as u32) - 33;
+                    n = n * 85 + u32::from(msg[i]) - 33;
                 }
                 *msg = &msg[5..];
                 args.push(Box::new(n));
@@ -146,11 +147,11 @@ fn parse_ext_params(msg: &mut &[u8]) -> Option<Vec<Box<dyn Display>>> {
             'R' => {
                 let mut cat = 0;
                 for i in 0..5 {
-                    cat = cat * 85 + (msg[i] as u32) - 33;
+                    cat = cat * 85 + u32::from(msg[i]) - 33;
                 }
                 let mut ins = 0;
                 for i in 5..10 {
-                    ins = ins * 85 + (msg[i] as u32) - 33;
+                    ins = ins * 85 + u32::from(msg[i]) - 33;
                 }
                 *msg = &msg[10..];
                 let string = mmdb::format_message(cat, ins, vec![]);
@@ -282,12 +283,12 @@ pub trait IncomingPacket {
 // AOCP_LOGIN_OK         (Login Result OK)                           DONE
 // AOCP_LOGIN_ERROR      (Login Result Error)              S         DONE
 // AOCP_LOGIN_CHARLIST   (Login CharacterList)             isii      DONE
-// AOCP_CLIENT_UNKNOWN   (Client Unknown)                  I         Does not seem to exist
-// AOCP_CLIENT_NAME      (Client Name)                     IS        DONE
-// AOCP_CLIENT_LOOKUP    (Lookup Result)                   IS        DONE
+// AOCP_CLIENT_UNKNOWN   (Client Unknown)                  I         Does not
+// seem to exist AOCP_CLIENT_NAME      (Client Name)                     IS
+// DONE AOCP_CLIENT_LOOKUP    (Lookup Result)                   IS        DONE
 // AOCP_MSG_PRIVATE      (Message Private)                 ISS       DONE
-// AOCP_MSG_VICINITY     (Message Vicinity)                ISS       Can't be added
-// AOCP_MSG_VICINITYA    (Message Anon Vicinity)           SSS       DONE
+// AOCP_MSG_VICINITY     (Message Vicinity)                ISS       Can't be
+// added AOCP_MSG_VICINITYA    (Message Anon Vicinity)           SSS       DONE
 // AOCP_MSG_SYSTEM       (Message System)                  S         DONE
 // AOCP_CHAT_NOTICE      (Chat Notice)                     IIIS      DONE
 // AOCP_BUDDY_ADD        (Buddy Added)                     IIS       DONE
@@ -297,13 +298,14 @@ pub trait IncomingPacket {
 // AOCP_PRIVGRP_CLIJOIN  (Privategroup Client Join)        II        DONE
 // AOCP_PRIVGRP_CLIPART  (Privategroup Client Part)        II        DONE
 // AOCP_PRIVGRP_MESSAGE  (Privategroup Message)            IISS      DONE
-// AOCP_PRIVGRP_REFUSE   (Privategroup Refuse Invite)      II        Does not seem to exist
-// AOCP_GROUP_ANNOUNCE   (Group Announce)                  GSIS      DONE
-// AOCP_GROUP_PART       (Group Part)                      G         Does not seem to exist
-// AOCP_GROUP_MESSAGE    (Group Message)                   GISS      DONE
-// AOCP_PING             (Pong)                            S         DONE
-// AOCP_FORWARD          (Forward)                         IM        Can't be added
-// AOCP_ADM_MUX_INFO     (Adm Mux Info)                    iii       Can't be added
+// AOCP_PRIVGRP_REFUSE   (Privategroup Refuse Invite)      II        Does not
+// seem to exist AOCP_GROUP_ANNOUNCE   (Group Announce)                  GSIS
+// DONE AOCP_GROUP_PART       (Group Part)                      G         Does
+// not seem to exist AOCP_GROUP_MESSAGE    (Group Message)
+// GISS      DONE AOCP_PING             (Pong)                            S
+// DONE AOCP_FORWARD          (Forward)                         IM        Can't
+// be added AOCP_ADM_MUX_INFO     (Adm Mux Info)                    iii
+// Can't be added
 //
 // Outgoing:
 // AOCP_LOGIN_REQUEST    (Login Response GetCharLst)       ISS       DONE
@@ -312,20 +314,21 @@ pub trait IncomingPacket {
 // AOCP_MSG_PRIVATE      (Message Private)                 ISS       DONE
 // AOCP_BUDDY_ADD        (Buddy Add)                       IS        DONE
 // AOCP_BUDDY_REMOVE     (Buddy Remove)                    I         DONE
-// AOCP_ONLINE_SET       (Onlinestatus Set)                I         Can't be added
-// AOCP_PRIVGRP_INVITE   (Privategroup Invite)             I         DONE
+// AOCP_ONLINE_SET       (Onlinestatus Set)                I         Can't be
+// added AOCP_PRIVGRP_INVITE   (Privategroup Invite)             I         DONE
 // AOCP_PRIVGRP_KICK     (Privategroup Kick)               I         DONE
 // AOCP_PRIVGRP_JOIN     (Privategroup Join)               I         DONE
 // AOCP_PRIVGRP_PART     (Privategroup Part)               I         DONE
 // AOCP_PRIVGRP_KICKALL  (Privategroup Kickall)                      DONE
 // AOCP_PRIVGRP_MESSAGE  (Privategroup Message)            ISS       DONE
-// AOCP_GROUP_DATA_SET   (Group Data Set)                  GIS       Does not seem to exist
-// AOCP_GROUP_MESSAGE    (Group Message)                   GSS       DONE
-// AOCP_GROUP_CM_SET     (Group Clientmode Set)            GIIII     Can't be added
-// AOCP_CLIENTMODE_GET   (Clientmode Get)                  IG        Can't be added
-// AOCP_CLIENTMODE_SET   (Clientmode Set)                  IIII      Can't be added
-// AOCP_PING             (Ping)                            S         DONE
-// AOCP_CC               (CC)                              s         Can't be added
+// AOCP_GROUP_DATA_SET   (Group Data Set)                  GIS       Does not
+// seem to exist AOCP_GROUP_MESSAGE    (Group Message)                   GSS
+// DONE AOCP_GROUP_CM_SET     (Group Clientmode Set)            GIIII     Can't
+// be added AOCP_CLIENTMODE_GET   (Clientmode Get)                  IG
+// Can't be added AOCP_CLIENTMODE_SET   (Clientmode Set)                  IIII
+// Can't be added AOCP_PING             (Ping)                            S
+// DONE AOCP_CC               (CC)                              s         Can't
+// be added
 
 /// Enum for all packets possible to be received from the server.
 #[derive(Debug)]
@@ -748,7 +751,7 @@ impl OutgoingPacket for BuddyStatusPacket {
     fn serialize(&self) -> SerializedPacket {
         let mut buf = Vec::with_capacity(8 + 2 + self.send_tag.len());
         write_u32(&mut buf, self.character_id);
-        write_u32(&mut buf, self.online as u32);
+        write_u32(&mut buf, u32::from(self.online));
         write_string(&mut buf, &self.send_tag);
 
         (PacketType::BuddyAdd, buf)
@@ -881,7 +884,7 @@ impl IncomingPacket for ChatNoticePacket {
             mmdb::format_message(category_id, instance_id, params)
         };
         #[cfg(not(feature = "mmdb"))]
-        let text = String::from("");
+        let text = String::new();
 
         let notice = ChatNotice {
             sender: sender_id,

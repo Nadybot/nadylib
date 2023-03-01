@@ -1,14 +1,14 @@
+use std::collections::HashMap;
+
+use log::{error, info};
+use tokio::time::{sleep, Duration};
+
 use crate::{
     client_socket::{AOSocket, SocketConfig},
     error::Result,
     models::Channel,
     packets::{BuddyAddPacket, LoginSelectPacket, ReceivedPacket},
 };
-
-use log::{error, info};
-use tokio::time::{sleep, Duration};
-
-use std::collections::HashMap;
 
 pub struct Bot {
     socket: AOSocket,
@@ -25,7 +25,7 @@ pub struct Bot {
 impl Bot {
     /// Creates a new RK5 bot.
     pub async fn new(username: String, password: String, character: String) -> Result<Self> {
-        let socket = AOSocket::connect("chat.d1.funcom.com:7105", SocketConfig::default()).await?;
+        let socket = AOSocket::connect("chat.d1.funcom.com:7105", &SocketConfig::default()).await?;
 
         Ok(Self {
             socket,
@@ -45,23 +45,22 @@ impl Bot {
     }
 
     /// Gets the ID of a user by name.
-    pub fn get_character_id(&self, character_name: String) -> Option<u32> {
-        self.users_by_name.get(&character_name).cloned()
+    pub fn get_character_id(&self, character_name: &str) -> Option<u32> {
+        self.users_by_name.get(character_name).copied()
     }
 
     /// Gets the online status of a character.
     pub async fn is_online(&self, character_id: u32) -> Option<bool> {
-        match self.buddies.get(&character_id) {
-            Some(online) => Some(*online),
-            None => {
-                let packet = BuddyAddPacket {
-                    character_id,
-                    send_tag: String::from("\u{1}"),
-                };
-                self.socket.send(packet).await.ok()?;
-                sleep(Duration::from_millis(500)).await;
-                self.buddies.get(&character_id).cloned()
-            }
+        if let Some(online) = self.buddies.get(&character_id) {
+            Some(*online)
+        } else {
+            let packet = BuddyAddPacket {
+                character_id,
+                send_tag: String::from("\u{1}"),
+            };
+            self.socket.send(packet).await.ok()?;
+            sleep(Duration::from_millis(500)).await;
+            self.buddies.get(&character_id).copied()
         }
     }
 
@@ -82,11 +81,11 @@ impl Bot {
                 | ReceivedPacket::GroupMessage(_)
                 | ReceivedPacket::PrivgrpMessage(_)
                 | ReceivedPacket::Ping(_)
-                | ReceivedPacket::PrivgrpKick(_) => {}
+                | ReceivedPacket::PrivgrpKick(_)
+                | ReceivedPacket::ChatNotice(_) => {}
                 ReceivedPacket::BuddyStatus(b) => {
                     self.buddies.insert(b.character_id, b.online);
                 }
-                ReceivedPacket::ChatNotice(_) => {}
                 ReceivedPacket::ClientLookup(c) => {
                     self.users_by_id
                         .insert(c.character_id, c.character_name.clone());

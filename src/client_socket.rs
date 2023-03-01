@@ -1,11 +1,4 @@
-use crate::{
-    crypto::generate_key,
-    error::Result,
-    packets::{
-        LoginRequestPacket, OutgoingPacket, PacketType, PingPacket, ReceivedPacket,
-        SerializedPacket,
-    },
-};
+use std::{convert::TryFrom, time::Duration};
 
 use byteorder::{ByteOrder, NetworkEndian};
 use leaky_bucket_lite::LeakyBucket;
@@ -25,7 +18,14 @@ use tokio::{
     time::{timeout_at, Instant},
 };
 
-use std::{convert::TryFrom, time::Duration};
+use crate::{
+    crypto::generate_key,
+    error::Result,
+    packets::{
+        LoginRequestPacket, OutgoingPacket, PacketType, PingPacket, ReceivedPacket,
+        SerializedPacket,
+    },
+};
 
 /// A send handle for sending packets to an [`AOSocket`].
 #[derive(Debug, Clone)]
@@ -35,6 +35,7 @@ pub struct SocketSendHandle {
 }
 
 impl SocketSendHandle {
+    #[must_use]
     pub fn new(
         sender: UnboundedSender<SerializedPacket>,
         ratelimiter: Option<LeakyBucket>,
@@ -146,10 +147,13 @@ impl Default for SocketConfig {
 }
 
 impl SocketConfig {
+    #[must_use]
     pub fn keepalive(mut self, value: bool) -> Self {
         self.keepalive = value;
         self
     }
+
+    #[must_use]
     pub fn limit_tells(mut self, value: bool) -> Self {
         self.limit_tells = value;
         self
@@ -158,14 +162,14 @@ impl SocketConfig {
 
 impl AOSocket {
     /// Opens a TCP connection to the chat server specified in the address.
-    pub async fn connect<A: ToSocketAddrs>(addr: A, config: SocketConfig) -> Result<Self> {
+    pub async fn connect<A: ToSocketAddrs>(addr: A, config: &SocketConfig) -> Result<Self> {
         let sock = TcpStream::connect(addr).await?;
 
         Ok(Self::from_stream(sock, config))
     }
 
     /// Starts the socket from an existing [`TcpStream`].
-    pub fn from_stream(sock: TcpStream, config: SocketConfig) -> Self {
+    pub fn from_stream(sock: TcpStream, config: &SocketConfig) -> Self {
         let (rx, tx) = sock.into_split();
 
         let (send, recv) = unbounded_channel();
@@ -247,7 +251,8 @@ impl AOSocket {
         Ok(())
     }
 
-    /// Wrapper for generating a login key and sending a [`LoginRequestPacket`] to the server.
+    /// Wrapper for generating a login key and sending a [`LoginRequestPacket`]
+    /// to the server.
     pub async fn login(&self, username: &str, password: &str, login_seed: &str) -> Result<()> {
         let key = generate_key(username, password, login_seed);
         let packet = LoginRequestPacket {
@@ -260,6 +265,7 @@ impl AOSocket {
     }
 
     /// Gets a handle to a send end of the internal receiver.
+    #[must_use]
     pub fn get_sender(&self) -> SocketSendHandle {
         self.sender.clone()
     }
@@ -281,7 +287,8 @@ impl AOSocket {
         let mut header_buf = [0; 4];
         self.read_half.read_exact(&mut header_buf).await?;
 
-        // The header consists of 4 bytes = 2 unsigned 16 bit integers for packet type and length
+        // The header consists of 4 bytes = 2 unsigned 16 bit integers for packet type
+        // and length
         let packet_type_int = NetworkEndian::read_u16(&header_buf[0..2]);
         let packet_length = NetworkEndian::read_u16(&header_buf[2..4]);
 

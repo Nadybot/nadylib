@@ -5,7 +5,7 @@ async fn main() -> Result<()> {
     let char_name = std::env::var("CHAR_NAME").unwrap();
     let username = std::env::var("USERNAME").unwrap();
     let password = std::env::var("PASSWORD").unwrap();
-    let mut sock = AOSocket::connect("chat.d1.funcom.com:7105", SocketConfig::default()).await?;
+    let mut sock = AOSocket::connect("chat.d1.funcom.com:7105", &SocketConfig::default()).await?;
 
     while let Ok(packet) = sock.read_packet().await {
         match packet {

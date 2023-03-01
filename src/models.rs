@@ -1,6 +1,6 @@
-use crate::error::Error;
-
 use std::convert::TryFrom;
+
+use crate::error::Error;
 
 /// Represents a Character in AO.
 #[derive(Debug, Clone)]

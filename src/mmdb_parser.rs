@@ -1,9 +1,9 @@
-use byteorder::{LittleEndian, ReadBytesExt};
-
 use std::{
     collections::HashMap,
     io::{Cursor, Seek, SeekFrom},
 };
+
+use byteorder::{LittleEndian, ReadBytesExt};
 
 const MMDB: &[u8] = include_bytes!("../data/text.mdb");
 
@@ -24,6 +24,7 @@ pub struct MmdbParser<'a> {
 
 impl MmdbParser<'_> {
     /// Creates a new [`MmdbParser`].
+    #[must_use]
     pub fn new() -> Self {
         Self {
             cache: HashMap::new(),
@@ -81,7 +82,7 @@ impl MmdbParser<'_> {
     fn read_entry(&mut self) -> Entry {
         Entry {
             entry_id: self.buf.read_u32::<LittleEndian>().unwrap(),
-            offset: self.buf.read_u32::<LittleEndian>().unwrap() as u64,
+            offset: u64::from(self.buf.read_u32::<LittleEndian>().unwrap()),
         }
     }
 
@@ -148,14 +149,14 @@ impl Default for MmdbParser<'_> {
 #[test]
 fn test_can_find_offline_msg() {
     let mut parser = MmdbParser::new();
-    let string = parser.get_message(20000, 172363154);
+    let string = parser.get_message(20000, 172_363_154);
     assert!(string.is_some());
 }
 
 #[test]
 fn test_cache_works() {
     let mut parser = MmdbParser::new();
-    let string = parser.get_message(20000, 172363154);
+    let string = parser.get_message(20000, 172_363_154);
     assert!(string.is_some());
     assert_eq!(parser.cache.len(), 1);
 }
