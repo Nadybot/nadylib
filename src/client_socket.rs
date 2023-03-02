@@ -12,10 +12,9 @@ use tokio::{
     sync::{
         mpsc::{unbounded_channel, UnboundedReceiver, UnboundedSender},
         oneshot,
-        watch::{channel, Receiver, Sender},
     },
     task::JoinHandle,
-    time::{timeout_at, Instant},
+    time::timeout,
 };
 
 use crate::{
@@ -69,66 +68,56 @@ impl SocketSendHandle {
 pub struct AOSocket {
     read_half: OwnedReadHalf,
     sender: SocketSendHandle,
-    send_task: Option<JoinHandle<UnboundedReceiver<SerializedPacket>>>,
-    keep_alive: Option<JoinHandle<()>>,
+    send_task: Option<JoinHandle<(UnboundedReceiver<SerializedPacket>, bool)>>,
     shutdown: Option<oneshot::Sender<()>>,
+}
+
+async fn write_packet(sock: &mut OwnedWriteHalf, mut packet: SerializedPacket) -> Result<()> {
+    let mut buf = vec![0; 4];
+    NetworkEndian::write_u16(&mut buf[..2], packet.0 as u16);
+    NetworkEndian::write_u16(&mut buf[2..4], packet.1.len() as u16);
+    buf.append(&mut packet.1);
+
+    sock.write_all(&buf).await?;
+
+    Ok(())
 }
 
 async fn send_task(
     mut shutdown: oneshot::Receiver<()>,
     mut packet_queue: UnboundedReceiver<SerializedPacket>,
     mut sock: OwnedWriteHalf,
-    last_packet: Option<Sender<Instant>>,
-) -> UnboundedReceiver<SerializedPacket> {
+    keep_alive: bool,
+) -> (UnboundedReceiver<SerializedPacket>, bool) {
     loop {
         tokio::select! {
-            Some((packet_type, mut packet_body)) = packet_queue.recv() => {
-                let mut buf = Vec::with_capacity(4 + packet_body.len());
-                let mut pkt_type_buf = vec![0; 2];
-                let mut pkt_len_buf = vec![0; 2];
-                NetworkEndian::write_u16(&mut pkt_type_buf, packet_type as u16);
-                NetworkEndian::write_u16(&mut pkt_len_buf, packet_body.len() as u16);
-                buf.append(&mut pkt_type_buf);
-                buf.append(&mut pkt_len_buf);
-                buf.append(&mut packet_body);
-
-                if sock.write_all(&buf).await.is_err() {
-                    break;
-                };
-
-                if let Some(sender) = &last_packet {
-                    if sender.send(Instant::now()).is_err() {
-                        break;
-                    };
+            maybe_packet = timeout(Duration::from_secs(55), packet_queue.recv()) => {
+                match maybe_packet {
+                    Ok(Some(packet)) => {
+                        if write_packet(&mut sock, packet).await.is_err() {
+                            break;
+                        }
+                    },
+                    Ok(None) => break,
+                    Err(_) => {
+                        if keep_alive {
+                            let packet = PingPacket {
+                                client: String::from("nadylib"),
+                            };
+                            if write_packet(&mut sock, packet.serialize()).await.is_err() {
+                                break;
+                            }
+                        }
+                    }
                 }
             },
             _ = &mut shutdown => {
                 break;
             }
-            else => break,
         }
     }
 
-    packet_queue
-}
-
-async fn keepalive(sender: UnboundedSender<SerializedPacket>, mut last_packet: Receiver<Instant>) {
-    let mut last_p = *last_packet.borrow();
-    loop {
-        let res = timeout_at(last_p + Duration::from_secs(55), last_packet.changed()).await;
-
-        if res.is_ok() {
-            last_p = *last_packet.borrow();
-        } else {
-            let pack = PingPacket {
-                client: String::from("nadylib"),
-            };
-            if sender.send(pack.serialize()).is_err() {
-                return;
-            };
-            last_p = Instant::now();
-        }
-    }
+    (packet_queue, keep_alive)
 }
 
 #[derive(Debug)]
@@ -175,15 +164,7 @@ impl AOSocket {
         let (send, recv) = unbounded_channel();
         let (shutdown_tx, shutdown_rx) = oneshot::channel();
 
-        let (keep_alive, send_task) = if config.keepalive {
-            let (lp_send, lp_recv) = channel(Instant::now());
-            let keep_alive = Some(spawn(keepalive(send.clone(), lp_recv)));
-            let send_task = spawn(send_task(shutdown_rx, recv, tx, Some(lp_send)));
-
-            (keep_alive, send_task)
-        } else {
-            (None, spawn(send_task(shutdown_rx, recv, tx, None)))
-        };
+        let send_task = spawn(send_task(shutdown_rx, recv, tx, config.keepalive));
 
         let sender = {
             if config.limit_tells {
@@ -206,7 +187,6 @@ impl AOSocket {
         Self {
             read_half: rx,
             sender,
-            keep_alive,
             send_task: Some(send_task),
             shutdown: Some(shutdown_tx),
         }
@@ -221,29 +201,12 @@ impl AOSocket {
         }
 
         if let Some(send_task_handle) = self.send_task.take() {
-            let had_keepalive = self.keep_alive.is_some();
-
-            if let Some(keep_alive) = self.keep_alive.take() {
-                keep_alive.abort();
-            }
-
-            let recv = send_task_handle.await.unwrap();
+            let (recv, keepalive) = send_task_handle.await.unwrap();
             let (rx, tx) = sock.into_split();
-
             let (shutdown_tx, shutdown_rx) = oneshot::channel();
-
-            let (keep_alive, send_task) = if had_keepalive {
-                let (lp_send, lp_recv) = channel(Instant::now());
-                let keep_alive = Some(spawn(keepalive(self.sender.sender.clone(), lp_recv)));
-                let send_task = spawn(send_task(shutdown_rx, recv, tx, Some(lp_send)));
-
-                (keep_alive, send_task)
-            } else {
-                (None, spawn(send_task(shutdown_rx, recv, tx, None)))
-            };
+            let send_task = spawn(send_task(shutdown_rx, recv, tx, keepalive));
 
             self.read_half = rx;
-            self.keep_alive = keep_alive;
             self.send_task = Some(send_task);
             self.shutdown = Some(shutdown_tx);
         }
@@ -319,9 +282,5 @@ impl Drop for AOSocket {
         if let Some(send_task) = &self.send_task {
             send_task.abort();
         };
-
-        if let Some(keep_alive) = &self.keep_alive {
-            keep_alive.abort();
-        }
     }
 }
