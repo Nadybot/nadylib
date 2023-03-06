@@ -38,13 +38,54 @@ pub enum SubscriptionId {
     NotParsed,
 }
 
+#[derive(Clone)]
+pub enum AccountManagerHttpClient {
+    Proxied(hyper::Client<hyper_proxy::ProxyConnector<HttpConnector>>),
+    Unproxied(hyper::Client<hyper_rustls::HttpsConnector<HttpConnector>>),
+}
+
+impl AccountManagerHttpClient {
+    pub fn new(with_proxy: bool) -> Self {
+        if with_proxy {
+            let mut proxy = Proxy::new(Intercept::All, Uri::from_static(PROXY_URL));
+            proxy.force_connect();
+
+            let mut connector = HttpConnector::new();
+            connector.set_connect_timeout(Some(Duration::from_secs(5)));
+
+            let proxy_connector = ProxyConnector::from_proxy(connector, proxy).unwrap();
+
+            let client = Client::builder().build(proxy_connector);
+
+            Self::Proxied(client)
+        } else {
+            let connector = hyper_rustls::HttpsConnectorBuilder::new()
+                .with_webpki_roots()
+                .https_or_http()
+                .enable_http1()
+                .build();
+
+            let client = Client::builder().build(connector);
+
+            Self::Unproxied(client)
+        }
+    }
+
+    async fn request(&self, req: Request<Body>) -> Result<Response<Body>, hyper::Error> {
+        match self {
+            Self::Proxied(p) => p.request(req).await,
+            Self::Unproxied(c) => c.request(req).await,
+        }
+    }
+}
+
 pub struct AccountManager {
     main_username: Option<String>,
     username: String,
     main_password: Option<String>,
     password: String,
     email: String,
-    client: Client<ProxyConnector<HttpConnector>>,
+    client: AccountManagerHttpClient,
     cookies: CookieStore,
     headers: HeaderMap,
     referer: Option<String>,
@@ -68,17 +109,7 @@ fn uri_to_url(uri: &Uri) -> Url {
 }
 
 impl AccountManager {
-    pub fn new() -> Self {
-        let mut proxy = Proxy::new(Intercept::All, Uri::from_static(PROXY_URL));
-        proxy.force_connect();
-
-        let mut connector = HttpConnector::new();
-        connector.set_connect_timeout(Some(Duration::from_secs(5)));
-
-        let proxy_connector = ProxyConnector::from_proxy(connector, proxy).unwrap();
-
-        let client = Client::builder().build(proxy_connector);
-
+    pub fn from_client(client: AccountManagerHttpClient) -> Self {
         let mut headers = HeaderMap::new();
         headers.insert(USER_AGENT, HeaderValue::from_static(DEFAULT_USER_AGENT));
         headers.insert(ACCEPT, HeaderValue::from_static("text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8"));

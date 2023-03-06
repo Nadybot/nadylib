@@ -1,4 +1,4 @@
-use std::{convert::TryFrom, time::Duration};
+use std::{convert::TryFrom, net::SocketAddr, time::Duration};
 
 use byteorder::{ByteOrder, NetworkEndian};
 use leaky_bucket_lite::LeakyBucket;
@@ -67,6 +67,7 @@ impl SocketSendHandle {
 #[derive(Debug)]
 pub struct AOSocket {
     read_half: OwnedReadHalf,
+    chatserver_addr: SocketAddr,
     sender: SocketSendHandle,
     send_task: Option<JoinHandle<(UnboundedReceiver<SerializedPacket>, bool)>>,
     shutdown: Option<oneshot::Sender<()>>,
@@ -77,6 +78,8 @@ async fn write_packet(sock: &mut OwnedWriteHalf, mut packet: SerializedPacket) -
     NetworkEndian::write_u16(&mut buf[..2], packet.0 as u16);
     NetworkEndian::write_u16(&mut buf[2..4], packet.1.len() as u16);
     buf.append(&mut packet.1);
+
+    log::debug!("Writing serialized {:?} packet", packet.0);
 
     sock.write_all(&buf).await?;
 
@@ -154,12 +157,13 @@ impl AOSocket {
     pub async fn connect<A: ToSocketAddrs>(addr: A, config: &SocketConfig) -> Result<Self> {
         let sock = TcpStream::connect(addr).await?;
 
-        Ok(Self::from_stream(sock, config))
+        Self::from_stream(sock, config)
     }
 
     /// Starts the socket from an existing [`TcpStream`].
-    pub fn from_stream(sock: TcpStream, config: &SocketConfig) -> Self {
+    pub fn from_stream(sock: TcpStream, config: &SocketConfig) -> Result<Self> {
         let (rx, tx) = sock.into_split();
+        let addr = rx.peer_addr()?;
 
         let (send, recv) = unbounded_channel();
         let (shutdown_tx, shutdown_rx) = oneshot::channel();
@@ -184,23 +188,34 @@ impl AOSocket {
             }
         };
 
-        Self {
+        Ok(Self {
             read_half: rx,
+            chatserver_addr: addr,
             sender,
             send_task: Some(send_task),
             shutdown: Some(shutdown_tx),
-        }
+        })
     }
 
     pub async fn reconnect(&mut self) -> Result<()> {
-        let sock = TcpStream::connect(self.read_half.peer_addr().unwrap()).await?;
+        log::debug!("Attempting to reconnect to {}", self.chatserver_addr);
+
+        let sock = TcpStream::connect(self.chatserver_addr).await?;
+
+        log::debug!(
+            "Succesfully established TCP connection to {}",
+            self.chatserver_addr
+        );
 
         // Cancel the queue -> tcp writing task
         if let Some(shutdown) = self.shutdown.take() {
+            log::debug!("Sent shutdown notice to packet queue task");
             let _ = shutdown.send(());
         }
 
         if let Some(send_task_handle) = self.send_task.take() {
+            log::debug!("Awaiting packet queue task termination");
+
             let (recv, keepalive) = send_task_handle.await.unwrap();
             let (rx, tx) = sock.into_split();
             let (shutdown_tx, shutdown_rx) = oneshot::channel();
@@ -209,6 +224,8 @@ impl AOSocket {
             self.read_half = rx;
             self.send_task = Some(send_task);
             self.shutdown = Some(shutdown_tx);
+
+            log::debug!("Successfully terminated packet queue task and started a new one");
         }
 
         Ok(())
@@ -260,6 +277,8 @@ impl AOSocket {
         // Read the rest of the packet
         let mut packet_body = vec![0; packet_length as usize];
         self.read_half.read_exact(&mut packet_body).await?;
+
+        log::debug!("Read raw {packet_type:?} packet");
 
         Ok((packet_type, packet_body))
     }
