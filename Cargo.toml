@@ -60,6 +60,7 @@ default = ["async"]
 account-management = [
     "hyper",
     "hyper-proxy",
+    "hyper-rustls",
     "cookie",
     "cookie_store",
     "serde_json",

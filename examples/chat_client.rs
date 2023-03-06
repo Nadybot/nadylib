@@ -1,7 +1,7 @@
 use std::time::Duration;
 
 use nadylib::{
-    account::AccountManager,
+    account::{AccountManager, AccountManagerHttpClient},
     packets::{LoginSelectPacket, PrivgrpJoinPacket},
     AOSocket, ReceivedPacket, Result, SocketConfig,
 };
@@ -31,11 +31,12 @@ async fn main() -> Result<()> {
                 eprintln!("Failed to log in due to {}", e.message);
 
                 if e.message.contains("Account system denies login") {
-                    if let Ok(unfreeze_result) = AccountManager::new()
-                        .username(username.clone())
-                        .password(password.clone())
-                        .reactivate()
-                        .await
+                    if let Ok(unfreeze_result) =
+                        AccountManager::from_client(AccountManagerHttpClient::new(true))
+                            .username(username.clone())
+                            .password(password.clone())
+                            .reactivate()
+                            .await
                     {
                         if unfreeze_result.should_continue() {
                             println!("Unfroze account, waiting 5 seconds before reconnecting");
