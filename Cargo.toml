@@ -30,7 +30,7 @@ hyper = { version = "0.14", default-features = false, features = [
 hyper-proxy = { git = "https://github.com/Gelbpunkt/hyper-proxy", default-features = false, features = [
     "rustls-webpki"
 ], optional = true }
-hyper-rustls = { version = "0.23", default-features = false, features = [
+hyper-rustls = { version = "0.24", default-features = false, features = [
     "http1",
     "http2",
     "tls12",
