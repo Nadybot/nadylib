@@ -37,8 +37,8 @@ hyper-rustls = { version = "0.24", default-features = false, features = [
     "webpki-roots",
     "tokio-runtime"
 ], optional = true }
-cookie = { version = "0.16", optional = true }
-cookie_store = { version = "0.19", optional = true }
+cookie = { version = "0.17", optional = true }
+cookie_store = { version = "0.20", optional = true }
 serde_json = { version = "1", optional = true }
 serde_urlencoded = { version = "0.7", optional = true }
 url = { version = "2.3", optional = true }
