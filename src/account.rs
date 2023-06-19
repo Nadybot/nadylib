@@ -1,4 +1,4 @@
-use std::{convert::Infallible, str::FromStr, time::Duration};
+use std::{str::FromStr, time::Duration};
 
 use cookie::{Cookie, ParseError};
 use cookie_store::CookieStore;
@@ -129,7 +129,7 @@ impl AccountManager {
             password: String::new(),
             email: String::new(),
             client,
-            cookies: CookieStore::from_cookies::<_, Infallible>([], false).unwrap(),
+            cookies: CookieStore::new(),
             headers,
             referer: None,
         }
