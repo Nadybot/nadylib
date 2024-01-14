@@ -55,7 +55,7 @@ fn encrypt(key: &str, source: &[u8]) -> String {
     NativeEndian::read_u32_into(source, &mut source_arr);
 
     let mut ret = String::new();
-    let mut cycle = vec![0; 2];
+    let mut cycle = [0; 2];
 
     for i in (0..source_arr.len()).step_by(2) {
         cycle[0] ^= source_arr[i];

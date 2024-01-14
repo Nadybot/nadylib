@@ -19,25 +19,26 @@ tokio = { version = "1.2", default-features = false, features = [
     "rt",
     "io-util",
     "time",
-    "sync"
+    "sync",
 ], optional = true }
 # Account management
-hyper = { version = "0.14", default-features = false, features = [
+http-body-util = { version = "0.1", optional = true }
+hyper = { version = "1", optional = true }
+hyper-util = { version = "0.1", default-features = false, features = [
     "client",
-    "http1",
-    "http2",
+    "client-legacy",
+    "tokio",
 ], optional = true }
 hyper-proxy = { git = "https://github.com/Gelbpunkt/hyper-proxy", default-features = false, features = [
-    "rustls-webpki"
+    "rustls-webpki-roots",
 ], optional = true }
-hyper-rustls = { version = "0.24", default-features = false, features = [
+hyper-rustls = { version = "0.26", default-features = false, features = [
     "http1",
     "http2",
+    "ring",
     "tls12",
     "webpki-roots",
-    "tokio-runtime"
 ], optional = true }
-cookie = { version = "0.17", optional = true }
 cookie_store = { version = "0.20", default-features = false, optional = true }
 serde_json = { version = "1", optional = true }
 serde_urlencoded = { version = "0.7", optional = true }
@@ -52,20 +53,21 @@ tokio = { version = "1.2", default-features = false, features = [
     "time",
     "sync",
     "rt-multi-thread",
-    "macros"
+    "macros",
 ] }
 
 [features]
 default = ["async"]
 account-management = [
+    "http-body-util",
     "hyper",
+    "hyper-util",
     "hyper-proxy",
     "hyper-rustls",
-    "cookie",
     "cookie_store",
     "serde_json",
     "serde_urlencoded",
-    "url"
+    "url",
 ]
 mmdb-parser = []
 mmdb = []

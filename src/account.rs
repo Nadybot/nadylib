@@ -1,18 +1,21 @@
 use std::{str::FromStr, time::Duration};
 
-use cookie::{Cookie, ParseError};
-use cookie_store::CookieStore;
+use cookie_store::{CookieStore, RawCookie, RawCookieParseError};
+use http_body_util::{BodyExt, Full};
 use hyper::{
-    body::{aggregate, to_bytes, Buf},
-    client::HttpConnector,
+    body::{Buf, Bytes, Incoming},
     header::{
         Entry, ACCEPT, ACCEPT_LANGUAGE, CACHE_CONTROL, CONTENT_TYPE, COOKIE, PRAGMA, REFERER,
         SET_COOKIE, USER_AGENT,
     },
     http::{request, HeaderValue},
-    Body, Client, HeaderMap, Method, Request, Response, StatusCode, Uri,
+    HeaderMap, Method, Request, Response, StatusCode, Uri,
 };
 use hyper_proxy::{Intercept, Proxy, ProxyConnector};
+use hyper_util::{
+    client::legacy::{connect::HttpConnector, Client, Error as ClientError},
+    rt::TokioExecutor,
+};
 use log::error;
 use tokio::time::timeout;
 use url::Url;
@@ -40,8 +43,8 @@ pub enum SubscriptionId {
 
 #[derive(Clone)]
 pub enum AccountManagerHttpClient {
-    Proxied(hyper::Client<hyper_proxy::ProxyConnector<HttpConnector>>),
-    Unproxied(hyper::Client<hyper_rustls::HttpsConnector<HttpConnector>>),
+    Proxied(Client<hyper_proxy::ProxyConnector<HttpConnector>, Full<Bytes>>),
+    Unproxied(Client<hyper_rustls::HttpsConnector<HttpConnector>, Full<Bytes>>),
 }
 
 impl AccountManagerHttpClient {
@@ -55,7 +58,7 @@ impl AccountManagerHttpClient {
 
             let proxy_connector = ProxyConnector::from_proxy(connector, proxy).unwrap();
 
-            let client = Client::builder().build(proxy_connector);
+            let client = Client::builder(TokioExecutor::new()).build(proxy_connector);
 
             Self::Proxied(client)
         } else {
@@ -65,13 +68,13 @@ impl AccountManagerHttpClient {
                 .enable_http1()
                 .build();
 
-            let client = Client::builder().build(connector);
+            let client = Client::builder(TokioExecutor::new()).build(connector);
 
             Self::Unproxied(client)
         }
     }
 
-    async fn request(&self, req: Request<Body>) -> Result<Response<Body>, hyper::Error> {
+    async fn request(&self, req: Request<Full<Bytes>>) -> Result<Response<Incoming>, ClientError> {
         match self {
             Self::Proxied(p) => p.request(req).await,
             Self::Unproxied(c) => c.request(req).await,
@@ -185,15 +188,15 @@ impl AccountManager {
         }
     }
 
-    fn store_cookies(&mut self, response: &mut Response<Body>, url: &Url) {
+    fn store_cookies(&mut self, response: &mut Response<Incoming>, url: &Url) {
         if let Entry::Occupied(entry) = response.headers_mut().entry(SET_COOKIE) {
             let (_, values) = entry.remove_entry_mult();
 
             let cookies = values.into_iter().filter_map(|val| {
                 std::str::from_utf8(val.as_bytes())
-                    .map_err(ParseError::from)
-                    .and_then(Cookie::parse)
-                    .map(Cookie::into_owned)
+                    .map_err(RawCookieParseError::from)
+                    .and_then(RawCookie::parse)
+                    .map(RawCookie::into_owned)
                     .ok()
             });
 
@@ -207,7 +210,7 @@ impl AccountManager {
         let mut res = loop {
             let mut builder = Request::builder().method(Method::GET).uri(&uri);
             builder.headers_mut().unwrap().extend(self.headers.clone());
-            let req = builder.body(Body::empty()).unwrap();
+            let req = builder.body(Full::default()).unwrap();
 
             match timeout(REQUEST_TIMEOUT, self.client.request(req)).await {
                 Ok(Ok(res)) => break res,
@@ -220,7 +223,7 @@ impl AccountManager {
             }
         };
 
-        let body = aggregate(res.body_mut()).await?;
+        let body = res.body_mut().collect().await?.aggregate();
 
         match serde_json::from_reader::<_, Vec<String>>(body.reader()) {
             Ok(user_agents) => {
@@ -244,7 +247,7 @@ impl AccountManager {
         let mut res = loop {
             let mut builder = Request::builder().method(Method::GET).uri(&uri);
             builder.headers_mut().unwrap().extend(self.headers.clone());
-            let req = builder.body(Body::empty()).unwrap();
+            let req = builder.body(Full::default()).unwrap();
 
             match timeout(REQUEST_TIMEOUT, self.client.request(req)).await {
                 Ok(Ok(res)) => break res,
@@ -260,7 +263,7 @@ impl AccountManager {
         self.store_cookies(&mut res, &url);
         self.referer = Some(uri.to_string());
 
-        let cookie = Cookie::new("cookieconsent_status", "deny");
+        let cookie = RawCookie::new("cookieconsent_status", "deny");
         self.cookies.insert_raw(&cookie, &url).unwrap();
 
         Ok(())
@@ -294,7 +297,7 @@ impl AccountManager {
 
             builder.headers_mut().unwrap().extend(self.headers.clone());
             builder = self.apply_cookies(builder, &url);
-            let req = builder.body(Body::from(payload)).unwrap();
+            let req = builder.body(Full::from(payload)).unwrap();
 
             match timeout(REQUEST_TIMEOUT, self.client.request(req)).await {
                 Ok(Ok(res)) => {
@@ -331,7 +334,7 @@ impl AccountManager {
 
             builder.headers_mut().unwrap().extend(self.headers.clone());
             builder = self.apply_cookies(builder, &url);
-            let req = builder.body(Body::empty()).unwrap();
+            let req = builder.body(Full::default()).unwrap();
 
             match timeout(REQUEST_TIMEOUT, self.client.request(req)).await {
                 Ok(Ok(res)) => break res,
@@ -351,7 +354,9 @@ impl AccountManager {
             return Ok(SubscriptionId::NotParsed);
         }
 
-        let body = unsafe { String::from_utf8_unchecked(to_bytes(res.body_mut()).await?.to_vec()) };
+        let body = unsafe {
+            String::from_utf8_unchecked(res.body_mut().collect().await?.to_bytes().to_vec())
+        };
 
         let mut idx = 0;
 
@@ -390,7 +395,7 @@ impl AccountManager {
 
             builder.headers_mut().unwrap().extend(self.headers.clone());
             builder = self.apply_cookies(builder, &url);
-            let req = builder.body(Body::empty()).unwrap();
+            let req = builder.body(Full::default()).unwrap();
 
             match timeout(REQUEST_TIMEOUT, self.client.request(req)).await {
                 Ok(Ok(res)) => {
@@ -427,7 +432,7 @@ impl AccountManager {
 
             builder.headers_mut().unwrap().extend(self.headers.clone());
             builder = self.apply_cookies(builder, &url);
-            let req = builder.body(Body::empty()).unwrap();
+            let req = builder.body(Full::default()).unwrap();
 
             match timeout(REQUEST_TIMEOUT, self.client.request(req)).await {
                 Ok(Ok(res)) => {
@@ -465,7 +470,7 @@ impl AccountManager {
 
             builder.headers_mut().unwrap().extend(self.headers.clone());
             builder = self.apply_cookies(builder, &url);
-            let req = builder.body(Body::empty()).unwrap();
+            let req = builder.body(Full::default()).unwrap();
 
             match timeout(REQUEST_TIMEOUT, self.client.request(req)).await {
                 Ok(Ok(res)) => {
