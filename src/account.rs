@@ -3,7 +3,7 @@ use std::{str::FromStr, time::Duration};
 use cookie_store::{CookieStore, RawCookie, RawCookieParseError};
 use http_body_util::{BodyExt, Full};
 use hyper::{
-    body::{Buf, Bytes, Incoming},
+    body::{Bytes, Incoming},
     header::{
         Entry, ACCEPT, ACCEPT_LANGUAGE, CACHE_CONTROL, CONTENT_TYPE, COOKIE, PRAGMA, REFERER,
         SET_COOKIE, USER_AGENT,
@@ -16,7 +16,6 @@ use hyper_util::{
     client::legacy::{connect::HttpConnector, Client, Error as ClientError},
     rt::TokioExecutor,
 };
-use log::error;
 use tokio::time::timeout;
 use url::Url;
 
@@ -29,10 +28,7 @@ const LOGOUT_URL: &str = "https://account.anarchy-online.com/log_out";
 const PROXY_URL: &str = "http://proxy.nadybot.org:22222";
 const REQUEST_TIMEOUT: Duration = Duration::from_secs(10);
 
-const USER_AGENT_LIST_URL: &str =
-    "https://raw.githubusercontent.com/Kikobeats/top-user-agents/master/index.json";
-
-const DEFAULT_USER_AGENT: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36";
+const DEFAULT_USER_AGENT: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.3";
 const NEEDLE: &str = r#"<a href="/subscription/"#;
 
 pub enum SubscriptionId {
@@ -202,42 +198,6 @@ impl AccountManager {
 
             self.cookies.store_response_cookies(cookies, url);
         };
-    }
-
-    async fn update_user_agent(&mut self) -> Result<(), hyper::Error> {
-        let uri = Uri::from_static(USER_AGENT_LIST_URL);
-
-        let mut res = loop {
-            let mut builder = Request::builder().method(Method::GET).uri(&uri);
-            builder.headers_mut().unwrap().extend(self.headers.clone());
-            let req = builder.body(Full::default()).unwrap();
-
-            match timeout(REQUEST_TIMEOUT, self.client.request(req)).await {
-                Ok(Ok(res)) => break res,
-                Ok(Err(e)) => {
-                    log::error!("Failed to get user agent list to due {e}, retrying");
-                }
-                Err(_) => {
-                    log::error!("Timeout when fetching user agent list, retrying");
-                }
-            }
-        };
-
-        let body = res.body_mut().collect().await?.aggregate();
-
-        match serde_json::from_reader::<_, Vec<String>>(body.reader()) {
-            Ok(user_agents) => {
-                if let Some(user_agent) = user_agents.get(0) {
-                    self.headers
-                        .insert(USER_AGENT, HeaderValue::from_str(user_agent).unwrap());
-                }
-            }
-            Err(e) => {
-                error!("Failed to deserialize user agent list JSON: {e}");
-            }
-        }
-
-        Ok(())
     }
 
     async fn open_login_page(&mut self) -> Result<(), hyper::Error> {
@@ -495,7 +455,6 @@ impl AccountManager {
     }
 
     pub async fn reactivate(&mut self) -> Result<UnfreezeResult, hyper::Error> {
-        self.update_user_agent().await?;
         self.open_login_page().await?;
         self.login().await?;
         let subscription_id = self.open_account_page(true).await?;
